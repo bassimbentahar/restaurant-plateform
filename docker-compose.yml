@@ -15,13 +15,13 @@ services:
   mail-dev:
     container_name: r_mail_dev
     image: maildev/maildev
-    ports: 
+    ports:
      - 1080:1080
      - 1025:1025
     networks:
       - microservices-net
   keycloak:
-    container_name: keycloak-bsn
+    container_name: keycloak-res
     image: quay.io/keycloak/keycloak:26.2.2
     ports:
       - 9090:8080
@@ -32,6 +32,25 @@ services:
       - microservices-net
     command:
       - "start-dev"
+
+  restaurant-api:
+    container_name: restaurant-api
+    image: restaurant/restaurant:1.0.0
+    ports:
+      - 8088:8088
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+  restaurant-ui:
+    container_name: restaurant-ui
+    image: restaurant/restaurant-client-ui:1.0.0
+    ports:
+      - 8080:80
+    networks:
+      - microservices-net
+    depends_on:
+      - restaurant-api
 
 networks:
   microservices-net:
