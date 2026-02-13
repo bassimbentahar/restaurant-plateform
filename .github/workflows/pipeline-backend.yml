@@ -25,14 +25,13 @@ jobs:
       - name: Debug tree
         run: |
           pwd
-          ls
-          ls backend
+          echo"-------"
           ls backend/restaurant-backend
       - name: Compile project
         run: |
           cd backend/restaurant-backend
+          chmod +x mvnw
           ./mvnw clean compile
-
 
   unit-tests:
     runs-on: ubuntu-latest
