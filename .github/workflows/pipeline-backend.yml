@@ -99,7 +99,9 @@ jobs:
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
       - name: Debug AWS secrets
         run: |
-          echo "AWS key length: ${#{{ secrets.AWS_ACCESS_KEY_ID }}}"
+         echo "AWS key length: ${#AWS_ACCESS_KEY_ID}"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
       # 🔐 Login AWS
       - name: Configure AWS credentials
