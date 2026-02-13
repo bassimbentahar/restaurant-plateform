@@ -22,6 +22,12 @@ jobs:
         with:
           java-version: 21
           distribution: 'corretto'
+      - name: Debug tree
+        run: |
+          pwd
+          ls
+          ls backend
+          ls backend/restaurant-backend
       - name: Compile project
         run: |
           cd backend/restaurant-backend
