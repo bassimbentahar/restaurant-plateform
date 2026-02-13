@@ -105,7 +105,7 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      # 🐳 Build + Push image
+      # Build + Push image
       - name: Build & Push Docker image to ECR
         run: |
           IMAGE_URI=701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-api
