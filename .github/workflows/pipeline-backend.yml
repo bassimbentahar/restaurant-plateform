@@ -25,7 +25,6 @@ jobs:
       - name: Debug tree
         run: |
           pwd
-          echo"-------"
           ls backend/restaurant-backend
       - name: Compile project
         run: |
