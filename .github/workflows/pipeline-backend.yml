@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - backend/restaurant-backend/**
+      - frontend/**
       - docker/backend/**
       - 'docker-compose.yml'
       - .github/workflows/*-backend.yml
