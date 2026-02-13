@@ -2,8 +2,6 @@ name: RES Backend API Pipeline
 
 on:
   push:
-    branches:
-      - ci/pipeline
     paths:
       - backend/restaurant-backend/**
       - docker/backend/**
