@@ -26,6 +26,7 @@ jobs:
         run: |
           pwd
           ls -R | head -50
+          pwd
 
       - name: Compile project
         run: |
