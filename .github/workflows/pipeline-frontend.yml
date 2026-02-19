@@ -1,0 +1,55 @@
+name: RES Frontend Pipeline
+
+on:
+  push:
+    paths:
+      - backend/**
+      - frontend/**
+      - docker/frontend/**
+      - 'docker-compose.yml'
+      - .github/workflows/*-frontend.yml
+
+jobs:
+  build-image:
+    name: Build FE Docker image
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Extract project version
+        id: extract_version
+        run: |
+          cd frontend
+          echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+
+          # 🔐 Login AWS
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      # 🔐 Login ECR
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # 🐳 Build + Push image
+      - name: Build & Push Docker image to ECR
+        run: |
+          IMAGE_URI=701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-api
+          VERSION=${{ steps.extract_version.outputs.VERSION }}
+
+          docker build \
+            --build-arg PROFILE=dev \
+            --build-arg APP_VERSION=$VERSION \
+            -t $IMAGE_URI:$VERSION \
+            -t $IMAGE_URI:latest \
+            -f docker/backend/Dockerfile \
+            backend/restaurant-backend
+
+          docker push $IMAGE_URI:$VERSION
+          docker push $IMAGE_URI:latest
