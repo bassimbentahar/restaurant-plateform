@@ -6,7 +6,7 @@ on:
       - frontend/client-app/**
       - shared/**
       - docker/frontend/**
-      - .github/workflows/*-frontend-client.yml
+      - .github/workflows/*-frontend.yml
 
 jobs:
 
