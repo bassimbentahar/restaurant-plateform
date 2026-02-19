@@ -51,7 +51,6 @@ jobs:
             -t $IMAGE_URI:$VERSION \
             -t $IMAGE_URI:latest \
             -f docker/frontend/Dockerfile \
-            frontend/client-app
 
           docker push $IMAGE_URI:$VERSION
           docker push $IMAGE_URI:latest
