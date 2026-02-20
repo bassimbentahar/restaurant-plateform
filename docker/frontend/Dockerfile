@@ -16,7 +16,7 @@ RUN npx ng build client-app --configuration production
 # ===== RUNTIME STAGE =====
 FROM nginx:alpine
 COPY frontend/client-app/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist/client-app /usr/share/nginx/html
+COPY --from=build /app/dist/client-app/browser /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
