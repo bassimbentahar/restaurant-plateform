@@ -215,11 +215,24 @@
       "projectType": "library",
       "root": "shared",
       "sourceRoot": "shared/src",
+      "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular/build:library",
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "shared/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "shared/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "shared/tsconfig.lib.json"
+            "tsConfig": "shared/tsconfig.spec.json"
           }
         }
       }

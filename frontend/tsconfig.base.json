@@ -13,7 +13,14 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+
+    "baseUrl": ".",
+    "paths": {
+      "shared": [
+        "dist/shared"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -23,13 +30,35 @@
   },
   "files": [],
   "references": [
-    { "path": "./client-app/tsconfig.app.json" },
-    { "path": "./client-app/tsconfig.spec.json" },
-    { "path": "./admin-app/tsconfig.app.json" },
-    { "path": "./admin-app/tsconfig.spec.json" },
-    { "path": "./delivery-app/tsconfig.app.json" },
-    { "path": "./delivery-app/tsconfig.spec.json" },
-    { "path": "./shared/tsconfig.lib.json" },
-    { "path": "./shared/tsconfig.spec.json" }
+    {
+      "path": "./client-app/tsconfig.app.json"
+    },
+    {
+      "path": "./client-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./admin-app/tsconfig.app.json"
+    },
+    {
+      "path": "./admin-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./delivery-app/tsconfig.app.json"
+    },
+    {
+      "path": "./delivery-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./shared/tsconfig.lib.json"
+    },
+    {
+      "path": "./shared/tsconfig.spec.json"
+    },
+    {
+      "path": "./shared/tsconfig.lib.json"
+    },
+    {
+      "path": "./shared/tsconfig.spec.json"
+    }
   ]
 }

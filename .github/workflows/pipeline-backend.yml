@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - backend/restaurant-backend/**
-      - frontend/**
       - docker/backend/**
       - 'docker-compose.yml'
       - .github/workflows/*-backend.yml
@@ -24,11 +23,6 @@ jobs:
         with:
           java-version: 21
           distribution: 'corretto'
-      - name: Debug structure
-        run: |
-          pwd
-          ls -R | head -50
-          pwd
 
       - name: Compile project
         run: |
@@ -98,11 +92,6 @@ jobs:
         run: |
           cd backend/restaurant-backend
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
-      - name: Debug AWS secrets
-        run: |
-         echo "AWS key length: ${#AWS_ACCESS_KEY_ID}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
       # 🔐 Login AWS
       - name: Configure AWS credentials
@@ -173,4 +162,3 @@ jobs:
             --cluster restaurant-cluster-dev \
             --service restaurant-api-dev \
             --force-new-deployment
-## 701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-api

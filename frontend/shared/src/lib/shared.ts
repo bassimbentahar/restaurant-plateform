@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
     </p>
   `,
   styles: ``,
+  standalone: true
 })
 export class Shared {
 
