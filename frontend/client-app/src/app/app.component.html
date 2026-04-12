@@ -1,3 +1,79 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" contentId="main-content" type="overlay">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <div class="menu-profile">
+        <ion-avatar class="profile-avatar">
+          <img [src]="imageUrl()" alt="User profile" />
+        </ion-avatar>
+
+        @if (isLoggedIn()) {
+          <ion-text>
+            <h2>{{ userName() }}</h2>
+          </ion-text>
+        } @else {
+          <ion-text color="medium">
+            <h2>Guest</h2>
+          </ion-text>
+        }
+      </div>
+
+      <ion-list>
+        @for (item of menuItems(); track trackByLabel($index, item)) {
+          @if (!item.requiresAuth || isLoggedIn()) {
+            <ion-item
+              button
+              detail="false"
+              (click)="navigateTo(item.route!, item.requiresAuth ?? false)"
+            >
+              <ion-icon slot="start" [name]="item.icon"></ion-icon>
+              <ion-label>{{ item.label }}</ion-label>
+            </ion-item>
+          }
+        }
+
+        @if (!isLoggedIn()) {
+          <ion-item button detail="false" (click)="login()">
+            <ion-icon slot="start" name="log-in-outline"></ion-icon>
+            <ion-label>Login</ion-label>
+          </ion-item>
+        }
+
+        @if (isLoggedIn()) {
+          <ion-item button detail="false" (click)="logout()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Logout</ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <div class="app-shell">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <ion-title>{{ pageTitle() }}</ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button (click)="goToCart()">
+            <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+            @if (cartCount() > 0) {
+              <ion-badge color="danger">{{ cartCount() }}</ion-badge>
+            }
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </div>
 </ion-app>

@@ -27,7 +27,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "client-app/public"
+                "input": "client-app/public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -95,7 +96,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "admin-app/public"
+                "input": "admin-app/public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -163,7 +165,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "delivery-app/public"
+                "input": "delivery-app/public",
+                "output": "/"
               }
             ],
             "styles": [

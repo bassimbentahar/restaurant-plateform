@@ -1,0 +1,178 @@
+<ion-content class="item-page">
+  ggggggg
+  @if (loading()) {
+    <div class="loading-wrapper">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else {
+    @if (product(); as menuItem) {
+      <ion-grid>
+        <ion-row class="product-image-row">
+          <img
+            class="product-image"
+            [src]="menuItem.thumb || 'assets/img/placeholder.png'"
+            [alt]="menuItem.title"
+          />
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" class="favourite-col">
+            <ion-button fill="clear" (click)="toggleFavourite()">
+              <ion-icon
+                [name]="isLiked() ? 'heart' : 'heart-outline'"
+                color="danger"
+              ></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12">
+            <h2>{{ menuItem.title }}</h2>
+            <p>{{ menuItem.description }}</p>
+          </ion-col>
+        </ion-row>
+
+        @if (menuItem.variants?.length) {
+          <ion-list class="size-list">
+            <ion-list-header>Sizes</ion-list-header>
+
+            <ion-radio-group
+              [value]="selectedVariant()?.id"
+              (ionChange)="onVariantChange($event.detail.value)"
+            >
+              @for (variant of menuItem.variants; track variant.id) {
+                @if (variant.isAvailable !== false) {
+                  <ion-item>
+                    <ion-label>
+                      {{ variant.name }}
+                      <span class="offer-p">
+                        {{ currency().currencySymbol }} {{ variant.basePrice }}
+                      </span>
+                    </ion-label>
+
+                    <ion-radio slot="end" [value]="variant.id"></ion-radio>
+                  </ion-item>
+                }
+              }
+            </ion-radio-group>
+          </ion-list>
+        }
+
+        @if (menuItem.optionGroups?.length) {
+          @for (group of menuItem.optionGroups; track group.id) {
+            @if (group.isAvailable !== false) {
+              @if (group.displayType === 'radio' || group.displayType === 'select' || group.displayType === 'buttons') {
+                <ion-list class="extra-list">
+                  <ion-list-header>
+                    {{ group.name }}
+                    @if (group.required) {
+                      <span class="required">*</span>
+                    }
+                  </ion-list-header>
+
+                  <ion-radio-group
+                    [value]="getSelectedOptionId(group.id)"
+                    (ionChange)="onSingleOptionChange(group, $event.detail.value)"
+                  >
+                    @for (option of group.options; track option.id) {
+                      @if (option.isAvailable !== false && isOptionAllowedForCurrentVariant(option)) {
+                        <ion-item>
+                          <ion-label>
+                            {{ option.name }}
+                            @if (option.priceDelta > 0) {
+                              <span class="offer-p">
+                                + {{ currency().currencySymbol }} {{ option.priceDelta }}
+                              </span>
+                            }
+                          </ion-label>
+
+                          <ion-radio slot="end" [value]="option.id"></ion-radio>
+                        </ion-item>
+                      }
+                    }
+                  </ion-radio-group>
+                </ion-list>
+              } @else {
+                <ion-list class="extra-list">
+                  <ion-list-header>
+                    {{ group.name }}
+                    @if (group.required) {
+                      <span class="required">*</span>
+                    }
+                    <small class="group-rule">
+                      min {{ group.minSelect }} / max {{ group.maxSelect }}
+                    </small>
+                  </ion-list-header>
+
+                  @for (option of group.options; track option.id) {
+                    @if (option.isAvailable !== false && isOptionAllowedForCurrentVariant(option)) {
+                      <ion-item>
+                        <ion-label>
+                          {{ option.name }}
+                          @if (option.priceDelta > 0) {
+                            <span class="offer-p">
+                              + {{ currency().currencySymbol }} {{ option.priceDelta }}
+                            </span>
+                          }
+                        </ion-label>
+
+                        <ion-checkbox
+                          slot="end"
+                          [checked]="isOptionSelected(group.id, option.id)"
+                          (ionChange)="onMultiOptionChange(group, option, $event.detail.checked)"
+                        ></ion-checkbox>
+                      </ion-item>
+                    }
+                  }
+                </ion-list>
+              }
+            }
+          }
+        }
+
+        <ion-row class="quantity-cart-row">
+          <ion-col size="5">
+            <div class="count">
+              <button class="item-count" (click)="removeQuantity()">-</button>
+              <span class="item-count show-count">{{ quantity() }}</span>
+              <button class="item-count" (click)="addQuantity()">+</button>
+            </div>
+          </ion-col>
+
+          <ion-col size="7">
+            <ion-button expand="block" (click)="addToCart()">
+              <ion-icon slot="start" name="cart-outline"></ion-icon>
+              Add to cart
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="summary-row">
+          <ion-col size="12">
+            <h3>
+              Total:
+              {{ currency().currencySymbol }} {{ totalPrice() }}
+            </h3>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="button-fixed">
+          <ion-col size="6">
+            <ion-button expand="block" (click)="checkout()">
+              <ion-icon slot="start" name="cart-outline"></ion-icon>
+              Checkout
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="6">
+            <ion-button expand="block" fill="outline" (click)="home()">
+              <ion-icon slot="start" name="basket-outline"></ion-icon>
+              Keep shopping
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    }
+  }
+</ion-content>

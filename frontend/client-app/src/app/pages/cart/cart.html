@@ -1,0 +1,125 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="backToProducts()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>My Cart</ion-title>
+
+    <ion-buttons slot="end">
+      @if (cartCount() > 0) {
+        <ion-badge color="danger">{{ cartCount() }}</ion-badge>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (items().length === 0) {
+    <div class="empty-cart">
+      <ion-icon name="cart-outline" class="empty-icon"></ion-icon>
+      <h2>Your cart is empty</h2>
+      <ion-button (click)="backToProducts()">Browse products</ion-button>
+    </div>
+  } @else {
+    <ion-grid>
+      <ion-row>
+        @for (item of items(); track trackById($index, item)) {
+          <ion-col size="12">
+            <ion-card>
+              <ion-card-content>
+                <div class="cart-item">
+                  <img
+                    class="cart-item-image"
+                    [src]="item.productImage || 'assets/img/placeholder.png'"
+                    [alt]="item.productName"
+                  />
+
+                  <div class="cart-item-body">
+                    <div class="cart-item-header">
+                      <h3>{{ item.productName }}</h3>
+
+                      <ion-button fill="clear" color="danger" (click)="removeItem(item)">
+                        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                      </ion-button>
+                    </div>
+
+                    @if (item.selectedVariant) {
+                      <p class="muted">
+                        Size: {{ item.selectedVariant.variantName }}
+                      </p>
+                    }
+
+                    @if (item.selectedOptions.length > 0) {
+                      <ion-list lines="none" class="options-list">
+                        @for (option of item.selectedOptions; track option.optionId) {
+                          <ion-item>
+                            <ion-label>
+                              {{ option.optionGroupName }}: {{ option.optionName }}
+                              @if (option.priceDelta > 0) {
+                                <span class="muted">
+                                  (+ {{ currency().currencySymbol }} {{ option.priceDelta }})
+                                </span>
+                              }
+                            </ion-label>
+                          </ion-item>
+                        }
+                      </ion-list>
+                    }
+
+                    <div class="price-block">
+                      <p>
+                        Unit price:
+                        <strong>
+                          {{ currency().currencySymbol }} {{ item.unitFinalPrice }}
+                        </strong>
+                      </p>
+
+                      <div class="quantity-row">
+                        <ion-button fill="outline" size="small" (click)="decreaseQuantity(item)">
+                          <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+                        </ion-button>
+
+                        <span class="qty">{{ item.quantity }}</span>
+
+                        <ion-button fill="outline" size="small" (click)="increaseQuantity(item)">
+                          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+                        </ion-button>
+                      </div>
+
+                      <p class="line-total">
+                        Total:
+                        <strong>
+                          {{ currency().currencySymbol }} {{ item.lineTotalPrice }}
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+
+    <div class="cart-summary">
+      <h2>
+        Cart total:
+        <span>{{ currency().currencySymbol }} {{ cartTotal() }}</span>
+      </h2>
+
+      <div class="summary-actions">
+        <ion-button fill="outline" color="medium" (click)="clearCart()">
+          Clear cart
+        </ion-button>
+
+        <ion-button (click)="checkout()">
+          Checkout
+        </ion-button>
+      </div>
+    </div>
+  }
+</ion-content>
