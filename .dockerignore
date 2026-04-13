@@ -1,0 +1,10 @@
+.git
+.github
+**/node_modules
+**/.angular
+**/dist
+**/coverage
+**/.idea
+**/.vscode
+**/tmp
+**/out-tsc
