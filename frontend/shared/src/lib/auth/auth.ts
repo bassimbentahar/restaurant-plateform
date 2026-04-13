@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,9 +10,9 @@ export class Auth {
 
   async init(): Promise<boolean> {
     this.keycloak = new Keycloak({
-      url: 'http://localhost:9090',
-      realm: 'res-realm',
-      clientId: 'client-app',
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId,
     });
 
     return await this.keycloak.init({

@@ -2,6 +2,8 @@ name: RES Frontend Client Pipeline
 
 on:
   push:
+    branches:
+      - develop
     paths:
       - frontend/**
       - frontend/client-app/**
@@ -10,13 +12,13 @@ on:
       - .github/workflows/*-frontend.yml
 
 jobs:
-
   build-image:
     name: Build & Push Frontend Docker Image
     runs-on: ubuntu-latest
     environment: dev
     outputs:
       VERSION: ${{ steps.extract_version.outputs.VERSION }}
+      BUILD_CONFIG: ${{ steps.set_build_config.outputs.BUILD_CONFIG }}
 
     steps:
       - name: Checkout code
@@ -24,14 +26,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 🔹 Extract version from package.json
+      - name: Set build config from branch
+        id: set_build_config
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "BUILD_CONFIG=production" >> $GITHUB_OUTPUT
+          else
+            echo "BUILD_CONFIG=dev-aws" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract project version
         id: extract_version
         run: |
           cd frontend/client-app
           echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
-      # 🔐 AWS Login
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -42,13 +51,14 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      # 🐳 Build + Push
       - name: Build & Push Docker image to ECR
         run: |
           IMAGE_URI=701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-client-dev
           VERSION=${{ steps.extract_version.outputs.VERSION }}
+          BUILD_CONFIG=${{ steps.set_build_config.outputs.BUILD_CONFIG }}
 
           docker build \
+            --build-arg BUILD_CONFIG=$BUILD_CONFIG \
             -t $IMAGE_URI:$VERSION \
             -t $IMAGE_URI:latest \
             -f docker/frontend/Dockerfile \
@@ -60,7 +70,7 @@ jobs:
   deploy:
     name: Deploy Frontend on ECS
     runs-on: ubuntu-latest
-    needs: [ build-image ]
+    needs: [build-image]
     environment: dev
 
     steps:
@@ -96,4 +106,5 @@ jobs:
           aws ecs update-service \
             --cluster restaurant-cluster-dev \
             --service restaurant-client-dev \
+            --task-definition restaurant-client-task-dev \
             --force-new-deployment

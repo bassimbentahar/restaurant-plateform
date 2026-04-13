@@ -8,8 +8,7 @@ COPY frontend/ ./frontend/
 WORKDIR /app/frontend
 
 RUN npm ci
-RUN npx ng build client-app --configuration production
-
+RUN npx ng build client-app --configuration=$BUILD_CONFIG \
 # ===== RUNTIME STAGE =====
 FROM nginx:alpine
 

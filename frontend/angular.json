@@ -67,6 +67,9 @@
             },
             "development": {
               "buildTarget": "client-app:build:development"
+            },
+            "dev-aws": {
+              "buildTarget": "client-app:build:dev-aws"
             }
           },
           "defaultConfiguration": "development"
@@ -175,6 +178,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "client-app/src/environments/environment.ts",
+                  "with": "client-app/src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -193,6 +202,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "dev-aws": {
+              "fileReplacements": [
+                {
+                  "replace": "client-app/src/environments/environment.ts",
+                  "with": "client-app/src/environments/environment.dev-aws.ts"
+                }
+              ],
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false
             }
           },
           "defaultConfiguration": "production"
