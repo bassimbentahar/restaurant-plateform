@@ -1,5 +1,3 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -14,11 +12,10 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-
     "baseUrl": ".",
     "paths": {
       "shared": [
-        "dist/shared"
+        "shared/src/public-api.ts"
       ]
     }
   },
@@ -30,35 +27,13 @@
   },
   "files": [],
   "references": [
-    {
-      "path": "./client-app/tsconfig.app.json"
-    },
-    {
-      "path": "./client-app/tsconfig.spec.json"
-    },
-    {
-      "path": "./admin-app/tsconfig.app.json"
-    },
-    {
-      "path": "./admin-app/tsconfig.spec.json"
-    },
-    {
-      "path": "./delivery-app/tsconfig.app.json"
-    },
-    {
-      "path": "./delivery-app/tsconfig.spec.json"
-    },
-    {
-      "path": "./shared/tsconfig.lib.json"
-    },
-    {
-      "path": "./shared/tsconfig.spec.json"
-    },
-    {
-      "path": "./shared/tsconfig.lib.json"
-    },
-    {
-      "path": "./shared/tsconfig.spec.json"
-    }
+    { "path": "./client-app/tsconfig.app.json" },
+    { "path": "./client-app/tsconfig.spec.json" },
+    { "path": "./admin-app/tsconfig.app.json" },
+    { "path": "./admin-app/tsconfig.spec.json" },
+    { "path": "./delivery-app/tsconfig.app.json" },
+    { "path": "./delivery-app/tsconfig.spec.json" },
+    { "path": "./shared/tsconfig.lib.json" },
+    { "path": "./shared/tsconfig.spec.json" }
   ]
 }
