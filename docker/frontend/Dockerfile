@@ -2,18 +2,21 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+ARG BUILD_CONFIG=dev-aws
+
 # Copier tout le workspace frontend
 COPY frontend/ ./frontend/
 
 WORKDIR /app/frontend
 
 RUN npm ci
-RUN npx ng build client-app --configuration=$BUILD_CONFIG \
+RUN npx ng build client-app --configuration=$BUILD_CONFIG
+
 # ===== RUNTIME STAGE =====
 FROM nginx:alpine
 
 COPY frontend/client-app/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist/client-app/browser /usr/share/nginx/html
+COPY --from=build /app/frontend/dist/client-app/browser /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
