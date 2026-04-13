@@ -1,0 +1,23 @@
+# Angular workspace
+.angular/
+node_modules/
+dist/
+
+# Build / temp
+tmp/
+out-tsc/
+bazel-out/
+
+# Logs
+npm-debug.log
+yarn-error.log
+*.log
+
+# IDE
+.idea/
+.vscode/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
