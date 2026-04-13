@@ -6,41 +6,36 @@ on:
       - develop
     paths:
       - frontend/**
-      - frontend/client-app/**
-      - shared/**
       - docker/frontend/**
-      - .github/workflows/*-frontend.yml
+      - .github/workflows/*frontend*.yml
 
 jobs:
   build-image:
     name: Build & Push Frontend Docker Image
     runs-on: ubuntu-latest
     environment: dev
+
     outputs:
       VERSION: ${{ steps.extract_version.outputs.VERSION }}
-      BUILD_CONFIG: ${{ steps.set_build_config.outputs.BUILD_CONFIG }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set build config from branch
+      # 🔥 Détermine la config Angular selon la branche
+      - name: Set build config
         id: set_build_config
         run: |
-          if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            echo "BUILD_CONFIG=production" >> $GITHUB_OUTPUT
-          else
-            echo "BUILD_CONFIG=dev-aws" >> $GITHUB_OUTPUT
-          fi
+          echo "BUILD_CONFIG=dev-aws" >> $GITHUB_ENV
 
-      - name: Extract project version
+      # 📦 Récupérer la version depuis package.json
+      - name: Extract version
         id: extract_version
         run: |
           cd frontend/client-app
           echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
+      # 🔐 AWS
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -51,11 +46,11 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build & Push Docker image to ECR
+      # 🐳 Build & push Docker
+      - name: Build & Push Docker image
         run: |
           IMAGE_URI=701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-client-dev
           VERSION=${{ steps.extract_version.outputs.VERSION }}
-          BUILD_CONFIG=${{ steps.set_build_config.outputs.BUILD_CONFIG }}
 
           docker build \
             --build-arg BUILD_CONFIG=$BUILD_CONFIG \
@@ -70,7 +65,7 @@ jobs:
   deploy:
     name: Deploy Frontend on ECS
     runs-on: ubuntu-latest
-    needs: [build-image]
+    needs: build-image
     environment: dev
 
     steps:
@@ -87,11 +82,11 @@ jobs:
             --task-definition restaurant-client-task-dev \
             --query taskDefinition > task-definition.json
 
-      - name: Update image in task definition
+      - name: Update image
         run: |
-          NEW_IMAGE="701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-client-dev:${{ needs.build-image.outputs.VERSION }}"
+          IMAGE_URI=701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-client-dev:${{ needs.build-image.outputs.VERSION }}
 
-          jq --arg IMAGE "$NEW_IMAGE" \
+          jq --arg IMAGE "$IMAGE_URI" \
             '.containerDefinitions[0].image = $IMAGE |
              del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)' \
              task-definition.json > new-task-definition.json
@@ -101,7 +96,7 @@ jobs:
           aws ecs register-task-definition \
             --cli-input-json file://new-task-definition.json
 
-      - name: Deploy new revision
+      - name: Deploy
         run: |
           aws ecs update-service \
             --cluster restaurant-cluster-dev \
