@@ -3,6 +3,7 @@ name: RES Frontend Client Pipeline
 on:
   push:
     paths:
+      - frontend/**
       - frontend/client-app/**
       - shared/**
       - docker/frontend/**
