@@ -24,7 +24,10 @@ export class Auth {
     });
 
     const initOptions: any = {
+      onLoad: 'check-sso',
       checkLoginIframe: false,
+      silentCheckSsoRedirectUri:
+        this.appBaseUrl + '/assets/silent-check-sso.html',
       pkceMethod: config.pkce ? 'S256' : false,
     };
 

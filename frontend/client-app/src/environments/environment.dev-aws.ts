@@ -5,6 +5,6 @@ export const environment = {
     url: 'https://auth.portalcoffee.ch',
     realm: 'res-realm',
     clientId: 'client-app',
-    pkce: false,
+    pkce: true,
   },
 };
