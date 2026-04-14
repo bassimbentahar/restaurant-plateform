@@ -22,7 +22,6 @@ export class Auth {
     });
 
     const initOptions: any = {
-      onLoad: 'check-sso',
       checkLoginIframe: false,
       pkceMethod: config.pkce ? 'S256' : false,
     };
