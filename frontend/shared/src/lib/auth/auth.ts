@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
 
 @Injectable({
@@ -12,7 +12,11 @@ export class Auth {
     realm: string;
     clientId: string;
   }): Promise<boolean> {
-    this.keycloak = new Keycloak(config);
+    this.keycloak = new Keycloak({
+      url: config.url,
+      realm: config.realm,
+      clientId: config.clientId,
+    });
 
     return this.keycloak.init({
       onLoad: 'check-sso',
@@ -23,29 +27,35 @@ export class Auth {
     });
   }
 
-  login(): Promise<void> {
-    return this.keycloak.login({
+  async login(): Promise<void> {
+    await this.keycloak.login({
       redirectUri: window.location.origin,
     });
   }
 
-  logout(): Promise<void> {
-    return this.keycloak.logout({
+  async logout(): Promise<void> {
+    await this.keycloak.logout({
       redirectUri: window.location.origin,
     });
   }
 
   isLoggedIn(): boolean {
-    return !!this.keycloak.authenticated;
+    return !!this.keycloak?.authenticated;
   }
 
   getToken(): string | undefined {
-    return this.keycloak.token;
+    return this.keycloak?.token;
+  }
+
+  getUsername(): string | undefined {
+    return this.keycloak?.tokenParsed?.['preferred_username'] as string | undefined;
   }
 
   getRoles(): string[] {
-    return (
-      (this.keycloak.tokenParsed?.['realm_access'] as any)?.roles || []
-    );
+    return ((this.keycloak?.tokenParsed?.['realm_access'] as { roles?: string[] })?.roles ?? []);
+  }
+
+  hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
   }
 }
