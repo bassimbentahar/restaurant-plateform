@@ -7,7 +7,6 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { Auth } from 'shared';
 import { environment } from './environments/environment';
-import { KeycloakPkceMethod } from 'keycloak-js';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -17,14 +16,11 @@ bootstrapApplication(AppComponent, {
     provideAppInitializer(() => {
       const auth = inject(Auth);
 
-      const pkceMethod: KeycloakPkceMethod | false =
-        environment.keycloak.pkce ?? false;
-
       return auth.init({
         url: environment.keycloak.url,
         realm: environment.keycloak.realm,
         clientId: environment.keycloak.clientId,
-        pkceMethod,
+        pkce: environment.keycloak.pkce ?? false,
       });
     }),
   ],
