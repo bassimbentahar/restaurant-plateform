@@ -4,5 +4,6 @@ export const environment = {
     url: 'http://localhost:9090',
     realm: 'res-realm',
     clientId: 'client-app',
+    pkce: 'S256' as const,
   },
 };

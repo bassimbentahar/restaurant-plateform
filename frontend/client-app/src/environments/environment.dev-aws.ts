@@ -4,5 +4,6 @@ export const environment = {
     url: 'http://16.170.187.167:8081',
     realm: 'res-realm',
     clientId: 'client-app',
+    pkce: false
   },
 };
