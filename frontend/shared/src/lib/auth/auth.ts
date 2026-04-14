@@ -21,16 +21,13 @@ export class Auth {
       clientId: config.clientId,
     });
 
-    const initOptions: Parameters<Keycloak['init']>[0] = {
+    const initOptions: any = {
       onLoad: 'check-sso',
       checkLoginIframe: false,
       silentCheckSsoRedirectUri:
         window.location.origin + '/silent-check-sso.html',
+      pkceMethod: config.pkce ? 'S256' : false,
     };
-
-    if (config.pkce) {
-      initOptions.pkceMethod = 'S256';
-    }
 
     return this.keycloak.init(initOptions);
   }
