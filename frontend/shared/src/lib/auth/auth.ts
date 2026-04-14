@@ -27,7 +27,7 @@ export class Auth {
       onLoad: 'check-sso',
       checkLoginIframe: false,
       silentCheckSsoRedirectUri:
-        this.appBaseUrl + '/assets/silent-check-sso.html',
+        window.location.origin + '/silent-check-sso.html',
       pkceMethod: config.pkce ? 'S256' : false,
     };
 
