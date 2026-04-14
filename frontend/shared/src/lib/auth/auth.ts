@@ -24,8 +24,6 @@ export class Auth {
     const initOptions: any = {
       onLoad: 'check-sso',
       checkLoginIframe: false,
-      silentCheckSsoRedirectUri:
-        window.location.origin + '/silent-check-sso.html',
       pkceMethod: config.pkce ? 'S256' : false,
     };
 
