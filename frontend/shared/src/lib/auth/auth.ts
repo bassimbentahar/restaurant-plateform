@@ -6,14 +6,16 @@ import Keycloak from 'keycloak-js';
 })
 export class Auth {
   private keycloak!: Keycloak;
+  private appBaseUrl!: string;
 
   async init(config: {
     url: string;
     realm: string;
     clientId: string;
     pkce?: boolean;
+    appBaseUrl: string;
   }): Promise<boolean> {
-    console.log('PKCE enabled =', config.pkce);
+    this.appBaseUrl = config.appBaseUrl;
 
     this.keycloak = new Keycloak({
       url: config.url,
@@ -31,13 +33,13 @@ export class Auth {
 
   async login(): Promise<void> {
     await this.keycloak.login({
-      redirectUri: window.location.origin,
+      redirectUri: `${this.appBaseUrl}/`,
     });
   }
 
   async logout(): Promise<void> {
     await this.keycloak.logout({
-      redirectUri: window.location.origin,
+      redirectUri: `${this.appBaseUrl}/`,
     });
   }
 

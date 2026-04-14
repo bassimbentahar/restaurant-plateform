@@ -21,6 +21,7 @@ bootstrapApplication(AppComponent, {
         realm: environment.keycloak.realm,
         clientId: environment.keycloak.clientId,
         pkce: environment.keycloak.pkce ?? false,
+        appBaseUrl: environment.appBaseUrl,
       });
     }),
   ],
