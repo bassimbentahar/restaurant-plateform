@@ -13,6 +13,7 @@ export class Auth {
     clientId: string;
     pkceMethod?: KeycloakPkceMethod | false;
   }): Promise<boolean> {
+    console.log('PKCE config =', config.pkceMethod);
     this.keycloak = new Keycloak({
       url: config.url,
       realm: config.realm,
