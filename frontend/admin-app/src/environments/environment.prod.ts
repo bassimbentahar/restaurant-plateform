@@ -4,6 +4,6 @@ export const environment = {
     url: 'https://ton-domaine-keycloak',
     realm: 'res-realm',
     clientId: 'client-app',
-    pkce: 'S256' as const,
+    pkce: false,
   },
 };

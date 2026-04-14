@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   keycloak: {
-    url: 'http://16.170.187.167:8081',
+    url: 'https://auth.portalcoffee.ch',
     realm: 'res-realm',
     clientId: 'client-app',
     pkce: false
