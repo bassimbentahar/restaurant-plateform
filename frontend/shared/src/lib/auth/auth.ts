@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Keycloak from 'keycloak-js';
-import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -8,14 +7,14 @@ import {environment} from '../../environments/environment';
 export class Auth {
   private keycloak!: Keycloak;
 
-  async init(): Promise<boolean> {
-    this.keycloak = new Keycloak({
-      url: environment.keycloak.url,
-      realm: environment.keycloak.realm,
-      clientId: environment.keycloak.clientId,
-    });
+  async init(config: {
+    url: string;
+    realm: string;
+    clientId: string;
+  }): Promise<boolean> {
+    this.keycloak = new Keycloak(config);
 
-    return await this.keycloak.init({
+    return this.keycloak.init({
       onLoad: 'check-sso',
       checkLoginIframe: false,
       silentCheckSsoRedirectUri:
@@ -44,17 +43,9 @@ export class Auth {
     return this.keycloak.token;
   }
 
-  getUsername(): string | undefined {
-    return this.keycloak.tokenParsed?.['preferred_username'] as string;
-  }
-
   getRoles(): string[] {
     return (
       (this.keycloak.tokenParsed?.['realm_access'] as any)?.roles || []
     );
-  }
-
-  hasRole(role: string): boolean {
-    return this.getRoles().includes(role);
   }
 }

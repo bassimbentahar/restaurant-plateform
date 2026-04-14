@@ -1,7 +1,7 @@
 export const environment = {
-  production: true,
+  production: false,
   keycloak: {
-    url: 'https://auth.example.com',
+    url: 'http://16.170.187.167:8081',
     realm: 'res-realm',
     clientId: 'client-app',
   },

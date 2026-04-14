@@ -37,6 +37,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "client-app/src/environments/environment.ts",
+                  "with": "client-app/src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -55,6 +61,18 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "dev-aws": {
+              "fileReplacements": [
+                {
+                  "replace": "client-app/src/environments/environment.ts",
+                  "with": "client-app/src/environments/environment.dev-aws.ts"
+                }
+              ],
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -109,6 +127,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "admin-app/src/environments/environment.ts",
+                  "with": "admin-app/src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -127,6 +151,18 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "dev-aws": {
+              "fileReplacements": [
+                {
+                  "replace": "admin-app/src/environments/environment.ts",
+                  "with": "admin-app/src/environments/environment.dev-aws.ts"
+                }
+              ],
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -139,6 +175,9 @@
             },
             "development": {
               "buildTarget": "admin-app:build:development"
+            },
+            "dev-aws": {
+              "buildTarget": "admin-app:build:dev-aws"
             }
           },
           "defaultConfiguration": "development"
@@ -180,8 +219,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "client-app/src/environments/environment.ts",
-                  "with": "client-app/src/environments/environment.prod.ts"
+                  "replace": "delivery-app/src/environments/environment.ts",
+                  "with": "delivery-app/src/environments/environment.prod.ts"
                 }
               ],
               "budgets": [
@@ -206,13 +245,14 @@
             "dev-aws": {
               "fileReplacements": [
                 {
-                  "replace": "client-app/src/environments/environment.ts",
-                  "with": "client-app/src/environments/environment.dev-aws.ts"
+                  "replace": "delivery-app/src/environments/environment.ts",
+                  "with": "delivery-app/src/environments/environment.dev-aws.ts"
                 }
               ],
               "optimization": true,
               "extractLicenses": true,
-              "sourceMap": false
+              "sourceMap": false,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -225,6 +265,9 @@
             },
             "development": {
               "buildTarget": "delivery-app:build:development"
+            },
+            "dev-aws": {
+              "buildTarget": "delivery-app:build:dev-aws"
             }
           },
           "defaultConfiguration": "development"

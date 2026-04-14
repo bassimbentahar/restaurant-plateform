@@ -6,6 +6,7 @@ import { provideAppInitializer, inject } from '@angular/core';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { Auth } from 'shared';
+import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -14,7 +15,11 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideAppInitializer(() => {
       const auth = inject(Auth);
-      return auth.init();
+      return auth.init({
+        url: environment.keycloak.url,
+        realm: environment.keycloak.realm,
+        clientId: environment.keycloak.clientId,
+      });
     }),
   ],
 });
