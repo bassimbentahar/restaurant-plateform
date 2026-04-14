@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import Keycloak from 'keycloak-js';
+import {Injectable} from '@angular/core';
+import Keycloak, {KeycloakPkceMethod} from 'keycloak-js';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,7 @@ export class Auth {
     url: string;
     realm: string;
     clientId: string;
+    pkceMethod?: KeycloakPkceMethod | false;
   }): Promise<boolean> {
     this.keycloak = new Keycloak({
       url: config.url,
@@ -23,7 +24,7 @@ export class Auth {
       checkLoginIframe: false,
       silentCheckSsoRedirectUri:
         window.location.origin + '/silent-check-sso.html',
-      pkceMethod: 'S256',
+      pkceMethod: config.pkceMethod
     });
   }
 
