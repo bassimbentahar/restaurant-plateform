@@ -25,7 +25,7 @@ import {basketOutline, cartOutline, heart, heartOutline,} from 'ionicons/icons';
 import {Product, ProductOption, ProductOptionGroup, ProductVariant,} from '../../models/product.model';
 import {CartItem, SelectedOption, SelectedVariant} from '../../models/cart-item.model';
 import {Currency} from '../../models/currency.model';
-import {ProductService} from '../../services/product.service';
+import {ProductMockService} from '../../services/productMock.service';
 import {CartService} from '../../services/cart.service';
 
 @Component({
@@ -54,7 +54,7 @@ import {CartService} from '../../services/cart.service';
 export class ProductDetails implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly productService = inject(ProductService);
+  private readonly productService = inject(ProductMockService);
   private readonly cartService = inject(CartService);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
@@ -409,7 +409,7 @@ export class ProductDetails implements OnInit {
       id: crypto.randomUUID(),
       productId: currentProduct.id,
       productName: currentProduct.title,
-      productImage: currentProduct.thumb,
+      productImage: currentProduct.thumb ?? undefined,
       quantity: this.quantity(),
       selectedVariant,
       selectedOptions,

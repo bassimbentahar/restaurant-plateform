@@ -10,17 +10,19 @@ import {
   IonCardTitle,
   IonCol,
   IonContent,
-  IonGrid,
+  IonGrid, IonHeader,
   IonIcon,
   IonRow,
   IonSearchbar,
-  IonSpinner,
+  IonSpinner, IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cartOutline, star } from 'ionicons/icons';
-import { ProductService } from '../../services/product.service';
+import { ProductMockService } from '../../services/productMock.service';
 import { Currency } from '../../models/currency.model';
 import { Product } from '../../models/product.model';
+import {ProductService} from "../../services/product.service";
+import {ImageService} from "../../services/image.service";
 
 @Component({
   selector: 'app-product-list',
@@ -40,6 +42,8 @@ import { Product } from '../../models/product.model';
     IonCardSubtitle,
     IonCardContent,
     IonSpinner,
+    IonToolbar,
+    IonHeader,
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
@@ -48,6 +52,10 @@ export class ProductList implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly productService = inject(ProductService);
+  protected readonly imageService = inject(ImageService);
+  protected categories = signal<{ id: string; name: string }[]>([]);
+  protected activeCategoryId = signal<string | null>(null);
+  protected imageErrors = new Set<string>();
 
   readonly loading = signal(true);
   readonly noOfItems = signal(0);
@@ -103,6 +111,7 @@ export class ProductList implements OnInit {
       next: (products) => {
         const normalized = products.map((product) => ({
           ...product,
+
           reviews: product.reviews ?? [],
           variants: product.variants ?? [],
           optionGroups: product.optionGroups ?? [],
@@ -171,10 +180,36 @@ export class ProductList implements OnInit {
   onSearchInput(event: Event): void {
     const target = event.target as HTMLIonSearchbarElement & { value?: string };
     this.searchTerm.set(target.value ?? '');
+    this.activeCategoryId.set('all');
   }
 
   navigate(productId: string): void {
     this.router.navigate(['/product-details', productId]);
+  }
+
+  scrollToTop(): void  {
+    this.activeCategoryId.set('all');
+    const content = document.querySelector('ion-content');
+    content?.scrollToTop?.(500);
+  }
+
+  onContentScroll(event: Event): void {
+    const sections = document.querySelectorAll<HTMLElement>('.category-section');
+
+    let currentCategoryId = 'all';
+    let minDistance = Number.POSITIVE_INFINITY;
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const distance = Math.abs(rect.top - 140);
+
+      if (rect.top <= 180 && distance < minDistance) {
+        minDistance = distance;
+        currentCategoryId = section.dataset['categoryId'] || 'all';
+      }
+    });
+
+    this.activeCategoryId.set(currentCategoryId);
   }
 
   getPrice(item: Product): number | null {
@@ -206,6 +241,47 @@ export class ProductList implements OnInit {
   getStars(item: Product): number[] {
     const count = Math.round(this.getAverageRating(item));
     return Array.from({ length: count }, (_, i) => i);
+  }
+
+  groupedCategories = computed(() => {
+    const items = this.filteredItems();
+
+    const map = new Map<string, { id: string; name: string; items: Product[] }>();
+
+    for (const item of items) {
+      const categoryId = item.category?.id;
+      const categoryName = item.category?.name;
+
+      if (!categoryId || !categoryName) continue;
+
+      if (!map.has(categoryId)) {
+        map.set(categoryId, {
+          id: categoryId,
+          name: categoryName,
+          items: [],
+        });
+      }
+
+      map.get(categoryId)!.items.push(item);
+    }
+
+    return Array.from(map.values());
+  });
+
+  scrollToCategory(categoryId: string): void {
+    const el = document.getElementById(`category-${categoryId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.activeCategoryId.set(categoryId);
+    }
+  }
+
+  onImageError(item: Product) {
+    this.imageErrors.add(item.id);
+  }
+
+  hasImageError(item: Product): boolean {
+    return this.imageErrors.has(item.id);
   }
 
   trackById = (_: number, item: Product): string => item.id;

@@ -7,10 +7,12 @@ public record ProductOptionGroupResponse(
   UUID id,
   String name,
   String description,
-  Integer minSelections,
-  Integer maxSelections,
+  String displayType,
   boolean required,
-  Integer displayOrder,
-  List<ProductOptionItemResponse> items
-) {
-}
+  boolean multiple,
+  Integer minSelect,
+  Integer maxSelect,
+  Boolean isAvailable,
+  Integer sortOrder,
+  List<ProductOptionItemResponse> options
+) {}

@@ -7,9 +7,9 @@ public record ProductOptionItemResponse(
   UUID id,
   String name,
   String description,
-  BigDecimal priceAdjustment,
+  BigDecimal priceDelta,
   boolean isDefault,
   boolean isAvailable,
-  Integer displayOrder
+  Integer sortOrder
 ) {
 }

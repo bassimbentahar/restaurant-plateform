@@ -1,6 +1,6 @@
 package com.restaurant.restaurantbackend.product.dto.response;
 
-import com.restaurant.restaurantbackend.product.category.dto.ProductCategorySummaryResponse;
+import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,20 +17,19 @@ public record ProductResponse(
   String description,
   String thumb,
   BigDecimal basePrice,
-  boolean isAvailable,
-  boolean isFeatured,
-  boolean isArchived,
+  Boolean isAvailable,
+  Boolean isFeatured,
+  Boolean isArchived,
   Integer preparationTimeMinutes,
   LocalTime availableFrom,
   LocalTime availableTo,
   Integer calories,
   String ingredientsText,
   String allergensText,
-  ProductCategorySummaryResponse category,
+  ProductCategoryResponse category,
   List<ProductImageResponse> images,
   List<ProductVariantResponse> variants,
   List<ProductOptionGroupResponse> optionGroups,
   LocalDateTime createdAt,
   LocalDateTime updatedAt
-) {
-}
+) {}

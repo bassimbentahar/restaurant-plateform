@@ -1,9 +1,3 @@
--- Seed Flyway pour Miam's / Family Food New (page menu public Just Eat)
--- Modèle retenu :
---   option_groups         = vraie table métier des groupes d’options
---   option_items          = items d’options
---   product_option_groups = table de jointure entre products et option_groups
-
 BEGIN;
 
 -- ============================================================
@@ -56,7 +50,7 @@ VALUES
     'Tacos viande hachée',
     'Choisissez votre sauce et vos suppléments.',
     'Big tacos avec viande hachée. Choisissez votre sauce et vos suppléments.',
-    NULL,
+    '/assets/products/tacos-viande-hachee.jpg',
     17.00,
     TRUE,
     FALSE,
@@ -78,7 +72,7 @@ VALUES
     'Tacos nuggets',
     'Choisissez votre sauce et vos suppléments.',
     'Big tacos avec nuggets. Choisissez votre sauce et vos suppléments.',
-    NULL,
+    '/assets/products/tacos-nuggets.jpg',
     17.00,
     TRUE,
     FALSE,
@@ -100,7 +94,7 @@ VALUES
     'Tacos falafel (végétarien)',
     'Choisissez votre sauce et vos suppléments.',
     'Big tacos végétarien avec falafel. Choisissez votre sauce et vos suppléments.',
-    NULL,
+    '/assets/products/tacos-falafel.jpg',
     17.00,
     TRUE,
     FALSE,
@@ -122,7 +116,7 @@ VALUES
     'Tacos merguez',
     'Choisissez votre sauce et vos suppléments.',
     'Big tacos avec merguez. Choisissez votre sauce et vos suppléments.',
-    NULL,
+    '/assets/products/tacos-merguez.jpg',
     19.00,
     TRUE,
     FALSE,
@@ -144,7 +138,7 @@ VALUES
     'Big Tacos – Escalope de poulet',
     'Big tacos garni de poulet classique, frites et fromage fondu.',
     'Big tacos garni de poulet classique, frites et fromage fondu. Choisissez votre sauce et vos suppléments.',
-    NULL,
+    '/assets/products/tacos-poulet.jpg',
     17.00,
     TRUE,
     TRUE,
@@ -166,7 +160,7 @@ VALUES
     'Tacos mixte (2 viandes)',
     'Choisissez deux viandes, votre sauce et vos suppléments.',
     'Tacos mixte avec deux viandes. L’extrait public du menu affiche un prix à partir de 12.00 CHF.',
-    NULL,
+    '/assets/products/tacos-mixte.jpg',
     12.00,
     TRUE,
     FALSE,
@@ -188,7 +182,7 @@ VALUES
     'Nuggets (7 pièces)',
     NULL,
     'Nuggets (7 pièces).',
-    NULL,
+    '/assets/products/nuggets.jpg',
     7.00,
     TRUE,
     FALSE,
@@ -210,7 +204,7 @@ VALUES
     'Grandes frites',
     NULL,
     'Grandes frites.',
-    NULL,
+    '/assets/products/grandes-frites.jpg',
     8.00,
     TRUE,
     FALSE,
@@ -232,7 +226,7 @@ VALUES
     'Coca-Cola 0.5l',
     NULL,
     'Coca-Cola 0.5l.',
-    NULL,
+    '/assets/products/coca-cola.jpg',
     4.00,
     TRUE,
     FALSE,
@@ -254,7 +248,7 @@ VALUES
     'Taco Bowl',
     'Catégorie Taco Bowls visible sur le menu public.',
     'Entrée générique Taco Bowl pour le seed. L’extrait public confirme la catégorie Taco Bowls avec 3 articles, mais pas tous les noms des articles.',
-    NULL,
+    '/assets/products/taco-bowl.jpg',
     12.00,
     TRUE,
     FALSE,
@@ -269,6 +263,30 @@ VALUES
     NOW(),
     '10000000-0000-0000-0000-000000000005'
   )
+  ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
+-- Images produits
+-- ============================================================
+INSERT INTO product_images (
+  id,
+  url,
+  alt_text,
+  display_order,
+  is_primary,
+  product_id
+)
+VALUES
+  ('50000000-0000-0000-0000-000000000001', '/assets/products/tacos-viande-hachee.jpg', 'Tacos viande hachée', 0, TRUE, '20000000-0000-0000-0000-000000000001'),
+  ('50000000-0000-0000-0000-000000000002', '/assets/products/tacos-nuggets.jpg', 'Tacos nuggets', 0, TRUE, '20000000-0000-0000-0000-000000000002'),
+  ('50000000-0000-0000-0000-000000000003', '/assets/products/tacos-falafel.jpg', 'Tacos falafel', 0, TRUE, '20000000-0000-0000-0000-000000000003'),
+  ('50000000-0000-0000-0000-000000000004', '/assets/products/tacos-merguez.jpg', 'Tacos merguez', 0, TRUE, '20000000-0000-0000-0000-000000000004'),
+  ('50000000-0000-0000-0000-000000000005', '/assets/products/tacos-poulet.jpg', 'Big Tacos escalope de poulet', 0, TRUE, '20000000-0000-0000-0000-000000000005'),
+  ('50000000-0000-0000-0000-000000000006', '/assets/products/tacos-mixte.jpg', 'Tacos mixte', 0, TRUE, '20000000-0000-0000-0000-000000000006'),
+  ('50000000-0000-0000-0000-000000000007', '/assets/products/nuggets.jpg', 'Nuggets 7 pièces', 0, TRUE, '20000000-0000-0000-0000-000000000007'),
+  ('50000000-0000-0000-0000-000000000008', '/assets/products/grandes-frites.jpg', 'Grandes frites', 0, TRUE, '20000000-0000-0000-0000-000000000008'),
+  ('50000000-0000-0000-0000-000000000009', '/assets/products/coca-cola.jpg', 'Coca-Cola 0.5l', 0, TRUE, '20000000-0000-0000-0000-000000000009'),
+  ('50000000-0000-0000-0000-000000000010', '/assets/products/taco-bowl.jpg', 'Taco Bowl', 0, TRUE, '20000000-0000-0000-0000-000000000010')
   ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
@@ -304,19 +322,16 @@ INSERT INTO option_items (
   option_group_id
 )
 VALUES
-  -- Sauces
   ('40000000-0000-0000-0000-000000000001', 'Algérienne', NULL, 0.00, FALSE, TRUE, 0, '30000000-0000-0000-0000-000000000001'),
   ('40000000-0000-0000-0000-000000000002', 'Samouraï', NULL, 0.00, FALSE, TRUE, 1, '30000000-0000-0000-0000-000000000001'),
   ('40000000-0000-0000-0000-000000000003', 'Harissa', NULL, 0.00, FALSE, TRUE, 2, '30000000-0000-0000-0000-000000000001'),
   ('40000000-0000-0000-0000-000000000004', 'Mayonnaise', NULL, 0.00, FALSE, TRUE, 3, '30000000-0000-0000-0000-000000000001'),
   ('40000000-0000-0000-0000-000000000005', 'Ketchup', NULL, 0.00, FALSE, TRUE, 4, '30000000-0000-0000-0000-000000000001'),
 
-  -- Suppléments
   ('40000000-0000-0000-0000-000000000006', 'Fromage supplémentaire', NULL, 1.00, FALSE, TRUE, 0, '30000000-0000-0000-0000-000000000002'),
   ('40000000-0000-0000-0000-000000000007', 'Frites supplémentaires', NULL, 1.50, FALSE, TRUE, 1, '30000000-0000-0000-0000-000000000002'),
   ('40000000-0000-0000-0000-000000000008', 'Jalapeños', NULL, 1.00, FALSE, TRUE, 2, '30000000-0000-0000-0000-000000000002'),
 
-  -- Choix de viandes
   ('40000000-0000-0000-0000-000000000009', 'Viande hachée', NULL, 0.00, FALSE, TRUE, 0, '30000000-0000-0000-0000-000000000003'),
   ('40000000-0000-0000-0000-000000000010', 'Nuggets', NULL, 0.00, FALSE, TRUE, 1, '30000000-0000-0000-0000-000000000003'),
   ('40000000-0000-0000-0000-000000000011', 'Falafel', NULL, 0.00, FALSE, TRUE, 2, '30000000-0000-0000-0000-000000000003'),

@@ -24,21 +24,27 @@ public class ProductOptionGroupMapper {
       return null;
     }
 
-    List<ProductOptionItemResponse> items = group.getItems() == null
+    List<ProductOptionItemResponse> options = group.getItems() == null
       ? List.of()
       : group.getItems().stream()
       .map(optionItemMapper::toResponse)
       .toList();
 
+    boolean multiple = group.getMaxSelections() != null && group.getMaxSelections() > 1;
+    String displayType = multiple ? "checkbox" : "radio";
+
     return new ProductOptionGroupResponse(
       group.getId(),
       group.getName(),
       group.getDescription(),
+      displayType,
+      group.isRequired(),
+      multiple,
       group.getMinSelections(),
       group.getMaxSelections(),
-      group.isRequired(),
+      true,
       group.getDisplayOrder(),
-      items
+      options
     );
   }
 

@@ -56,3 +56,493 @@ page-product-list {
     }
   }
 }
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.product-card {
+  margin: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.product-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 180px;
+}
+
+.product-image-wrapper {
+  flex: 0 0 140px; // largeur fixe image
+  width: 140px;
+  height: 140px; // hauteur fixe image
+  margin: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; // garde une belle image sans déformation
+  display: block;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-detail {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.item-price {
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .product-card-content {
+    min-height: 160px;
+  }
+
+  .product-image-wrapper {
+    flex: 0 0 110px;
+    width: 110px;
+    height: 110px;
+    margin: 12px;
+  }
+}
+
+.categories-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.categories-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  border: none;
+  background: #f2f2f2;
+  color: #222;
+  padding: 10px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.category-pill.active {
+  background: #222;
+  color: #fff;
+}
+
+.category-section {
+  margin-top: 20px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 8px;
+}
+
+.category-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.product-card {
+  margin: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.product-card-content {
+  display: flex;
+  min-height: 180px;
+}
+
+.product-image-wrapper {
+  flex: 0 0 140px;
+  width: 140px;
+  height: 140px;
+  margin: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f6f6f6;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-detail {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-price {
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .product-image-wrapper {
+    width: 110px;
+    height: 110px;
+    flex: 0 0 110px;
+    margin: 12px;
+  }
+
+  .category-header h2 {
+    font-size: 22px;
+  }
+}
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+
+.categories-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #ffffff;
+  padding: 10px 12px 12px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.categories-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  border: none;
+  background: #f3f3f3;
+  color: #222;
+  padding: 10px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-pill.active {
+  background: #222;
+  color: #fff;
+}
+
+.category-section {
+  margin-top: 8px;
+  scroll-margin-top: 120px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 8px 10px;
+}
+
+.category-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #222;
+}
+
+.category-header span {
+  font-size: 16px;
+  color: #666;
+}
+
+.product-card {
+  margin: 8px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.product-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 180px;
+}
+
+.product-image-wrapper {
+  flex: 0 0 140px;
+  width: 140px;
+  height: 140px;
+  margin: 16px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-price {
+  font-weight: 700;
+}
+
+.item-detail {
+  margin: 0;
+  color: #555;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.rating-value {
+  font-size: 14px;
+  color: #444;
+}
+
+@media (max-width: 767px) {
+  .category-header h2 {
+    font-size: 22px;
+  }
+
+  .category-header span {
+    font-size: 14px;
+  }
+
+  .product-card-content {
+    min-height: 160px;
+  }
+
+  .product-image-wrapper {
+    flex: 0 0 110px;
+    width: 110px;
+    height: 110px;
+    margin: 12px;
+  }
+}
+
+.product-image-wrapper {
+  position: relative;
+  flex: 0 0 140px;
+  width: 140px;
+  height: 140px;
+  margin: 16px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f8f8f8 0%, #f1f1f1 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* état sans image */
+.no-image-state {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 45%),
+    linear-gradient(180deg, #fafafa 0%, #f2f2f2 100%);
+}
+
+/* bouton plus premium */
+.add-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.96);
+  color: #ff6a00;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.10),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+  backdrop-filter: blur(4px);
+}
+
+.add-btn:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 14px 24px rgba(0, 0, 0, 0.13),
+    0 4px 8px rgba(0, 0, 0, 0.10);
+}
+
+.add-btn:active {
+  transform: scale(0.96);
+}
+
+.add-btn__icon {
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 500;
+  transform: translateY(-1px);
+}
+
+/* bouton sur image */
+.add-btn--overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 106, 0, 0.16);
+}
+
+/* bouton au centre quand il n'y a pas d'image */
+.add-btn--centered {
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(255, 106, 0, 0.18);
+}
+
+@media (max-width: 767px) {
+  .product-image-wrapper {
+    flex: 0 0 110px;
+    width: 110px;
+    height: 110px;
+    margin: 12px;
+    border-radius: 16px;
+  }
+
+  .add-btn--overlay {
+    width: 38px;
+    height: 38px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .add-btn--centered {
+    width: 46px;
+    height: 46px;
+  }
+
+  .add-btn__icon {
+    font-size: 24px;
+  }
+}
+.add-btn ion-icon {
+  font-size: 24px;
+}
+.categories-toolbar {
+  --background: #fff;
+  padding: 8px 12px;
+}
+
+.categories-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  border: none;
+  background: #f2f2f2;
+  padding: 10px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.category-pill.active {
+  background: #222;
+  color: #fff;
+}

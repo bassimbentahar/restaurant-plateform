@@ -16,7 +16,7 @@ export interface CartItem {
   id: string; // id unique de ligne panier
   productId: string;
   productName: string;
-  productImage?: string;
+  productImage?: string | undefined;
 
   quantity: number;
 

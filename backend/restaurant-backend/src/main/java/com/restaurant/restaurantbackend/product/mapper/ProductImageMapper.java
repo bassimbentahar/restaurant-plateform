@@ -1,7 +1,6 @@
 package com.restaurant.restaurantbackend.product.mapper;
 
 import com.restaurant.restaurantbackend.product.Product;
-
 import com.restaurant.restaurantbackend.product.dto.request.ProductImageRequest;
 import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
@@ -16,10 +15,11 @@ public class ProductImageMapper {
     }
 
     return new ProductImageResponse(
+      image.getId(),
       image.getUrl(),
       image.getAltText(),
-      image.getDisplayOrder(),
-      image.isPrimary()
+      image.isPrimary(),
+      image.getDisplayOrder()
     );
   }
 

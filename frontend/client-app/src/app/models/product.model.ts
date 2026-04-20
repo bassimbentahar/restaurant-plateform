@@ -34,7 +34,7 @@ export interface ProductTag {
 export interface ProductVariant {
   id: string;
   code?: string;
-  name: string; // Small, Medium, Large
+  name: string;
   description?: string;
   basePrice: number;
   compareAtPrice?: number | null;
@@ -49,24 +49,21 @@ export interface ProductOption {
   id: string;
   code?: string;
   name: string;
-  description?: string;
+  description?: string | null;
   priceDelta: number;
   compareAtPriceDelta?: number | null;
   isDefault?: boolean;
   isAvailable?: boolean;
   sortOrder?: number;
 
-  // Si l'option n'est valable que pour certaines variantes
   allowedVariantIds?: string[];
-
-  // Si tu veux plus tard gérer le stock
   stockQuantity?: number | null;
 }
 
 export interface ProductOptionGroup {
   id: string;
   code?: string;
-  name: string; // Ex: "Sauce", "Suppléments", "Cuisson"
+  name: string;
   description?: string;
 
   displayType: OptionGroupDisplayType;
@@ -83,27 +80,14 @@ export interface ProductOptionGroup {
   options: ProductOption[];
 }
 
-export interface ProductAvailability {
-  isAvailable: boolean;
-  availableFrom?: string;
-  availableTo?: string;
-  daysOfWeek?: number[]; // 0 dimanche, 1 lundi...
-}
-
-export interface ProductNutritionInfo {
-  calories?: number | null;
-  allergens?: string[];
-  ingredients?: string[];
-}
-
 export interface Product {
   id: string;
   sku?: string;
   slug?: string;
 
   title: string;
-  shortDescription?: string;
-  description?: string;
+  shortDescription?: string | null;
+  description?: string | null;
 
   isAvailable: boolean;
   isFeatured?: boolean;
@@ -112,25 +96,27 @@ export interface Product {
   category?: ProductCategoryRef;
   categories?: ProductCategoryRef[];
 
-  thumb?: string;
+  thumb?: string | null;
   images?: ProductImage[];
 
-  // Prix simple si le produit n’a pas de variantes
   basePrice?: number | null;
 
-  // Variantes type Small / Medium / Large
   variants?: ProductVariant[];
-
-  // Groupes d'options type sauce, suppléments, cuisson...
   optionGroups?: ProductOptionGroup[];
 
   reviews?: ProductReview[];
-
   tags?: ProductTag[];
+
   preparationTimeMinutes?: number | null;
 
-  nutrition?: ProductNutritionInfo;
-  availability?: ProductAvailability;
+  // Nutrition à plat, alignée avec l'API
+  calories?: number | null;
+  ingredientsText?: string | null;
+  allergensText?: string | null;
+
+  // Disponibilité à plat, alignée avec l'API
+  availableFrom?: string;
+  availableTo?: string;
 
   createdAt?: string;
   updatedAt?: string;

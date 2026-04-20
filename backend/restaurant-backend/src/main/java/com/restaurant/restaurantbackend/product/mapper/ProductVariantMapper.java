@@ -11,16 +11,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductVariantMapper {
 
-  public ProductVariantResponse toResponse(ProductVariant variant) {
+  public ProductVariantResponse toResponse(ProductVariant variant, Product product) {
     if (variant == null) {
       return null;
     }
 
+    BigDecimal productBasePrice = product != null && product.getBasePrice() != null
+      ? product.getBasePrice()
+      : BigDecimal.ZERO;
+
+    BigDecimal priceAdjustment = variant.getPriceAdjustment() != null
+      ? variant.getPriceAdjustment()
+      : BigDecimal.ZERO;
+
+    BigDecimal variantBasePrice = productBasePrice.add(priceAdjustment);
+
     return new ProductVariantResponse(
       variant.getId(),
       variant.getName(),
-      variant.getSku(),
-      variant.getPriceAdjustment(),
+      variantBasePrice,
+      null,
       variant.isDefault(),
       variant.isAvailable(),
       variant.getDisplayOrder()

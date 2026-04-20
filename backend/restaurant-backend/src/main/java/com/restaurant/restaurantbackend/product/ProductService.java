@@ -1,5 +1,6 @@
 package com.restaurant.restaurantbackend.product;
 
+import com.restaurant.restaurantbackend.product.dto.response.ProductResponse;
 import com.restaurant.restaurantbackend.product.dto.response.ProductSummaryResponse;
 import com.restaurant.restaurantbackend.product.mapper.ProductMapper;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class ProductService {
     this.productMapper = productMapper;
   }
 
-  public List<ProductSummaryResponse> getProducts() {
-    return productMapper.toProductSummaryResponses(productRepository.findAll());
+  public List<ProductResponse> getProducts() {
+    return productMapper.toProductResponses(productRepository.findAll());
   }
 }

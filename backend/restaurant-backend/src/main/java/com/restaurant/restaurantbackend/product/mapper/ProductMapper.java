@@ -1,6 +1,5 @@
 package com.restaurant.restaurantbackend.product.mapper;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +33,13 @@ public class ProductMapper {
     this.optionGroupMapper = optionGroupMapper;
   }
 
-  public List<ProductSummaryResponse> toProductSummaryResponses(List<Product> products){
+  public List<ProductSummaryResponse> toProductSummaryResponses(List<Product> products) {
     return products.stream()
-      .map(this::toProductSummaryResponses)
+      .map(this::toProductSummaryResponse)
       .toList();
   }
 
-  public ProductSummaryResponse toProductSummaryResponses(Product product) {
+  public ProductSummaryResponse toProductSummaryResponse(Product product) {
     if (product == null) {
       return null;
     }
@@ -58,7 +57,14 @@ public class ProductMapper {
     );
   }
 
-  public ProductResponse toResponse(Product product) {
+  public List<ProductResponse> toProductResponses(List<Product> products) {
+    if (products == null) return null;
+    return products.stream()
+      .map(this::toProductResponse)
+      .toList();
+  }
+
+  public ProductResponse toProductResponse(Product product) {
     if (product == null) {
       return null;
     }
@@ -72,7 +78,7 @@ public class ProductMapper {
     List<ProductVariantResponse> variants = product.getVariants() == null
       ? List.of()
       : product.getVariants().stream()
-      .map(productVariantMapper::toResponse)
+      .map(variant -> productVariantMapper.toResponse(variant, product))
       .toList();
 
     List<ProductOptionGroupResponse> optionGroups = product.getOptionGroups() == null
