@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   AlertController,
@@ -29,8 +29,8 @@ import {
   removeOutline,
 } from 'ionicons/icons';
 
-import { CartItem } from '../../models/cart-item.model';
 import { Currency } from '../../models/currency.model';
+import { CartItem } from '../../models/cart-item.model';
 import { CartService } from '../../services/cart.service';
 
 @Component({
@@ -58,7 +58,7 @@ import { CartService } from '../../services/cart.service';
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
 })
-export class Cart implements OnInit {
+export class Cart {
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
   private readonly alertController = inject(AlertController);
@@ -68,13 +68,10 @@ export class Cart implements OnInit {
     currencySymbol: 'CHF',
   });
 
-  readonly items = signal<CartItem[]>([]);
-
-  readonly cartCount = computed(() => this.items().length);
-
-  readonly cartTotal = computed(() =>
-    this.items().reduce((sum, item) => sum + item.lineTotalPrice, 0)
-  );
+  // ✅ branché directement sur le service
+  readonly items = this.cartService.items;
+  readonly cartCount = this.cartService.count;
+  readonly cartTotal = this.cartService.subtotal;
 
   constructor() {
     addIcons({
@@ -84,15 +81,8 @@ export class Cart implements OnInit {
       addOutline,
       removeOutline,
     });
-  }
 
-  ngOnInit(): void {
     this.loadCurrency();
-    this.loadCart();
-  }
-
-  ionViewWillEnter(): void {
-    this.loadCart();
   }
 
   private loadCurrency(): void {
@@ -116,17 +106,12 @@ export class Cart implements OnInit {
     }
   }
 
-  private loadCart(): void {
-    this.items.set(this.cartService.getCart());
-  }
-
   backToProducts(): void {
     this.router.navigateByUrl('/product-list');
   }
 
   increaseQuantity(item: CartItem): void {
     this.cartService.updateQuantity(item.id, item.quantity + 1);
-    this.loadCart();
   }
 
   decreaseQuantity(item: CartItem): void {
@@ -135,7 +120,6 @@ export class Cart implements OnInit {
     }
 
     this.cartService.updateQuantity(item.id, item.quantity - 1);
-    this.loadCart();
   }
 
   async removeItem(item: CartItem): Promise<void> {
@@ -152,7 +136,6 @@ export class Cart implements OnInit {
           role: 'destructive',
           handler: () => {
             this.cartService.removeItem(item.id);
-            this.loadCart();
           },
         },
       ],
@@ -175,7 +158,6 @@ export class Cart implements OnInit {
           role: 'destructive',
           handler: () => {
             this.cartService.clearCart();
-            this.loadCart();
           },
         },
       ],

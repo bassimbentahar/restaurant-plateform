@@ -15,6 +15,7 @@
       >
         Tous
       </button>
+
       @for (category of groupedCategories(); track category.id) {
         <button
           #categoryBtn
@@ -29,83 +30,97 @@
     </div>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [scrollEvents]="true" (ionScroll)="onContentScroll($event)">
+  <div class="page-layout">
+    <div class="products-column">
+      @if (loading()) {
+        <div class="loading-wrapper">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      } @else {
+        <ion-grid class="products-grid">
+          @for (category of groupedCategories(); track category.id) {
+            <section
+              #categorySection
+              class="category-section"
+              [id]="'category-' + category.id"
+              [attr.data-category-id]="category.id"
+            >
+              <div class="category-header">
+                <h2>{{ category.name }}</h2>
+                <span>{{ category.items.length }} items</span>
+              </div>
 
-  @if (loading()) {
-    <div class="loading-wrapper">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
-  } @else {
-    <ion-grid fixed>
-      @for (category of groupedCategories(); track category.id) {
-        <section #categorySection
-          class="category-section"
-          [id]="'category-' + category.id"
-          [attr.data-category-id]="category.id"
-        >
-          <div class="category-header">
-            <h2>{{ category.name }}</h2>
-            <span>{{ category.items.length }} items</span>
-          </div>
-
-          <ion-row>
-            @for (item of category.items; track trackById($index, item)) {
-              <ion-col size="12" size-md="6" size-lg="6">
-                <ion-card class="product-card" button (click)="openProduct(item.id)">
-                  <div class="product-card-content">
+              <ion-row>
+                @for (item of category.items; track trackById($index, item)) {
+                  <ion-col size="12" size-md="6" size-lg="6">
+                    <ion-card class="product-card" button (click)="openProduct(item.id)">
+                      <div class="product-card-content">
                         @if (!hasImageError(item)) {
                           <div class="product-image-wrapper">
-                            <img class="product-image"
+                            <img
+                              class="product-image"
                               [src]="imageService.getImageUrl(item.thumb)"
                               (error)="onImageError(item)"
                             />
-                            <button class="add-btn add-btn--overlay">
+                            <button
+                              class="add-btn add-btn--overlay"
+                              (click)="$event.stopPropagation()"
+                            >
                               +
                             </button>
                           </div>
                         } @else {
-                          <button class="add-btn add-btn--overlay">
+                          <button
+                            class="add-btn add-btn--overlay"
+                            (click)="$event.stopPropagation()"
+                          >
                             +
                           </button>
                         }
 
-                    <div class="product-info">
-                      <ion-card-header>
-                        <ion-card-title>{{ item.title }}</ion-card-title>
+                        <div class="product-info">
+                          <ion-card-header>
+                            <ion-card-title>{{ item.title }}</ion-card-title>
 
-                        <ion-card-subtitle>
-                          From:
-                          <span class="item-price">
-                            {{ currency().currencySymbol }} {{ getPrice(item) }}
-                          </span>
-                        </ion-card-subtitle>
-                      </ion-card-header>
+                            <ion-card-subtitle>
+                              From:
+                              <span class="item-price">
+                                {{ currency().currencySymbol }} {{ getPrice(item) }}
+                              </span>
+                            </ion-card-subtitle>
+                          </ion-card-header>
 
-                      <ion-card-content>
-                        <p class="item-detail">
-                          {{ item.description || '' }}
-                        </p>
+                          <ion-card-content>
+                            <p class="item-detail">
+                              {{ item.description || '' }}
+                            </p>
 
-                        @if (getAverageRating(item) > 0) {
-                          <div class="product-rating">
-                            @for (starItem of getStars(item); track $index) {
-                              <ion-icon name="star"></ion-icon>
+                            @if (getAverageRating(item) > 0) {
+                              <div class="product-rating">
+                                @for (starItem of getStars(item); track $index) {
+                                  <ion-icon name="star"></ion-icon>
+                                }
+                                <span class="rating-value">
+                                  {{ getAverageRating(item) | number:'1.1-1' }}
+                                </span>
+                              </div>
                             }
-                            <span class="rating-value">
-                              {{ getAverageRating(item) | number:'1.1-1' }}
-                            </span>
-                          </div>
-                        }
-                      </ion-card-content>
-                    </div>
-                  </div>
-                </ion-card>
-              </ion-col>
-            }
-          </ion-row>
-        </section>
+                          </ion-card-content>
+                        </div>
+                      </div>
+                    </ion-card>
+                  </ion-col>
+                }
+              </ion-row>
+            </section>
+          }
+        </ion-grid>
       }
-    </ion-grid>
-  }
+    </div>
+
+    <aside class="basket-column">
+      <app-basket-panel></app-basket-panel>
+    </aside>
+  </div>
 </ion-content>

@@ -33,6 +33,7 @@ import {ProductService} from "../../services/product.service";
 import {ImageService} from "../../services/image.service";
 import { ModalController } from '@ionic/angular/standalone';
 import {ProductDetails} from "../product-details/product-details";
+import {BasketPanel} from "../basket-panel/basket-panel";
 
 @Component({
   selector: 'app-product-list',
@@ -54,6 +55,7 @@ import {ProductDetails} from "../product-details/product-details";
     IonSpinner,
     IonToolbar,
     IonHeader,
+    BasketPanel,
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
@@ -202,10 +204,10 @@ export class ProductList implements OnInit {
     const modal = await this.modalCtrl.create({
       component: ProductDetails,
       componentProps: {
-        productId: productId // 🔥 on passe l'id
+        productId: productId //  on passe l'id
       },
-      breakpoints: [0, 0.5, 0.9], // effet "panel"
-      initialBreakpoint: 0.9,     // ouvert presque plein écran
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
     });
 
     await modal.present();

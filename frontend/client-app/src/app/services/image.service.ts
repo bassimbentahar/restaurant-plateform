@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 @Injectable({
   providedIn: 'root',
 })
+
 export class ImageService {
   getImageUrl(path?: string | null): string {
     if (!path) {

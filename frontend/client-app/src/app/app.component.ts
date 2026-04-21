@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   IonApp,
   IonAvatar,
@@ -75,7 +75,9 @@ export class AppComponent {
   readonly userName = signal('Guest');
   readonly imageUrl = signal('assets/img/profile.jpg');
   readonly currentUrl = signal('/home');
-  readonly cartCount = signal(0);
+
+  // ✅ réactif automatiquement
+  readonly cartCount = computed(() => this.cartService.count());
 
   readonly isLoggedIn = computed(() => this.auth.isLoggedIn());
 
@@ -136,13 +138,11 @@ export class AppComponent {
     });
 
     this.loadUserProfile();
-    this.refreshCartCount();
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
-        this.refreshCartCount();
       });
   }
 
@@ -156,10 +156,6 @@ export class AppComponent {
     const username = this.auth.getUsername?.();
     this.userName.set(username ? username.toUpperCase() : 'USER');
     this.imageUrl.set('assets/img/profile.jpg');
-  }
-
-  private refreshCartCount(): void {
-    this.cartCount.set(this.cartService.getCartCount());
   }
 
   async login(): Promise<void> {
@@ -177,7 +173,6 @@ export class AppComponent {
     }
 
     await this.router.navigateByUrl(route);
-    this.refreshCartCount();
   }
 
   async goToCart(): Promise<void> {

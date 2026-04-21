@@ -1,12 +1,12 @@
 import {CommonModule} from '@angular/common';
 import {Component, computed, inject, Input, OnInit, signal} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {
   AlertController,
   IonButton, IonButtons,
   IonCheckbox,
   IonCol,
-  IonContent,
+  IonContent, IonFooter,
   IonGrid, IonHeader,
   IonIcon,
   IonItem,
@@ -52,6 +52,7 @@ import { ModalController } from '@ionic/angular/standalone';
     IonButtons,
     IonToolbar,
     IonHeader,
+    IonFooter,
   ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',
@@ -74,6 +75,7 @@ export class ProductDetails implements OnInit {
     currencyName: 'CHF',
     currencySymbol: 'CHF',
   });
+  protected imageErrors = new Set<string>();
 
   readonly selectedVariant = signal<ProductVariant | null>(null);
 
@@ -143,7 +145,7 @@ export class ProductDetails implements OnInit {
   }
 
   private loadCartCount(): void {
-    this.noOfItems.set(this.cartService.getCartCount());
+    this.noOfItems.set(this.cartService.count());
   }
 
   private loadProduct(productId: string): void {
@@ -478,6 +480,14 @@ export class ProductDetails implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  onImageError(item: Product) {
+    this.imageErrors.add(item.id);
+  }
+
+  hasImageError(item: Product): boolean {
+    return this.imageErrors.has(item.id);
   }
 
   close() {

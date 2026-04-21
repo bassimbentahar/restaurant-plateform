@@ -6,7 +6,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="item-page">
+<ion-content class="item-page" fullscreen>
   @if (loading()) {
     <div class="loading-wrapper">
       <ion-spinner name="crescent"></ion-spinner>
@@ -15,13 +15,15 @@
     @if (product(); as menuItem) {
       <ion-grid>
         <ion-row class="product-image-row">
+          @if (!hasImageError(menuItem)) {
           <img
             class="product-image"
             [src]="imageService.getImageUrl(menuItem.thumb)"
+            (error)="onImageError(menuItem)"
             [alt]="menuItem.title"
           />
+          }
         </ion-row>
-
         <ion-row>
           <ion-col size="12" class="favourite-col">
             <ion-button fill="clear" (click)="toggleFavourite()">
@@ -163,23 +165,25 @@
             </h3>
           </ion-col>
         </ion-row>
-
-        <ion-row class="button-fixed">
-          <ion-col size="6">
-            <ion-button expand="block" (click)="checkout()">
-              <ion-icon slot="start" name="cart-outline"></ion-icon>
-              Checkout
-            </ion-button>
-          </ion-col>
-
-          <ion-col size="6">
-            <ion-button expand="block" fill="outline" (click)="toProducts()">
-              <ion-icon slot="start" name="basket-outline"></ion-icon>
-              Keep shopping
-            </ion-button>
-          </ion-col>
-        </ion-row>
       </ion-grid>
     }
   }
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="6">
+        <ion-button expand="block" (click)="checkout()">
+          Checkout
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-button expand="block" fill="outline" (click)="toProducts()">
+          Keep shopping
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

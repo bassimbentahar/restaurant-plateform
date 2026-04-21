@@ -1,67 +1,63 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { CartItem } from '../models/cart-item.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private readonly storageKey = 'Cart';
+  private readonly cartItemsSignal = signal<CartItem[]>(this.loadInitialCart());
 
-  getCart(): CartItem[] {
-    const raw = localStorage.getItem(this.storageKey);
-    if (!raw) {
-      return [];
-    }
+  readonly items = computed(() => this.cartItemsSignal());
+  readonly count = computed(() =>
+    this.cartItemsSignal().reduce((sum, item) => sum + item.quantity, 0)
+  );
+  readonly subtotal = computed(() =>
+    this.cartItemsSignal().reduce((sum, item) => sum + item.lineTotalPrice, 0)
+  );
 
+  addToCart(item: CartItem): void {
+    const current = this.cartItemsSignal();
+    const updated = [...current, item];
+    this.cartItemsSignal.set(updated);
+    this.persist(updated);
+  }
+
+  removeItem(cartItemId: string): void {
+    const updated = this.cartItemsSignal().filter((item) => item.id !== cartItemId);
+    this.cartItemsSignal.set(updated);
+    this.persist(updated);
+  }
+
+  updateQuantity(cartItemId: string, quantity: number): void {
+    const updated = this.cartItemsSignal().map((item) =>
+      item.id === cartItemId
+        ? {
+          ...item,
+          quantity,
+          lineTotalPrice: item.unitFinalPrice * quantity,
+        }
+        : item
+    );
+
+    this.cartItemsSignal.set(updated);
+    this.persist(updated);
+  }
+
+  private persist(items: CartItem[]): void {
+    localStorage.setItem('Cart', JSON.stringify(items));
+  }
+
+  private loadInitialCart(): CartItem[] {
     try {
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
+      const raw = localStorage.getItem('Cart');
+      return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
     }
   }
 
-  saveCart(cart: CartItem[]): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(cart));
-  }
-
-  addToCart(item: CartItem): void {
-    const cart = this.getCart();
-    cart.push(item);
-    this.saveCart(cart);
-  }
-
-  removeItem(cartItemId: string): void {
-    const updated = this.getCart().filter((item) => item.id !== cartItemId);
-    this.saveCart(updated);
-  }
-
   clearCart(): void {
-    localStorage.removeItem(this.storageKey);
-  }
-
-  updateQuantity(cartItemId: string, quantity: number): void {
-    const cart = this.getCart().map((item) => {
-      if (item.id !== cartItemId) {
-        return item;
-      }
-
-      const safeQuantity = quantity < 1 ? 1 : quantity;
-      return {
-        ...item,
-        quantity: safeQuantity,
-        lineTotalPrice: item.unitFinalPrice * safeQuantity,
-      };
-    });
-
-    this.saveCart(cart);
-  }
-
-  getCartCount(): number {
-    return this.getCart().length;
-  }
-
-  getCartTotal(): number {
-    return this.getCart().reduce((sum, item) => sum + item.lineTotalPrice, 0);
+    this.cartItemsSignal.set([]);
+    this.persist([]);
   }
 }
