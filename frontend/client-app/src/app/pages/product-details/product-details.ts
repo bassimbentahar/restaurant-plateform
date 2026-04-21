@@ -1,13 +1,13 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, inject, Input, OnInit, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   AlertController,
-  IonButton,
+  IonButton, IonButtons,
   IonCheckbox,
   IonCol,
   IonContent,
-  IonGrid,
+  IonGrid, IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
@@ -16,7 +16,7 @@ import {
   IonRadio,
   IonRadioGroup,
   IonRow,
-  IonSpinner,
+  IonSpinner, IonToolbar,
   ToastController,
 } from '@ionic/angular/standalone';
 import {addIcons} from 'ionicons';
@@ -25,8 +25,10 @@ import {basketOutline, cartOutline, heart, heartOutline,} from 'ionicons/icons';
 import {Product, ProductOption, ProductOptionGroup, ProductVariant,} from '../../models/product.model';
 import {CartItem, SelectedOption, SelectedVariant} from '../../models/cart-item.model';
 import {Currency} from '../../models/currency.model';
-import {ProductMockService} from '../../services/productMock.service';
 import {CartService} from '../../services/cart.service';
+import {ProductService} from "../../services/product.service";
+import {ImageService} from "../../services/image.service";
+import { ModalController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-product-details',
@@ -47,18 +49,22 @@ import {CartService} from '../../services/cart.service';
     IonRadio,
     IonCheckbox,
     IonSpinner,
+    IonButtons,
+    IonToolbar,
+    IonHeader,
   ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',
 })
 export class ProductDetails implements OnInit {
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly productService = inject(ProductMockService);
+  private readonly productService = inject(ProductService);
   private readonly cartService = inject(CartService);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
-
+  protected readonly imageService = inject(ImageService);
+  @Input() productId!: string;
+  private modalCtrl = inject(ModalController);
   readonly loading = signal(true);
   readonly noOfItems = signal(0);
   readonly quantity = signal(1);
@@ -105,17 +111,14 @@ export class ProductDetails implements OnInit {
     this.loadCurrency();
     this.loadCartCount();
 
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
+    if (!this.productId) {
+      this.loading.set(false);
+      this.close();
+      return;
+    }
 
-      if (!id) {
-        this.router.navigateByUrl('/home');
-        return;
-      }
-
-      this.loadProduct(id);
-      this.loadFavouriteState(id);
-    });
+    this.loadProduct(this.productId);
+    this.loadFavouriteState(this.productId);
   }
 
   private loadCurrency(): void {
@@ -149,7 +152,8 @@ export class ProductDetails implements OnInit {
     this.productService.getProductById(productId).subscribe({
       next: (product) => {
         if (!product) {
-          this.router.navigateByUrl('/home');
+          this.loading.set(false);
+          this.close();
           return;
         }
 
@@ -162,13 +166,13 @@ export class ProductDetails implements OnInit {
 
         this.selectedVariant.set(defaultVariant);
         this.initializeDefaultOptions(product);
-
         this.loading.set(false);
       },
-      error: (error) => {
+      error: async (error) => {
         console.error('Failed to load product', error);
         this.loading.set(false);
-        this.router.navigateByUrl('/home');
+        await this.presentToast('Produit introuvable', 2000);
+        this.close();
       },
     });
   }
@@ -215,8 +219,8 @@ export class ProductDetails implements OnInit {
     this.router.navigateByUrl('/cart');
   }
 
-  home(): void {
-    this.router.navigateByUrl('/home');
+  toProducts(): void {
+    this.router.navigateByUrl('/product-list');
   }
 
   onVariantChange(variantId: string): void {
@@ -474,5 +478,9 @@ export class ProductDetails implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  close() {
+    this.modalCtrl.dismiss();
   }
 }

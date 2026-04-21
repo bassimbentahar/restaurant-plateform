@@ -15,6 +15,7 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
+
     provideAppInitializer(() => {
       const auth = inject(Auth);
 

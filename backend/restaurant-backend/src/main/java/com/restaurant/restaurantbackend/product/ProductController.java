@@ -2,12 +2,10 @@ package com.restaurant.restaurantbackend.product;
 
 import com.restaurant.restaurantbackend.product.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1")
@@ -21,5 +19,10 @@ import java.util.List;
   @GetMapping("/products")
   public ResponseEntity<List<ProductResponse>> getProducts(){
     return ResponseEntity.ok(productService.getProducts());
+  }
+
+  @GetMapping("products/{id}")
+  public ResponseEntity<ProductResponse> getProduct(@PathVariable UUID id){
+    return ResponseEntity.ok(productService.getProduct(id));
   }
 }

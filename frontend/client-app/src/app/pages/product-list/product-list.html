@@ -15,7 +15,6 @@
       >
         Tous
       </button>
-
       @for (category of groupedCategories(); track category.id) {
         <button
           #categoryBtn
@@ -53,7 +52,7 @@
           <ion-row>
             @for (item of category.items; track trackById($index, item)) {
               <ion-col size="12" size-md="6" size-lg="6">
-                <ion-card class="product-card" button (click)="navigate(item.id)">
+                <ion-card class="product-card" button (click)="openProduct(item.id)">
                   <div class="product-card-content">
                         @if (!hasImageError(item)) {
                           <div class="product-image-wrapper">

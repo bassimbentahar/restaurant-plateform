@@ -7,8 +7,7 @@ import {
   signal,
   ViewChildren,
   QueryList,
-  ElementRef,
-  ViewChild
+  ElementRef
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,11 +27,12 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cartOutline, star } from 'ionicons/icons';
-import { ProductMockService } from '../../services/productMock.service';
 import { Currency } from '../../models/currency.model';
 import { Product } from '../../models/product.model';
 import {ProductService} from "../../services/product.service";
 import {ImageService} from "../../services/image.service";
+import { ModalController } from '@ionic/angular/standalone';
+import {ProductDetails} from "../product-details/product-details";
 
 @Component({
   selector: 'app-product-list',
@@ -65,8 +65,11 @@ export class ProductList implements OnInit {
   protected readonly imageService = inject(ImageService);
   protected activeCategoryId = signal<string | null>(null);
   protected imageErrors = new Set<string>();
+
+  private modalCtrl = inject(ModalController);
   @ViewChildren('categoryBtn') categoryButtons!: QueryList<ElementRef>;
   @ViewChildren('categorySection') sections!: QueryList<ElementRef>;
+
   readonly loading = signal(true);
   readonly noOfItems = signal(0);
   readonly searchTerm = signal('');
@@ -193,8 +196,19 @@ export class ProductList implements OnInit {
     this.activeCategoryId.set('all');
   }
 
-  navigate(productId: string): void {
-    this.router.navigate(['/product-details', productId]);
+  async openProduct(productId: string) {
+    console.log('openProduct called', productId);
+
+    const modal = await this.modalCtrl.create({
+      component: ProductDetails,
+      componentProps: {
+        productId: productId // 🔥 on passe l'id
+      },
+      breakpoints: [0, 0.5, 0.9], // effet "panel"
+      initialBreakpoint: 0.9,     // ouvert presque plein écran
+    });
+
+    await modal.present();
   }
 
   scrollToTop(): void  {

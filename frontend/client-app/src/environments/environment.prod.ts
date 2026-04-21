@@ -7,4 +7,5 @@ export const environment = {
     clientId: 'client-app',
     pkce: true,
   },
+  apiUrl: 'http://localhost:8080',
 };
