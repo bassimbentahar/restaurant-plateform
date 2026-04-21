@@ -7,7 +7,7 @@
   </ion-toolbar>
 
   <ion-toolbar class="categories-toolbar">
-    <div class="categories-scroll">
+    <div class="categories-scroll" #categoriesScrol>
       <button
         class="category-pill"
         [class.active]="activeCategoryId() === 'all'"
@@ -18,7 +18,9 @@
 
       @for (category of groupedCategories(); track category.id) {
         <button
+          #categoryBtn
           class="category-pill"
+          [attr.data-id]="category.id"
           [class.active]="activeCategoryId() === category.id"
           (click)="scrollToCategory(category.id)"
         >
@@ -38,7 +40,7 @@
   } @else {
     <ion-grid fixed>
       @for (category of groupedCategories(); track category.id) {
-        <section
+        <section #categorySection
           class="category-section"
           [id]="'category-' + category.id"
           [attr.data-category-id]="category.id"
@@ -55,7 +57,7 @@
                   <div class="product-card-content">
                         @if (!hasImageError(item)) {
                           <div class="product-image-wrapper">
-                            <img
+                            <img class="product-image"
                               [src]="imageService.getImageUrl(item.thumb)"
                               (error)="onImageError(item)"
                             />

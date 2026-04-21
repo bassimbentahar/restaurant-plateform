@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -53,10 +63,10 @@ export class ProductList implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly productService = inject(ProductService);
   protected readonly imageService = inject(ImageService);
-  protected categories = signal<{ id: string; name: string }[]>([]);
   protected activeCategoryId = signal<string | null>(null);
   protected imageErrors = new Set<string>();
-
+  @ViewChildren('categoryBtn') categoryButtons!: QueryList<ElementRef>;
+  @ViewChildren('categorySection') sections!: QueryList<ElementRef>;
   readonly loading = signal(true);
   readonly noOfItems = signal(0);
   readonly searchTerm = signal('');
@@ -188,28 +198,30 @@ export class ProductList implements OnInit {
   }
 
   scrollToTop(): void  {
-    this.activeCategoryId.set('all');
+    this.setActiveCategory('all');
     const content = document.querySelector('ion-content');
     content?.scrollToTop?.(500);
   }
 
   onContentScroll(event: Event): void {
-    const sections = document.querySelectorAll<HTMLElement>('.category-section');
 
     let currentCategoryId = 'all';
     let minDistance = Number.POSITIVE_INFINITY;
 
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect();
+    this.sections.forEach((section) => {
+      const el = section.nativeElement as HTMLElement;
+
+      const rect = el.getBoundingClientRect();
       const distance = Math.abs(rect.top - 140);
 
       if (rect.top <= 180 && distance < minDistance) {
         minDistance = distance;
-        currentCategoryId = section.dataset['categoryId'] || 'all';
+        currentCategoryId = el.dataset['categoryId'] || 'all';
       }
     });
 
-    this.activeCategoryId.set(currentCategoryId);
+    this.setActiveCategory(currentCategoryId);
+
   }
 
   getPrice(item: Product): number | null {
@@ -272,7 +284,7 @@ export class ProductList implements OnInit {
     const el = document.getElementById(`category-${categoryId}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      this.activeCategoryId.set(categoryId);
+      this.setActiveCategory(categoryId);
     }
   }
 
@@ -282,6 +294,30 @@ export class ProductList implements OnInit {
 
   hasImageError(item: Product): boolean {
     return this.imageErrors.has(item.id);
+  }
+
+  scrollActiveCategoryIntoView() {
+    const activeId = this.activeCategoryId();
+
+    const activeBtn = this.categoryButtons.find(btn =>
+      btn.nativeElement.getAttribute('data-id') === activeId
+    );
+
+    if (activeBtn) {
+      activeBtn.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
+  }
+
+  setActiveCategory(id: string) {
+    if (this.activeCategoryId() !== id) {
+      this.activeCategoryId.set(id);
+
+      setTimeout(() => this.scrollActiveCategoryIntoView(), 0);
+    }
   }
 
   trackById = (_: number, item: Product): string => item.id;
