@@ -1,0 +1,63 @@
+name: Manage Dev Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Start or stop dev environment"
+        required: true
+        type: choice
+        options:
+          - start
+          - stop
+
+jobs:
+  manage-dev:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Start dev environment
+        if: ${{ github.event.inputs.action == 'start' }}
+        run: |
+          echo "Starting RDS..."
+          aws rds start-db-instance \
+            --db-instance-identifier restaurant-db-dev || true
+
+          echo "Starting backend..."
+          aws ecs update-service \
+            --cluster restaurant-cluster-dev \
+            --service restaurant-api-dev \
+            --desired-count 1
+
+          echo "Starting frontend..."
+          aws ecs update-service \
+            --cluster restaurant-cluster-dev \
+            --service restaurant-client-dev \
+            --desired-count 1
+
+      - name: Stop dev environment
+        if: ${{ github.event.inputs.action == 'stop' }}
+        run: |
+          echo "Stopping frontend..."
+          aws ecs update-service \
+            --cluster restaurant-cluster-dev \
+            --service restaurant-client-dev \
+            --desired-count 0
+
+          echo "Stopping backend..."
+          aws ecs update-service \
+            --cluster restaurant-cluster-dev \
+            --service restaurant-api-dev \
+            --desired-count 0
+
+          echo "Stopping RDS..."
+          aws rds stop-db-instance \
+            --db-instance-identifier restaurant-db-dev || true
