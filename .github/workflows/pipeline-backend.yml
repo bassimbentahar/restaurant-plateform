@@ -112,7 +112,6 @@ jobs:
           VERSION=${{ steps.extract_version.outputs.VERSION }}
 
           docker build \
-            --build-arg PROFILE=dev \
             --build-arg APP_VERSION=$VERSION \
             -t $IMAGE_URI:$VERSION \
             -t $IMAGE_URI:latest \
@@ -141,15 +140,18 @@ jobs:
             --task-definition restaurant-api-task-dev \
             --query taskDefinition > task-definition.json
 
-      - name: Update image in task definition
+      - name: Update image and environment in task definition
         run: |
-          VERSION=$(jq -r '.containerDefinitions[0].image' task-definition.json | cut -d':' -f2)
           NEW_IMAGE="701970276292.dkr.ecr.eu-north-1.amazonaws.com/restaurant-api:${{ needs.build-image.outputs.VERSION }}"
 
           jq --arg IMAGE "$NEW_IMAGE" \
-            '.containerDefinitions[0].image = $IMAGE |
-             del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)' \
-             task-definition.json > new-task-definition.json
+             --arg PROFILE "dev-aws" \
+             '.containerDefinitions[0].image = $IMAGE |
+              .containerDefinitions[0].environment = [
+                { "name": "SPRING_PROFILES_ACTIVE", "value": $PROFILE }
+              ] |
+              del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)' \
+              task-definition.json > new-task-definition.json
 
       - name: Register new task definition
         run: |
