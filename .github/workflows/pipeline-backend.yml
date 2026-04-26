@@ -147,9 +147,6 @@ jobs:
           jq --arg IMAGE "$NEW_IMAGE" \
              --arg PROFILE "dev-aws" \
              '.containerDefinitions[0].image = $IMAGE |
-              .containerDefinitions[0].environment = [
-                { "name": "SPRING_PROFILES_ACTIVE", "value": $PROFILE }
-              ] |
               del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)' \
               task-definition.json > new-task-definition.json
 
