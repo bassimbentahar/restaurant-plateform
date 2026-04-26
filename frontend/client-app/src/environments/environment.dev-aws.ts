@@ -7,5 +7,5 @@ export const environment = {
     clientId: 'client-app',
     pkce: true,
   },
-  apiUrl: 'https://dev.portalcoffee.ch',
+  apiUrl: 'https://api-dev.portalcoffee.ch',
 };
