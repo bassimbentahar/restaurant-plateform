@@ -2,6 +2,7 @@ package com.restaurant.restaurantbackend.config.security;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
@@ -14,4 +15,7 @@ public class CorsProperties {
   public @Nullable List<String> getAllowedOrigins() {
     return allowedOrigins;
   }
-}
+
+  public void setAllowedOrigins(List<String> allowedOrigins) {
+    this.allowedOrigins = allowedOrigins;
+  }}
