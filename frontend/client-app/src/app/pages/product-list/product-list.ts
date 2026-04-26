@@ -34,6 +34,7 @@ import {ImageService} from "../../services/image.service";
 import { ModalController } from '@ionic/angular/standalone';
 import {ProductDetails} from "../product-details/product-details";
 import {BasketPanel} from "../basket-panel/basket-panel";
+import {CartService} from "../../services/cart.service";
 
 @Component({
   selector: 'app-product-list',
@@ -71,9 +72,13 @@ export class ProductList implements OnInit {
   private modalCtrl = inject(ModalController);
   @ViewChildren('categoryBtn') categoryButtons!: QueryList<ElementRef>;
   @ViewChildren('categorySection') sections!: QueryList<ElementRef>;
+  protected readonly isMobileBasketOpen = signal(false);
+
+  private readonly cartService = inject(CartService);
+  readonly cartCount = this.cartService.count;
+  readonly cartTotal = this.cartService.subtotal;
 
   readonly loading = signal(true);
-  readonly noOfItems = signal(0);
   readonly searchTerm = signal('');
   readonly categoryId = signal<string | null>(null);
   readonly currency = signal<Currency>({
@@ -104,7 +109,6 @@ export class ProductList implements OnInit {
 
   ngOnInit(): void {
     this.loadCurrency();
-    this.loadCartCount();
 
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
@@ -185,11 +189,6 @@ export class ProductList implements OnInit {
         currencyName: 'CHF',
       });
     }
-  }
-
-  private loadCartCount(): void {
-    const cart = JSON.parse(localStorage.getItem('Cart') ?? '[]');
-    this.noOfItems.set(Array.isArray(cart) ? cart.length : 0);
   }
 
   onSearchInput(event: Event): void {
@@ -334,6 +333,14 @@ export class ProductList implements OnInit {
 
       setTimeout(() => this.scrollActiveCategoryIntoView(), 0);
     }
+  }
+
+  openMobileBasket(): void {
+    this.isMobileBasketOpen.set(true);
+  }
+
+  closeMobileBasket(): void {
+    this.isMobileBasketOpen.set(false);
   }
 
   trackById = (_: number, item: Product): string => item.id;

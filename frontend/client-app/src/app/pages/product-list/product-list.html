@@ -123,4 +123,30 @@
       <app-basket-panel></app-basket-panel>
     </aside>
   </div>
+  @if (!loading() && cartCount() > 0) {
+    <div class="mobile-basket-bar">
+      <button class="mobile-basket-btn" (click)="openMobileBasket()">
+        <span>Basket</span>
+        <span>{{ cartCount() }} article(s)</span>
+        <span>{{ cartTotal() | number:'1.2-2' }} {{ currency().currencySymbol }}</span>
+      </button>
+    </div>
+  }
+
+  @if (isMobileBasketOpen()) {
+    <div class="mobile-basket-backdrop" (click)="closeMobileBasket()"></div>
+
+    <div class="mobile-basket-sheet">
+      <div class="mobile-basket-sheet__handle"></div>
+
+      <div class="mobile-basket-sheet__header">
+        <h3>Basket</h3>
+        <button class="mobile-basket-sheet__close" (click)="closeMobileBasket()">✕</button>
+      </div>
+
+      <div class="mobile-basket-sheet__content">
+        <app-basket-panel></app-basket-panel>
+      </div>
+    </div>
+  }
 </ion-content>

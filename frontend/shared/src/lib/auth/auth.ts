@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
+import {UserProfile} from './user-profile';
 
 @Injectable({
   providedIn: 'root',
@@ -7,6 +8,7 @@ import Keycloak from 'keycloak-js';
 export class Auth {
   private keycloak!: Keycloak;
   private appBaseUrl!: string;
+  private _profile: UserProfile | undefined;
 
   async init(config: {
     url: string;
@@ -30,8 +32,12 @@ export class Auth {
         window.location.origin + '/silent-check-sso.html',
       pkceMethod: config.pkce ? 'S256' : false,
     };
-
-    return this.keycloak.init(initOptions);
+    const authenticated = await this.keycloak.init(initOptions);
+    if(authenticated){
+      this._profile = (await this.keycloak.loadUserProfile()) as UserProfile;
+      this._profile.token= this.keycloak?.token
+    }
+    return authenticated;
   }
 
   async login(): Promise<void> {
@@ -60,6 +66,10 @@ export class Auth {
 
   getRoles(): string[] {
     return ((this.keycloak?.tokenParsed?.['realm_access'] as { roles?: string[] })?.roles ?? []);
+  }
+
+  get profile(): UserProfile |undefined{
+    return this._profile;
   }
 
   hasRole(role: string): boolean {
