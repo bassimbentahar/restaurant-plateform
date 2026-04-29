@@ -1,0 +1,233 @@
+<ion-content class="profile-page">
+  <div class="profile-layout">
+
+    <aside class="profile-sidebar">
+      <ion-avatar>
+        <img src="assets/img/profile.jpg" alt="Profile"/>
+      </ion-avatar>
+
+      <h1>Mon profil</h1>
+      <p>Gérez votre compte Portal Coffee</p>
+
+      <nav class="profile-nav">
+        <button type="button" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+          Profil
+        </button>
+        <button type="button" [class.active]="activeTab === 'addresses'" (click)="activeTab = 'addresses'">
+          Adresses
+        </button>
+        <button type="button" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
+          Sécurité
+        </button>
+        <button type="button" [class.active]="activeTab === 'preferences'" (click)="activeTab = 'preferences'">
+          Préférences
+        </button>
+        <button type="button" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'">
+          Commandes
+        </button>
+      </nav>
+    </aside>
+
+    <main class="profile-content">
+      @if (user$ | async; as user) {
+
+        @if (activeTab === 'profile') {
+          <section class="profile-section">
+            <div class="section-header">
+              <h2>Informations personnelles</h2>
+              <p>Ces informations sont utilisées pour vos commandes et livraisons.</p>
+            </div>
+
+            <form [formGroup]="profileForm" (ngSubmit)="save()" class="profile-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Prénom</label>
+                  <ion-input formControlName="firstname"></ion-input>
+                </div>
+
+                <div class="form-group">
+                  <label>Nom</label>
+                  <ion-input formControlName="lastname"></ion-input>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Email</label>
+                <ion-input [value]="user.email" readonly class="readonly-input"></ion-input>
+              </div>
+
+              <div class="info-box">
+                <ion-icon name="warning-outline"></ion-icon>
+                <p>Votre email est géré par Keycloak et ne peut pas être modifié depuis l’application.</p>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Téléphone</label>
+                  <ion-input formControlName="phone" placeholder="+41 79 123 45 67"></ion-input>
+                </div>
+
+                <div class="form-group">
+                  <label>Date de naissance</label>
+                  <ion-input type="date" formControlName="dateOfBirth"></ion-input>
+                </div>
+              </div>
+
+              <ion-button type="submit" class="save-btn">
+                Enregistrer les modifications
+              </ion-button>
+            </form>
+          </section>
+        }
+
+        @if (activeTab === 'addresses') {
+          <section class="profile-section">
+
+            <div class="section-header addresses-header">
+              <div>
+                <h2>Adresses de livraison</h2>
+                <p>Ajoutez vos adresses pour commander plus rapidement.</p>
+              </div>
+
+              <ion-button class="add-address-btn" (click)="addAddress()">
+                Ajouter une adresse
+              </ion-button>
+            </div>
+
+            @if (addresses$ | async; as addresses) {
+
+              @if (addresses.length === 0) {
+                <div class="address-empty-card">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <h3>Aucune adresse enregistrée</h3>
+                  <p>Ajoutez une adresse pour accélérer vos prochaines commandes.</p>
+
+                  <ion-button (click)="addAddress()">
+                    Ajouter ma première adresse
+                  </ion-button>
+                </div>
+              }
+
+              @if (addresses.length > 0) {
+                <div class="address-grid">
+                  @for (address of addresses; track address.id) {
+                    <article class="address-card" [class.default]="address.defaultAddress">
+
+                      <div class="address-card-header">
+                        <div class="address-icon">
+                          <ion-icon name="location-outline"></ion-icon>
+                        </div>
+
+                        <div>
+                          <h3>{{ address.label }}</h3>
+
+                          @if (address.defaultAddress) {
+                            <span class="default-badge">Par défaut</span>
+                          }
+                        </div>
+                      </div>
+
+                      <p class="address-line">
+                        {{ address.street }} {{ address.streetNumber }}
+                      </p>
+
+                      <p class="address-city">
+                        {{ address.postalCode }} {{ address.city }}
+                      </p>
+
+                      @if (address.instructions) {
+                        <p class="address-instructions">
+                          {{ address.instructions }}
+                        </p>
+                      }
+
+                      <div class="address-actions">
+                        <ion-button fill="clear" size="small">
+                          Modifier
+                        </ion-button>
+
+                        <ion-button fill="clear" size="small" color="danger" (click)="deleteAddress(address.id)">
+                          Supprimer
+                        </ion-button>
+
+                        @if (!address.defaultAddress) {
+                          <ion-button fill="clear" size="small" (click)="setDefaultAddress(address.id)">
+                            Définir par défaut
+                          </ion-button>
+                        }
+                      </div>
+
+                    </article>
+                  }
+                </div>
+              }
+
+            }
+
+          </section>
+        }
+        @if (activeTab === 'security') {
+          <section class="profile-section">
+
+            <div class="section-header">
+              <h2>Compte</h2>
+              <p>Gérez les paramètres de sécurité de votre compte.</p>
+            </div>
+
+            <div class="security-card">
+
+              <div class="security-item">
+                <div>
+                  <h3>Mot de passe</h3>
+                  <p>
+                    Pour protéger votre compte, la modification du mot de passe
+                    se fait dans un espace sécurisé.
+                  </p>
+                </div>
+
+                <ion-button fill="outline" (click)="changePassword()">
+                  Modifier
+                </ion-button>
+              </div>
+
+            </div>
+
+          </section>
+        }
+
+        @if (activeTab === 'preferences') {
+          <section class="profile-section">
+            <div class="section-header">
+              <h2>Préférences</h2>
+              <p>Personnalisez vos notifications et vos préférences client.</p>
+            </div>
+
+            <div class="preference-row">
+              <div>
+                <h3>Messages et promotions</h3>
+                <p>Recevoir les nouveautés, offres et réductions.</p>
+              </div>
+
+              <ion-toggle></ion-toggle>
+            </div>
+          </section>
+        }
+
+        @if (activeTab === 'orders') {
+          <section class="profile-section">
+            <div class="section-header">
+              <h2>Commandes</h2>
+              <p>Retrouvez vos commandes récentes.</p>
+            </div>
+
+            <div class="empty-card">
+              <h3>Aucune commande affichée</h3>
+              <p>Votre historique de commandes pourra être affiché ici.</p>
+            </div>
+          </section>
+        }
+
+      }
+    </main>
+  </div>
+</ion-content>

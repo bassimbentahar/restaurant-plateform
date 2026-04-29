@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, signal} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
 import {
   IonApp,
   IonAvatar,
@@ -19,9 +19,10 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
+
 } from '@ionic/angular/standalone';
-import { filter } from 'rxjs/operators';
-import { addIcons } from 'ionicons';
+import {filter} from 'rxjs/operators';
+import {addIcons} from 'ionicons';
 import {
   homeOutline,
   restaurantOutline,
@@ -29,10 +30,12 @@ import {
   cartOutline,
   logInOutline,
   logOutOutline,
-  menuOutline,
+  menuOutline, warningOutline,locationOutline
 } from 'ionicons/icons';
-import { Auth } from 'shared';
-import { CartService } from './services/cart.service';
+import {Auth} from 'shared';
+import {CartService} from './services/cart.service';
+import {firstValueFrom} from "rxjs";
+import {UserService} from "./services/user.service";
 
 type ClientMenuItem = {
   label: string;
@@ -70,13 +73,13 @@ type ClientMenuItem = {
 export class AppComponent {
   private readonly router = inject(Router);
   readonly auth = inject(Auth);
+  readonly userService = inject(UserService);
   private readonly cartService = inject(CartService);
 
-  readonly userName = signal('Guest');
+  readonly user$ = this.userService.user$
   readonly imageUrl = signal('assets/img/profile.jpg');
   readonly currentUrl = signal('/home');
 
-  // ✅ réactif automatiquement
   readonly cartCount = computed(() => this.cartService.count());
 
   readonly isLoggedIn = computed(() => this.auth.isLoggedIn());
@@ -102,6 +105,12 @@ export class AppComponent {
       label: 'Home',
       icon: 'home-outline',
       route: '/home',
+    },
+    {
+      label: 'Profile',
+      icon: 'person-outline',
+      route: '/profile',
+      requiresAuth: true
     },
     {
       label: 'Products',
@@ -135,9 +144,10 @@ export class AppComponent {
       logInOutline,
       logOutOutline,
       menuOutline,
+      warningOutline,
+      locationOutline
     });
 
-    this.loadUserProfile();
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -146,29 +156,30 @@ export class AppComponent {
       });
   }
 
-  private loadUserProfile(): void {
-    if (!this.auth.isLoggedIn()) {
-      this.userName.set('Guest');
-      this.imageUrl.set('assets/img/profile.jpg');
-      return;
+  async ngOnInit(): Promise<void> {
+    if (this.auth.isLoggedIn()) {
+      await firstValueFrom(this.userService.loadMe());
     }
 
-    const username = this.auth.getUsername?.();
-    this.userName.set(username ? username.toUpperCase() : 'USER');
-    this.imageUrl.set('assets/img/profile.jpg');
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+      });
   }
 
-  async login(): Promise<void> {
-    await this.auth.login();
+  async goToAuth(): Promise<void> {
+    this.router.navigate(['/auth']);
   }
 
   async logout(): Promise<void> {
+    this.userService.clear();
     await this.auth.logout();
   }
 
   async navigateTo(route: string, requiresAuth = false): Promise<void> {
     if (requiresAuth && !this.auth.isLoggedIn()) {
-      await this.auth.login();
+      await this.router.navigateByUrl('/auth');
       return;
     }
 
@@ -180,4 +191,5 @@ export class AppComponent {
   }
 
   trackByLabel = (_: number, item: ClientMenuItem): string => item.label;
+
 }

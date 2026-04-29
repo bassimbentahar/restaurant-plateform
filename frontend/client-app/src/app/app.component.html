@@ -14,7 +14,11 @@
 
         @if (isLoggedIn()) {
           <ion-text>
-            <h2>{{ userName() }}</h2>
+            @if (user$ | async; as user) {
+              <ion-label>{{ user.firstname }} {{ user.lastname }}</ion-label>
+            } @else {
+              <ion-label>Guest</ion-label>
+            }
           </ion-text>
         } @else {
           <ion-text color="medium">
@@ -38,7 +42,7 @@
         }
 
         @if (!isLoggedIn()) {
-          <ion-item button detail="false" (click)="login()">
+          <ion-item button detail="false" (click)="goToAuth()">
             <ion-icon slot="start" name="log-in-outline"></ion-icon>
             <ion-label>Login</ion-label>
           </ion-item>

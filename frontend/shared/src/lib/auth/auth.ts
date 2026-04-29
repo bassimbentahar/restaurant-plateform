@@ -56,6 +56,12 @@ export class Auth {
     return !!this.keycloak?.authenticated;
   }
 
+  async register(): Promise<void> {
+    await this.keycloak.register({
+      redirectUri: `${this.appBaseUrl}/`,
+    });
+  }
+
   getToken(): string | undefined {
     return this.keycloak?.token;
   }
@@ -74,5 +80,12 @@ export class Auth {
 
   hasRole(role: string): boolean {
     return this.getRoles().includes(role);
+  }
+
+  async changePassword(): Promise<void> {
+    await this.keycloak.login({
+      action: 'UPDATE_PASSWORD',
+      redirectUri: `${this.appBaseUrl}/profile`
+    });
   }
 }

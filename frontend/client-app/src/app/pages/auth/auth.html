@@ -1,0 +1,26 @@
+<ion-content class="auth-page">
+  <div class="auth-container">
+
+    <img src="assets/logo.png" alt="Portal Coffee" class="logo" />
+
+    <h1>Bienvenue chez Portal Coffee</h1>
+
+    <p>
+      Connectez-vous pour commander plus rapidement,
+      suivre vos commandes et retrouver votre historique.
+    </p>
+
+    <ion-button expand="block" (click)="login()">
+      Se connecter
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" (click)="register()">
+      Créer un compte
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" routerLink="/home">
+      Continuer sans compte
+    </ion-button>
+
+  </div>
+</ion-content>

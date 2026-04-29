@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Nouvelle adresse</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form [formGroup]="addressForm" (ngSubmit)="save()" class="address-form">
+
+    <div class="search-box">
+      <ion-label>Rechercher une adresse</ion-label>
+
+      <input
+        id="address-autocomplete-input"
+        class="google-address-input"
+        type="text"
+        placeholder="Tapez votre adresse"
+      />
+      @if (addressExists) {
+        <div class="error-message">
+          Cette adresse est déjà enregistrée
+        </div>
+      }
+    </div>
+
+    @if (addressForm.value.street) {
+      <div class="address-preview">
+        <h3>Adresse sélectionnée</h3>
+
+        <p>
+          {{ addressForm.value.street }}
+          {{ addressForm.value.streetNumber }},
+          {{ addressForm.value.postalCode }}
+          {{ addressForm.value.city }}
+        </p>
+      </div>
+    }
+
+    <div class="form-section">
+
+      <ion-item>
+        <ion-label position="stacked">Nom de l’adresse</ion-label>
+        <ion-input
+          formControlName="label"
+          placeholder="Maison, Travail..."
+          [class.input-error]="labelExists"
+          [class.shake]="shakeLabel">
+        </ion-input>
+      </ion-item>
+
+      @if (labelExists) {
+        <div class="error-message">
+          Ce nom existe déjà. Choisissez un autre nom.
+        </div>
+      }
+      @if (addressForm.get('label')?.touched && addressForm.get('label')?.invalid) {
+        <div class="error-message">
+          @if (addressForm.get('label')?.errors?.['required']) {
+            Le nom est obligatoire
+          }
+          @if (addressForm.get('label')?.errors?.['minlength']) {
+            Minimum 2 caractères
+          }
+        </div>
+      }
+
+      <ion-item>
+        <ion-label position="stacked">Instructions</ion-label>
+        <ion-input
+          formControlName="instructions"
+          placeholder="Étage, porte, remarque...">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Adresse par défaut</ion-label>
+        <ion-toggle formControlName="defaultAddress"></ion-toggle>
+      </ion-item>
+
+    </div>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      class="save-btn"
+      [disabled]="addressForm.invalid || labelExists || addressExists">
+      Enregistrer l’adresse
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" type="button" (click)="cancel()">
+      Annuler
+    </ion-button>
+
+  </form>
+
+</ion-content>
