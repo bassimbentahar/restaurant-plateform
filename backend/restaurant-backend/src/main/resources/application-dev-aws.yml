@@ -12,7 +12,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://dev.portalcoffee.ch/realms/res-realm
+          issuer-uri: https://auth.portalcoffee.ch/realms/res-realm
 
 app:
   cors:

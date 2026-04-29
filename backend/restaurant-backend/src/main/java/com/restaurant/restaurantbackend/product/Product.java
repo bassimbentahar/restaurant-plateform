@@ -1,30 +1,27 @@
 package com.restaurant.restaurantbackend.product;
 
+import com.restaurant.restaurantbackend.common.BaseEntity;
 import com.restaurant.restaurantbackend.product.category.ProductCategory;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
 import com.restaurant.restaurantbackend.product.option.OptionGroup;
 import com.restaurant.restaurantbackend.product.variant.ProductVariant;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @Entity
 @Table(name = "products")
-public class Product {
-
-  @Id
-  @GeneratedValue
-  private UUID id;
+public class Product extends BaseEntity {
 
   @Column(nullable = false, unique = true, length = 100)
   private String sku;
@@ -65,9 +62,6 @@ public class Product {
   @Column(name = "allergens_text", columnDefinition = "TEXT")
   private String allergensText;
 
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id")
   private ProductCategory category;
@@ -88,18 +82,6 @@ public class Product {
   )
   @OrderBy("displayOrder ASC")
   private List<OptionGroup> optionGroups;
-
-  @PrePersist
-  public void onCreate() {
-    LocalDateTime now = LocalDateTime.now();
-    this.createdAt = now;
-    this.updatedAt = now;
-  }
-
-  @PreUpdate
-  public void onUpdate() {
-    this.updatedAt = LocalDateTime.now();
-  }
 
   public BigDecimal calculatePrice(){
     return null;

@@ -109,8 +109,8 @@ public class ProductMapper {
       images,
       variants,
       optionGroups,
-      product.getCreatedAt(),
-      product.getUpdatedAt()
+      product.getCreatedDate(),
+      product.getLastModifiedDate()
     );
   }
 

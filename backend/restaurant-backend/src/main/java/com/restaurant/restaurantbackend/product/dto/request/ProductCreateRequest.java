@@ -3,6 +3,7 @@ package com.restaurant.restaurantbackend.product.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 public record ProductCreateRequest(
   String sku,
@@ -21,7 +22,7 @@ public record ProductCreateRequest(
   Integer calories,
   String ingredientsText,
   String allergensText,
-  String categoryId,
+  UUID categoryId,
   List<ProductImageRequest> images,
   List<ProductVariantRequest> variants,
   List<ProductOptionGroupRequest> optionGroups
