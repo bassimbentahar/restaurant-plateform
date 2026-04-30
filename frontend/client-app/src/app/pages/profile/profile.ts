@@ -9,12 +9,15 @@ import {
   IonInput,
   IonToggle, ModalController
 } from '@ionic/angular/standalone';
-import {firstValueFrom} from 'rxjs';
+import {firstValueFrom, map} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {UserRequest} from "../../models/user.model";
 import {Auth} from "shared";
 import {AddressService} from "../../services/AddressService";
 import {AddressModal} from "../address-modal/address-modal";
+import {filter} from "rxjs/operators";
+import {logInOutline} from "ionicons/icons";
+import {UserAddress} from "../../models/user-address.model";
 
 @Component({
   selector: 'app-profile',
@@ -84,7 +87,7 @@ export class Profile implements OnInit {
 
     await modal.present();
 
-    const { data } = await modal.onWillDismiss();
+    const {data} = await modal.onWillDismiss();
 
     if (data) {
       await firstValueFrom(this.addressService.create(data));
@@ -97,5 +100,25 @@ export class Profile implements OnInit {
 
   async setDefaultAddress(id: string): Promise<void> {
     await firstValueFrom(this.addressService.setDefault(id));
+  }
+
+  async updateAddress(id: string): Promise<void>{
+    const address = this.addressService.currentAddresses.find(a => a.id === id);
+
+    const modal = await this.modalCtrl.create({
+      component: AddressModal,
+      componentProps: {
+        fromUpdate: true,
+        addressToUpdate: address
+      }
+    });
+
+    await modal.present();
+
+    const {data} = await modal.onWillDismiss();
+
+    if (data) {
+      await firstValueFrom(this.addressService.update(id,data));
+    }
   }
 }

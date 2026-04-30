@@ -1,6 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Nouvelle adresse</ion-title>
+    <ion-title>
+      {{ fromUpdate ? 'Modifier l’adresse' : 'Nouvelle adresse' }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -79,15 +81,19 @@
       </ion-item>
 
     </div>
+    @if (addressForm.errors?.['sameAsOriginal'] && addressForm.dirty) {
+      <div class="error-message">
+        Cette adresse est identique à l’adresse actuelle.
+      </div>
+    }
 
     <ion-button
       expand="block"
       type="submit"
       class="save-btn"
       [disabled]="addressForm.invalid || labelExists || addressExists">
-      Enregistrer l’adresse
+      {{ fromUpdate ? 'Modifier l’adresse' : 'Enregistrer l’adresse' }}
     </ion-button>
-
     <ion-button expand="block" fill="clear" type="button" (click)="cancel()">
       Annuler
     </ion-button>

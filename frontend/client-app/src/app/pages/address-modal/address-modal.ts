@@ -1,6 +1,13 @@
-import {Component, AfterViewInit, OnInit, inject} from '@angular/core';
+import {Component, AfterViewInit, OnInit, inject, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {
   IonButton,
   IonContent,
@@ -14,7 +21,7 @@ import {
   ModalController,
   ToastController
 } from '@ionic/angular/standalone';
-import {UserAddressRequest} from '../../models/user-address.model';
+import {UserAddress, UserAddressRequest} from '../../models/user-address.model';
 import {environment} from '../../../environments/environment';
 import {AddressService} from '../../services/AddressService';
 
@@ -47,7 +54,10 @@ export class AddressModal implements OnInit, AfterViewInit {
   private toastCtrl = inject(ToastController);
   shakeLabel = false;
   labelExists = false;
-  protected addressExists = false;
+
+  @Input() fromUpdate = false;
+  @Input() addressToUpdate?: UserAddress;  protected addressExists = false;
+
   addressForm = this.fb.nonNullable.group({
     label: ['', [Validators.required, Validators.minLength(2)]],
     street: [''],
@@ -60,6 +70,22 @@ export class AddressModal implements OnInit, AfterViewInit {
   });
 
   ngOnInit(): void {
+    if (this.fromUpdate && this.addressToUpdate) {
+      this.addressForm.patchValue({
+        label: this.addressToUpdate.label,
+        street: this.addressToUpdate.street,
+        streetNumber: this.addressToUpdate.streetNumber ?? '',
+        postalCode: this.addressToUpdate.postalCode,
+        city: this.addressToUpdate.city,
+        country: this.addressToUpdate.country,
+        instructions: this.addressToUpdate.instructions ?? '',
+        defaultAddress: this.addressToUpdate.defaultAddress
+      });
+
+      this.addressForm.setValidators(this.sameAsOriginalValidator());
+      this.addressForm.updateValueAndValidity();
+    }
+
     this.addressForm.get('label')?.valueChanges.subscribe(value => {
       this.checkLabelExists(value);
     });
@@ -86,7 +112,8 @@ export class AddressModal implements OnInit, AfterViewInit {
     }
 
     this.labelExists = this.addressService.currentAddresses.some(address =>
-      address.label.trim().toLowerCase() === label
+      address.label.trim().toLowerCase() === label &&
+      (!this.fromUpdate || address.id !== this.addressToUpdate?.id)
     );
 
     if (this.labelExists) {
@@ -171,6 +198,11 @@ export class AddressModal implements OnInit, AfterViewInit {
       city,
       country
     });
+
+    this.addressForm.markAsDirty();
+    this.addressForm.updateValueAndValidity();
+
+    this.checkAddressExists();
   }
 
   cancel(): void {
@@ -213,7 +245,8 @@ export class AddressModal implements OnInit, AfterViewInit {
       a.street.toLowerCase() === street &&
       (a.streetNumber ?? '').toLowerCase() === number &&
       a.postalCode === postalCode &&
-      a.city.toLowerCase() === city
+      a.city.toLowerCase() === city &&
+      (!this.fromUpdate || a.id !== this.addressToUpdate?.id)
     );
   }
 
@@ -249,5 +282,27 @@ export class AddressModal implements OnInit, AfterViewInit {
     });
 
     await toast.present();
+  }
+
+  private sameAsOriginalValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!this.fromUpdate || !this.addressToUpdate || !control.dirty) {
+        return null;
+      }
+
+      const value = control.getRawValue();
+
+      const same =
+        value.label.trim() === this.addressToUpdate.label.trim() &&
+        value.street.trim() === this.addressToUpdate.street.trim() &&
+        (value.streetNumber ?? '').trim() === (this.addressToUpdate.streetNumber ?? '').trim() &&
+        value.postalCode.trim() === this.addressToUpdate.postalCode.trim() &&
+        value.city.trim() === this.addressToUpdate.city.trim() &&
+        value.country.trim() === this.addressToUpdate.country.trim() &&
+        (value.instructions ?? '').trim() === (this.addressToUpdate.instructions ?? '').trim() &&
+        value.defaultAddress === this.addressToUpdate.defaultAddress;
+
+      return same ? { sameAsOriginal: true } : null;
+    };
   }
 }
