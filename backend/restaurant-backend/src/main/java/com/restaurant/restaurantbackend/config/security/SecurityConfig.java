@@ -1,6 +1,5 @@
 package com.restaurant.restaurantbackend.config.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +54,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
+        System.out.println(corsProperties.getAllowedOrigins());
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(corsProperties.getAllowedOrigins());
