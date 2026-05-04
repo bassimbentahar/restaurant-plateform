@@ -51,7 +51,7 @@
         <span>{{ total() | number:'1.2-2' }} CHF</span>
       </div>
 
-      <ion-button expand="block">
+      <ion-button expand="block" (click)="goToCheckout()">
         Checkout ({{ total() | number:'1.2-2' }} CHF)
       </ion-button>
     </div>

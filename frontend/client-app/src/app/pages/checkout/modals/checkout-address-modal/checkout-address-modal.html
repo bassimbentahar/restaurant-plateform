@@ -1,0 +1,89 @@
+<ion-content>
+  <div class="checkout-address-modal">
+    <div class="modal-header">
+      <h2>Adresse de livraison</h2>
+
+      <button class="close-btn" type="button" (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="loading">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    } @else {
+      @if (addresses().length === 0) {
+        <div class="empty-state">
+          <ion-icon name="location-outline"></ion-icon>
+          <h3>Aucune adresse enregistrée</h3>
+          <p>Ajoutez une adresse pour continuer votre commande.</p>
+        </div>
+      } @else {
+        <div class="address-list">
+          @for (address of addresses(); track address.id) {
+            <button
+              type="button"
+              class="address-card"
+              [class.active]="selectedAddressId() === address.id"
+              (click)="select(address)"
+            >
+              <div class="address-card__icon">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+
+              <div class="address-card__content">
+                <div class="address-card__title">
+                  <strong>{{ address.label }}</strong>
+
+                  @if (address.defaultAddress) {
+                    <span>Par défaut</span>
+                  }
+                </div>
+
+                <p>{{ formatAddress(address) }}</p>
+
+                @if (address.instructions) {
+                  <small>{{ address.instructions }}</small>
+                }
+              </div>
+
+              <div class="address-card__actions">
+                @if (selectedAddressId() === address.id) {
+                  <ion-icon class="selected-icon" name="checkmark-circle"></ion-icon>
+                }
+
+                <button type="button" (click)="setDefault(address, $event)">
+                  <ion-icon name="star-outline"></ion-icon>
+                </button>
+
+                <button type="button" (click)="openEditAddress(address, $event)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </button>
+
+                <button type="button" class="danger" (click)="delete(address, $event)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+            </button>
+          }
+        </div>
+      }
+
+      <div class="modal-actions">
+        <ion-button expand="block" fill="outline" (click)="openCreateAddress()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Ajouter une adresse
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          [disabled]="!selectedAddressId()"
+          (click)="confirm()"
+        >
+          Utiliser cette adresse
+        </ion-button>
+      </div>
+    }
+  </div>
+</ion-content>

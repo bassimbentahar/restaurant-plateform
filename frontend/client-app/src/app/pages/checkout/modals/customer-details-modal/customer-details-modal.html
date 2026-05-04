@@ -1,0 +1,50 @@
+<ion-content>
+  <div class="modal-card">
+
+    <div class="modal-header">
+      <h2>Your details</h2>
+
+      <button class="close-btn" type="button" (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="form">
+
+      <div class="form-field">
+        <label>First name</label>
+        <input formControlName="firstname" />
+      </div>
+
+      <div class="form-field">
+        <label>Last name</label>
+        <input formControlName="lastname" />
+      </div>
+
+      <div class="form-field">
+        <label>Phone number</label>
+        <input
+          formControlName="phone"
+          type="tel"
+          placeholder="+41 79 123 45 67"
+          (blur)="formatSwissPhone()"
+        />
+      </div>
+      @if (hasPhoneError()) {
+        <div class="error-message">
+          Numéro suisse invalide. Exemple : +41 79 123 45 67
+        </div>
+      }
+      @if (hasPhoneRequiredError()) {
+        <div class="error-message">
+          Le numéro de téléphone est obligatoire.
+        </div>
+      }
+      <ion-button expand="block" class="save-btn" (click)="save()">
+        Save
+      </ion-button>
+
+    </form>
+
+  </div>
+</ion-content>

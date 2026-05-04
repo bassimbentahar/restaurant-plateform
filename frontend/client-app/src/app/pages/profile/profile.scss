@@ -410,6 +410,28 @@
   }
 }
 
+.error-message {
+  margin-top: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #fff0f0;
+  border: 1px solid rgba(211, 47, 47, 0.18);
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.form-group.has-error {
+  ion-input {
+    border-color: #d32f2f;
+    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+  }
+
+  label {
+    color: #b42318;
+  }
+}
 /* Mobile */
 @media (max-width: 760px) {
   .profile-layout {

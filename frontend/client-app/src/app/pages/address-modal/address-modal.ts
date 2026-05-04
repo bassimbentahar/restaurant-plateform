@@ -65,6 +65,8 @@ export class AddressModal implements OnInit, AfterViewInit {
     postalCode: [''],
     city: [''],
     country: ['Switzerland'],
+    latitude: [null as number | null],
+    longitude: [null as number | null],
     instructions: [''],
     defaultAddress: [false]
   });
@@ -87,7 +89,7 @@ export class AddressModal implements OnInit, AfterViewInit {
     }
 
     this.addressForm.get('label')?.valueChanges.subscribe(value => {
-      this.checkLabelExists(value);
+      this.checkLabelExists(value ?? '');
     });
 
     this.addressForm.valueChanges.subscribe(() => {
@@ -162,7 +164,8 @@ export class AddressModal implements OnInit, AfterViewInit {
 
     const autocomplete = new google.maps.places.Autocomplete(input, {
       types: ['address'],
-      componentRestrictions: {country: 'ch'}
+      componentRestrictions: { country: 'ch' },
+      fields: ['address_components', 'geometry']
     });
 
     autocomplete.addListener('place_changed', () => {
@@ -172,13 +175,15 @@ export class AddressModal implements OnInit, AfterViewInit {
         return;
       }
 
-      this.fillAddressForm(place.address_components);
+      this.fillAddressForm(place);
     });
   }
 
-  private fillAddressForm(components: any[]): void {
+  private fillAddressForm(place: any): void {
+    const components = place.address_components ?? [];
+
     const get = (type: string) =>
-      components.find(component => component.types.includes(type))?.long_name ?? '';
+      components.find((component: any) => component.types.includes(type))?.long_name ?? '';
 
     const street = get('route');
     const streetNumber = get('street_number');
@@ -191,12 +196,19 @@ export class AddressModal implements OnInit, AfterViewInit {
 
     const country = get('country') || 'Switzerland';
 
+    const latitude = place.geometry?.location?.lat();
+    const longitude = place.geometry?.location?.lng();
+
+    console.log('GOOGLE PLACE COORDINATES:', { latitude, longitude });
+
     this.addressForm.patchValue({
       street,
       streetNumber,
       postalCode,
       city,
-      country
+      country,
+      latitude,
+      longitude
     });
 
     this.addressForm.markAsDirty();
@@ -211,6 +223,7 @@ export class AddressModal implements OnInit, AfterViewInit {
 
   async save(): Promise<void> {
     const request: UserAddressRequest = this.addressForm.getRawValue();
+    console.log('ADDRESS REQUEST TO MODAL DISMISS:', request);
 
     this.checkLabelExists(request.label);
 

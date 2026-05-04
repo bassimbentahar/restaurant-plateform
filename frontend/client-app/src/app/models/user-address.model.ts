@@ -8,6 +8,8 @@ export interface UserAddress {
   country: string;
   instructions?: string;
   defaultAddress: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface UserAddressRequest {
@@ -19,4 +21,14 @@ export interface UserAddressRequest {
   country?: string;
   instructions?: string;
   defaultAddress: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+}
+
+export interface DeliveryValidationResponse {
+  deliverable: boolean;
+  deliveryFee: number;
+  minOrderAmount: number;
+  zoneName?: string;
+  reason?: string;
 }

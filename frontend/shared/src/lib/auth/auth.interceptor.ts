@@ -7,7 +7,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth);
 
   const token = auth.getToken();
-  console.log('TOKEN INTERCEPTOR =', token);
   if (token) {
     const cloned = req.clone({
       setHeaders: {
@@ -22,7 +21,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
-  console.log('HTTP request:', req.method, req.url);
   return next(req);
 };
 

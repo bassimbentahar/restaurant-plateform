@@ -1,0 +1,71 @@
+<ion-content>
+  <div class="delivery-time-modal">
+    <div class="modal-header">
+      <h2>Delivery time</h2>
+
+      <button class="close-btn" type="button" (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    <button class="time-row" type="button" (click)="chooseAsap()">
+      <span>As soon as possible</span>
+      <span class="radio" [class.active]="type() === 'ASAP'"></span>
+    </button>
+
+    <div class="section-separator"></div>
+
+    <button class="time-row strong" type="button" (click)="chooseScheduled()">
+      <span>Schedule for later</span>
+      <span class="radio" [class.active]="type() === 'SCHEDULED'"></span>
+    </button>
+
+    @if (type() === 'SCHEDULED') {
+      @if (loading()) {
+        <div class="loading">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      } @else {
+        <div class="days-row">
+          @for (day of slotDays(); track day.date) {
+            <button
+              class="day-card"
+              type="button"
+              [disabled]="day.disabled"
+              [class.active]="selectedDate() === day.date"
+              (click)="chooseDate(day.date)"
+            >
+              <strong>{{ day.label }}</strong>
+              <span>{{ day.date | date:'d MMM' }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="select-wrapper">
+          <select
+            [ngModel]="selectedTime()"
+            (ngModelChange)="chooseTime($event)"
+            [disabled]="!availableSlots().length"
+          >
+            @for (slot of availableSlots(); track slot.time) {
+              <option [value]="slot.time">
+                {{ slot.label }}
+              </option>
+            }
+          </select>
+
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>      }
+    }
+
+    <div class="modal-actions">
+      <ion-button
+        class="save-btn"
+        [disabled]="type() === 'SCHEDULED' && (!selectedDate() || !selectedTime())"
+        (click)="save()"
+      >
+        Save
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,42 @@
+<ion-content>
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>Note pour le restaurant</h2>
+
+      <button class="close-btn" type="button" (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="form">
+      <div class="form-field">
+        <label>Instructions spéciales</label>
+
+        <textarea
+          formControlName="note"
+          placeholder="Ex: sans oignons, sauce à part, appeler à l’arrivée..."
+        ></textarea>
+
+        <small>
+          {{ form.controls.note.value.length }}/500 caractères
+        </small>
+      </div>
+
+      @if (hasMaxLengthError()) {
+        <div class="error-message">
+          La note ne doit pas dépasser 500 caractères.
+        </div>
+      }
+
+      <ion-button expand="block" class="save-btn" (click)="save()">
+        Enregistrer
+      </ion-button>
+
+      @if (form.controls.note.value) {
+        <ion-button expand="block" fill="clear" color="medium" (click)="clear()">
+          Supprimer la note
+        </ion-button>
+      }
+    </form>
+  </div>
+</ion-content>

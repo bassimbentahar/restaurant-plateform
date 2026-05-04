@@ -1,0 +1,254 @@
+ion-content {
+  --background: #f7f2ed;
+}
+
+/* Container */
+.delivery-time-modal {
+  width: 100%;
+  min-height: 100%;
+  padding: 24px;
+  background: #f7f2ed;
+}
+
+/* Header */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #2f2118;
+  }
+}
+
+/* Close button */
+.close-btn {
+  border: 0;
+  background: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 24px;
+    color: #2f2118;
+  }
+}
+
+/* Rows (ASAP / Schedule) */
+.time-row {
+  width: 100%;
+  border: 0;
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+
+  span:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2f2118;
+  }
+
+  &.strong span:first-child {
+    font-weight: 800;
+  }
+}
+
+/* Radio custom */
+.radio {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s;
+
+  &.active {
+    border: 8px solid #7a5438;
+  }
+}
+
+/* Separator */
+.section-separator {
+  height: 1px;
+  background: #eee;
+  margin: 18px 0;
+}
+
+/* Days */
+.days-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Day card */
+.day-card {
+  border-radius: 18px;
+  background: #fff;
+  border: 2px solid transparent;
+  padding: 14px;
+  text-align: center;
+
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  transition: 0.2s;
+
+  strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: #2f2118;
+  }
+
+  span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #666;
+  }
+
+  &:hover {
+    border-color: #e5ddd6;
+  }
+
+  &.active {
+    border-color: #7a5438;
+    background: #f4eee8;
+  }
+}
+
+/* Time select */
+.select-wrapper {
+  margin-top: 16px;
+  height: 56px;
+  border-radius: 16px;
+  background: #fff;
+  border: 2px solid #e5ddd6;
+
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+
+  select {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0 50px 0 16px;
+    font-size: 16px;
+    background: transparent;
+    outline: none;
+    appearance: none;
+  }
+
+  ion-icon {
+    position: absolute;
+    right: 14px;
+    font-size: 20px;
+    color: #7a5438;
+  }
+}
+
+/* Actions */
+.modal-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+
+  ion-button {
+    --border-radius: 999px;
+    height: 52px;
+    padding: 0 28px;
+    font-weight: 800;
+    font-size: 16px;
+    --background: #7a5438;
+  }
+}
+
+.select-wrapper {
+  margin-top: 20px;
+  height: 64px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1.5px solid #d8d0c8;
+
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  select {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0 56px 0 18px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #2f2118;
+    background: transparent;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  ion-icon {
+    position: absolute;
+    right: 18px;
+    font-size: 28px;
+    color: #2f2118;
+    pointer-events: none;
+  }
+
+  &:focus-within {
+    border-color: #7a5438;
+    box-shadow: 0 0 0 4px rgba(122, 84, 56, 0.12);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .delivery-time-modal {
+    padding: 20px;
+  }
+
+  .days-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    justify-content: stretch;
+
+    ion-button {
+      width: 100%;
+    }
+  }
+}
+
+
+
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+

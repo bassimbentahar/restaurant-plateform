@@ -62,19 +62,38 @@
               </div>
 
               <div class="form-grid">
-                <div class="form-group">
+                <div class="form-group" [class.has-error]="hasPhoneError() || hasPhoneRequiredError()">
                   <label>Téléphone</label>
-                  <ion-input formControlName="phone" placeholder="+41 79 123 45 67"></ion-input>
-                </div>
 
+                  <ion-input
+                    formControlName="phone"
+                    placeholder="+41 79 123 45 67"
+                  ></ion-input>
+
+                  @if (hasPhoneRequiredError()) {
+                    <div class="error-message">
+                      Le numéro de téléphone est obligatoire.
+                    </div>
+                  }
+
+                  @if (hasPhoneError()) {
+                    <div class="error-message">
+                      Numéro suisse invalide. Exemple : +41 79 123 45 67
+                    </div>
+                  }
+                </div>
                 <div class="form-group">
                   <label>Date de naissance</label>
                   <ion-input type="date" formControlName="dateOfBirth"></ion-input>
                 </div>
               </div>
 
-              <ion-button type="submit" class="save-btn">
-                Enregistrer les modifications
+              <ion-button
+                type="submit"
+                class="save-btn"
+                [disabled]="profileForm.invalid || profileForm.pristine || saving"
+              >
+                {{ saving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
               </ion-button>
             </form>
           </section>

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import { IonButton, IonContent } from '@ionic/angular/standalone';
 import {Auth} from "shared";
 
@@ -15,11 +15,14 @@ import {Auth} from "shared";
   ]
 })
 export class AuthPage {
+  private readonly route = inject(ActivatedRoute);
 
   constructor(private authService: Auth) {}
 
   async login(): Promise<void> {
-    await this.authService.login();
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+
+    await this.authService.login(returnUrl);
   }
 
   async register(): Promise<void> {

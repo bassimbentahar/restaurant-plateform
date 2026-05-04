@@ -1,0 +1,132 @@
+ion-content {
+  --background: #f7f2ed;
+}
+
+ion-content::part(scroll) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* container */
+.modal-card {
+  background: #f7f2ed;
+  border-radius: 24px;
+  padding: 28px 28px 32px;
+  width: min(560px, calc(100vw - 32px));
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* header */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: #2f2118;
+  }
+}
+
+/* close button */
+.close-btn {
+  border: 0;
+  background: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 24px;
+    color: #2f2118;
+  }
+}
+
+/* form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* input group */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-weight: 700;
+    font-size: 14px;
+    color: #2f2118;
+  }
+  textarea {
+    min-height: 120px;
+    max-height: 180px;
+    border-radius: 16px;
+    border: 2px solid #e5ddd6;
+    padding: 14px 16px;
+    font-size: 15px;
+    background: #fff;
+    outline: none;
+    transition: all 0.2s ease;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.4;
+
+    &::placeholder {
+      color: #aaa;
+    }
+
+    &:focus {
+      border-color: #7a5438;
+      box-shadow: 0 0 0 4px rgba(122, 84, 56, 0.12);
+    }
+  }
+
+  textarea.ng-invalid.ng-touched {
+    border-color: #d32f2f;
+  }
+}
+
+.form-field small {
+  align-self: flex-end;
+  font-size: 13px;
+  color: #8a817a;
+  font-weight: 600;
+  margin-top: 4px;
+}
+/* button */
+.save-btn {
+  margin-top: 10px;
+  height: 54px;
+  --border-radius: 16px;
+  --background: #7a5438;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #d32f2f;
+}
+.error-message {
+  margin-top: -8px;
+  font-size: 13px;
+  color: #d32f2f;
+  font-weight: 700;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #d32f2f;
+}

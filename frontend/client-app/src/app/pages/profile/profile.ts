@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {ReactiveFormsModule, FormBuilder} from '@angular/forms';
+import {ReactiveFormsModule, FormBuilder, Validators} from '@angular/forms';
 import {
   IonAvatar,
   IonButton,
@@ -15,9 +15,7 @@ import {UserRequest} from "../../models/user.model";
 import {Auth} from "shared";
 import {AddressService} from "../../services/AddressService";
 import {AddressModal} from "../address-modal/address-modal";
-import {filter} from "rxjs/operators";
-import {logInOutline} from "ionicons/icons";
-import {UserAddress} from "../../models/user-address.model";
+import {swissPhoneValidator} from "../../validators/swiss-phone.validator";
 
 @Component({
   selector: 'app-profile',
@@ -43,15 +41,16 @@ export class Profile implements OnInit {
 
   private modalCtrl = inject(ModalController);
   private addressService = inject(AddressService);
-  addresses$ = this.addressService.addresses$;
 
+  addresses$ = this.addressService.addresses$;
   user$ = this.userService.user$;
 
+  saving = false;
   profileForm = this.fb.nonNullable.group({
-    firstname: [''],
-    lastname: [''],
+    firstname: ['', [Validators.required, Validators.minLength(2)]],
+    lastname: ['', [Validators.required, Validators.minLength(2)]],
     dateOfBirth: [''],
-    phone: ['']
+    phone: ['', [Validators.required, swissPhoneValidator()]]
   });
 
   async ngOnInit(): Promise<void> {
@@ -66,14 +65,34 @@ export class Profile implements OnInit {
       phone: user.phone ?? '',
       dateOfBirth: user.dateOfBirth ?? ''
     });
+    this.profileForm.markAsPristine();
   }
 
   async save(): Promise<void> {
-    const request: UserRequest = this.profileForm.getRawValue();
+    if (this.profileForm.invalid || this.profileForm.pristine || this.saving) {
+      return;
+    }
 
-    await firstValueFrom(
-      this.userService.updateProfile(request)
-    );
+    this.saving = true;
+
+    try {
+      const request: UserRequest = this.profileForm.getRawValue();
+
+      const updatedUser = await firstValueFrom(
+        this.userService.updateProfile(request)
+      );
+
+      this.profileForm.patchValue({
+        firstname: updatedUser.firstname,
+        lastname: updatedUser.lastname,
+        phone: updatedUser.phone ?? '',
+        dateOfBirth: updatedUser.dateOfBirth ?? ''
+      });
+
+      this.profileForm.markAsPristine();
+    } finally {
+      this.saving = false;
+    }
   }
 
   async changePassword(): Promise<void> {
@@ -120,5 +139,17 @@ export class Profile implements OnInit {
     if (data) {
       await firstValueFrom(this.addressService.update(id,data));
     }
+  }
+
+  hasPhoneError(): boolean {
+    const control = this.profileForm.controls.phone;
+
+    return control.touched && !!control.errors?.['swissPhone'];
+  }
+
+  hasPhoneRequiredError(): boolean {
+    const control = this.profileForm.controls.phone;
+
+    return control.touched && !!control.errors?.['required'];
   }
 }

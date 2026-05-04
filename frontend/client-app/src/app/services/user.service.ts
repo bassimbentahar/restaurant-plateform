@@ -23,7 +23,8 @@ export class UserService {
   }
 
   updateProfile(request: UserRequest) {
-    return this.http.put<User>('/api/users/me', request).pipe(
+    return this.http.put<User>(`${this.apiUrl}/me`, request).pipe(
+
       tap(user => this.userSubject.next(user))
     );
   }

@@ -40,9 +40,9 @@ export class Auth {
     return authenticated;
   }
 
-  async login(): Promise<void> {
+  async login(returnUrl: string = '/home'): Promise<void> {
     await this.keycloak.login({
-      redirectUri: `${this.appBaseUrl}/`,
+      redirectUri: `${this.appBaseUrl}${returnUrl}`,
     });
   }
 

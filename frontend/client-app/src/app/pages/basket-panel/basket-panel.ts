@@ -4,6 +4,7 @@ import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, trashOutline } from 'ionicons/icons';
 import { CartService } from '../../services/cart.service';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-basket-panel',
@@ -14,6 +15,7 @@ import { CartService } from '../../services/cart.service';
 })
 export class BasketPanel {
   private readonly cartService = inject(CartService);
+  private readonly router = inject(Router);
 
   readonly items = this.cartService.items;
   readonly count = this.cartService.count;
@@ -24,6 +26,14 @@ export class BasketPanel {
 
   constructor() {
     addIcons({ add, remove, trashOutline });
+  }
+
+  goToCheckout(): void {
+    if (this.items().length === 0) {
+      return;
+    }
+
+    this.router.navigate(['/checkout']);
   }
 
   increase(itemId: string, quantity: number): void {
