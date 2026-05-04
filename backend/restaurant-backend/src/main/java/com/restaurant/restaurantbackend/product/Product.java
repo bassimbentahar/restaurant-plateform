@@ -5,6 +5,7 @@ import com.restaurant.restaurantbackend.product.category.ProductCategory;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
 import com.restaurant.restaurantbackend.product.option.OptionGroup;
 import com.restaurant.restaurantbackend.product.variant.ProductVariant;
+import com.restaurant.restaurantbackend.restaurant.Restaurant;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,13 +21,25 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "products")
+@Table(
+  name = "products",
+  uniqueConstraints = {
+    @UniqueConstraint(
+      name = "uk_products_restaurant_sku",
+      columnNames = {"restaurant_id", "sku"}
+    ),
+    @UniqueConstraint(
+      name = "uk_products_restaurant_slug",
+      columnNames = {"restaurant_id", "slug"}
+    )
+  }
+)
 public class Product extends BaseEntity {
 
-  @Column(nullable = false, unique = true, length = 100)
+  @Column(nullable = false, length = 100)
   private String sku;
 
-  @Column(nullable = false, unique = false, length = 100)
+  @Column(nullable = false, length = 100)
   private String slug;
 
   @Column(nullable = false)
@@ -61,6 +74,10 @@ public class Product extends BaseEntity {
 
   @Column(name = "allergens_text", columnDefinition = "TEXT")
   private String allergensText;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "restaurant_id", nullable = false)
+  private Restaurant restaurant;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id")

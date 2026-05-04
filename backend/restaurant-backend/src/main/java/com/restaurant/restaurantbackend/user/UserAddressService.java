@@ -74,6 +74,8 @@ public class UserAddressService {
       .city(request.city())
       .country(request.country() != null ? request.country() : "Switzerland")
       .instructions(request.instructions())
+      .latitude(request.latitude())
+      .longitude(request.longitude())
       .defaultAddress(request.defaultAddress())
       .build();
 

@@ -1,5 +1,6 @@
 package com.restaurant.restaurantbackend.user.dto;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record UserAddressResponse(
@@ -11,5 +12,7 @@ public record UserAddressResponse(
   String city,
   String country,
   String instructions,
-  boolean defaultAddress
+  boolean defaultAddress,
+  BigDecimal latitude,
+  BigDecimal longitude
 ) {}

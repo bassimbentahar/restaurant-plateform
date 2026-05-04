@@ -1,5 +1,7 @@
 package com.restaurant.restaurantbackend.user.dto;
 
+import java.math.BigDecimal;
+
 public record UserAddressRequest(
   String label,
   String street,
@@ -8,5 +10,7 @@ public record UserAddressRequest(
   String city,
   String country,
   String instructions,
-  boolean defaultAddress
+  boolean defaultAddress,
+  BigDecimal latitude,
+  BigDecimal longitude
 ) {}

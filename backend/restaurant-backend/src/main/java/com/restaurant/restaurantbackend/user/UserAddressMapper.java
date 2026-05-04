@@ -17,7 +17,9 @@ public class UserAddressMapper {
       address.getCity(),
       address.getCountry(),
       address.getInstructions(),
-      address.isDefaultAddress()
+      address.isDefaultAddress(),
+      address.getLatitude(),
+      address.getLongitude()
     );
   }
 
@@ -30,5 +32,7 @@ public class UserAddressMapper {
     address.setCountry(request.country() != null ? request.country() : "Switzerland");
     address.setInstructions(request.instructions());
     address.setDefaultAddress(request.defaultAddress());
+    address.setLongitude(request.longitude());
+    address.setLatitude(request.latitude());
   }
 }

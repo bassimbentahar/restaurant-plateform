@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "user_addresses")
 @Getter
@@ -39,4 +41,10 @@ public class UserAddress extends BaseEntity {
 
   @Builder.Default
   private boolean defaultAddress = false;
+
+  @Column(precision = 10, scale = 7)
+  private BigDecimal latitude;
+
+  @Column(precision = 10, scale = 7)
+  private BigDecimal longitude;
 }

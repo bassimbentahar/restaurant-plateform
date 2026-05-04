@@ -1,5 +1,6 @@
 package com.restaurant.restaurantbackend.product.option;
 
+import com.restaurant.restaurantbackend.restaurant.Restaurant;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +41,10 @@ public class OptionGroup {
 
   @Column(nullable = false)
   private Integer displayOrder = 0;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "restaurant_id", nullable = false)
+  private Restaurant restaurant;
 
   @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderBy("displayOrder ASC")

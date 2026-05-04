@@ -23,8 +23,7 @@ public class UserController {
   public UserResponse update(
     @RequestBody UserRequest request
   ) {
-    User user = service.getOrCreateCurrentUser();
-    mapper.update(user, request);
+    User user = service.updateCurrentUser(request);
     return mapper.toResponse(user);
   }
 }

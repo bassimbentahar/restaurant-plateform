@@ -1,5 +1,6 @@
 package com.restaurant.restaurantbackend.user;
 
+import com.restaurant.restaurantbackend.user.dto.UserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,5 +74,17 @@ public class CurrentUserService {
     }
 
     return changed ? userRepository.save(user) : user;
+  }
+
+  @Transactional
+  public User updateCurrentUser(UserRequest request) {
+    User user = getOrCreateCurrentUser();
+
+    user.setFirstname(request.firstname());
+    user.setLastname(request.lastname());
+    user.setPhone(request.phone());
+    user.setDateOfBirth(request.dateOfBirth());
+
+    return userRepository.save(user);
   }
 }
