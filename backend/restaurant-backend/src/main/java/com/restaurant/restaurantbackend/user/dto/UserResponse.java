@@ -15,6 +15,6 @@ public record UserResponse(
   String phone,
   boolean enabled,
   boolean deleted,
-  LocalDateTime createdDate,
-  LocalDateTime lastModifiedDate
-) {}
+  LocalDateTime createdAt,
+  LocalDateTime updatedAt)
+{}

@@ -19,62 +19,66 @@ import java.util.List;
 @EnableConfigurationProperties(CorsProperties.class)
 public class SecurityConfig {
 
-    private final CorsProperties corsProperties;
+  private final CorsProperties corsProperties;
 
-    public SecurityConfig(CorsProperties corsProperties) {
-        this.corsProperties = corsProperties;
-    }
+  public SecurityConfig(CorsProperties corsProperties) {
+    this.corsProperties = corsProperties;
+  }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers(
-                                "/auth/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/actuator/health"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(auth -> auth
-                        .jwt(token -> token
-                                .jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter())
-                        )
-                )
-                .build();
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+      .cors(Customizer.withDefaults())
+      .csrf(AbstractHttpConfigurer::disable)
+      .authorizeHttpRequests(req -> req
+        .requestMatchers(
+          "/auth/**",
+          "/v3/api-docs/**",
+          "/swagger-ui/**",
+          "/swagger-ui.html",
+          "/actuator/health"
+        ).permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+        .requestMatchers("/assets/**").permitAll()
+        .requestMatchers(
+          "/ws/**",
+          "/ws/info/**"
+        ).permitAll()
+        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+        .anyRequest().authenticated()
+      )
+      .oauth2ResourceServer(auth -> auth
+        .jwt(token -> token
+          .jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter())
+        )
+      )
+      .build();
+  }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(corsProperties.getAllowedOrigins());
-        config.setAllowedHeaders(List.of(
-                HttpHeaders.ORIGIN,
-                HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT,
-                HttpHeaders.AUTHORIZATION
-        ));
-        config.setAllowedMethods(List.of(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.PATCH.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.OPTIONS.name()
-        ));
+    config.setAllowCredentials(true);
+    config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+    config.setAllowedHeaders(List.of(
+      HttpHeaders.ORIGIN,
+      HttpHeaders.CONTENT_TYPE,
+      HttpHeaders.ACCEPT,
+      HttpHeaders.AUTHORIZATION
+    ));
+    config.setAllowedMethods(List.of(
+      HttpMethod.GET.name(),
+      HttpMethod.POST.name(),
+      HttpMethod.PUT.name(),
+      HttpMethod.PATCH.name(),
+      HttpMethod.DELETE.name(),
+      HttpMethod.OPTIONS.name()
+    ));
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
 
-        return source;
-    }
+    return source;
+  }
 }
