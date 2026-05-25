@@ -14,7 +14,7 @@ import {
   IonLabel,
   IonList,
   IonMenu,
-  IonMenuButton,
+  IonMenuButton, IonPopover,
   IonRouterOutlet,
   IonText,
   IonTitle,
@@ -36,6 +36,8 @@ import {Auth} from 'shared';
 import {CartService} from './services/cart.service';
 import {firstValueFrom} from "rxjs";
 import {UserService} from "./services/user.service";
+import {AppLanguage, LanguageService} from "./services/language";
+import {TranslatePipe} from "@ngx-translate/core";
 
 type ClientMenuItem = {
   label: string;
@@ -66,6 +68,8 @@ type ClientMenuItem = {
     IonAvatar,
     IonText,
     IonRouterOutlet,
+    IonPopover,
+    TranslatePipe,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -83,52 +87,78 @@ export class AppComponent {
   readonly cartCount = computed(() => this.cartService.count());
 
   readonly isLoggedIn = computed(() => this.auth.isLoggedIn());
+  private readonly languageService = inject(LanguageService);
 
+  readonly languages = [
+    { code: 'fr', label: 'Français', short: 'FR' },
+    { code: 'en', label: 'English', short: 'EN' },
+    { code: 'de', label: 'Deutsch', short: 'DE' },
+  ] as const;
+
+  isLanguagePopoverOpen = false;
+  languagePopoverEvent?: Event;
+
+  get currentLanguage(): AppLanguage {
+    return this.languageService.getCurrentLanguage();
+  }
+
+  openLanguagePopover(event: Event): void {
+    this.languagePopoverEvent = event;
+    this.isLanguagePopoverOpen = true;
+  }
+
+  changeLanguage(language: AppLanguage): void {
+    this.languageService.switchLanguage(language);
+    this.isLanguagePopoverOpen = false;
+  }
   readonly pageTitle = computed(() => {
     const url = this.currentUrl();
 
-    if (url.startsWith('/home')) return 'Home';
-    if (url.startsWith('/product-list')) return 'Products';
-    if (url.startsWith('/product-details')) return 'Product Details';
-    if (url.startsWith('/cart')) return 'My Cart';
-    if (url.startsWith('/checkout')) return 'Checkout';
-    if (url.startsWith('/category')) return 'Category';
-    if (url.startsWith('/about-us')) return 'About Us';
-    if (url.startsWith('/contact')) return 'Contact';
-    if (url.startsWith('/news')) return 'News';
+    if (url.startsWith('/home')) return 'pages.home';
+    if (url.startsWith('/product-list')) return 'pages.products';
+    if (url.startsWith('/product-details')) return 'pages.productDetails';
+    if (url.startsWith('/cart')) return 'pages.cart';
+    if (url.startsWith('/checkout')) return 'pages.checkout';
+    if (url.startsWith('/category')) return 'pages.category';
+    if (url.startsWith('/about-us')) return 'pages.aboutUs';
+    if (url.startsWith('/contact')) return 'pages.contact';
+    if (url.startsWith('/news')) return 'pages.news';
+    if (url.startsWith('/order-tracking')) return 'order.tracking.title';
+    if (url.startsWith('/orders')) return 'pages.orders';
+    if (url.startsWith('/profile')) return 'pages.profile';
 
-    return 'Client App';
+    return 'app.title';
   });
 
   readonly menuItems = computed<ClientMenuItem[]>(() => [
     {
-      label: 'Home',
+      label: 'pages.home',
       icon: 'home-outline',
       route: '/home',
     },
     {
-      label: 'Profile',
+      label: 'pages.profile',
       icon: 'person-outline',
       route: '/profile',
-      requiresAuth: true
+      requiresAuth: true,
     },
     {
-      label: 'Products',
+      label: 'pages.products',
       icon: 'restaurant-outline',
       route: '/product-list',
     },
     {
-      label: 'About Us',
+      label: 'pages.aboutUs',
       icon: 'information-circle-outline',
       route: '/about-us',
     },
     {
-      label: 'Contact',
+      label: 'pages.contact',
       icon: 'information-circle-outline',
       route: '/contact',
     },
     {
-      label: 'Checkout',
+      label: 'pages.checkout',
       icon: 'cart-outline',
       route: '/checkout',
       requiresAuth: true,

@@ -1,0 +1,322 @@
+{
+  "language": {
+    "fr": "French",
+    "en": "English",
+    "de": "German",
+    "switchToFrench": "FR",
+    "switchToEnglish": "EN",
+    "switchToGerman": "DE"
+  },
+  "app": {
+    "title": "Portal Coffee",
+    "menu": "Menu"
+  },
+  "auth": {
+    "guest": "Guest",
+    "login": "Login",
+    "logout": "Logout",
+    "welcomeTitle": "Welcome to Portal Coffee",
+    "welcomeDescription": "Log in to order faster, track your orders, and view your history.",
+    "register": "Create an account",
+    "continueGuest": "Continue as guest"
+  },
+  "pages": {
+    "home": "Home",
+    "profile": "Profile",
+    "products": "Products",
+    "productDetails": "Product details",
+    "cart": "My cart",
+    "checkout": "Checkout",
+    "category": "Category",
+    "aboutUs": "About us",
+    "contact": "Contact",
+    "news": "News",
+    "orders": "My orders"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "total": "Total",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "order": {
+    "tracking": {
+      "title": "Order tracking",
+      "order": "Order",
+      "total": "Total",
+      "progression": "Progress",
+      "viewOrders": "View my orders",
+      "backToMenu": "Back to menu",
+      "cancelledMessage": "The order will not be prepared. Contact the restaurant if needed."
+    },
+    "status": {
+      "pending": "Order sent",
+      "confirmed": "Order confirmed",
+      "preparing": "Preparing",
+      "ready": {
+        "pickup": "Ready for pickup",
+        "delivery": "Order ready"
+      },
+      "outForDelivery": "Out for delivery",
+      "delivered": {
+        "pickup": "Order picked up",
+        "delivery": "Order delivered"
+      },
+      "cancelled": "Order cancelled",
+      "rejected": "Order rejected",
+      "default": "Order tracking"
+    },
+    "steps": {
+      "pending": {
+        "title": "Order sent",
+        "description": "We have received your order."
+      },
+      "confirmed": {
+        "title": "Order confirmed",
+        "description": "The restaurant has accepted your order."
+      },
+      "preparing": {
+        "title": "Preparing",
+        "description": "Your order is being prepared."
+      },
+      "ready": {
+        "pickup": {
+          "title": "Ready for pickup",
+          "description": "Your order is ready to be picked up."
+        },
+        "delivery": {
+          "title": "Ready",
+          "description": "Your order is ready."
+        }
+      },
+      "outForDelivery": {
+        "title": "Out for delivery",
+        "description": "Your order is on its way."
+      },
+      "delivered": {
+        "pickup": {
+          "title": "Picked up",
+          "description": "Enjoy your meal!"
+        },
+        "delivery": {
+          "title": "Delivered",
+          "description": "Enjoy your meal!"
+        }
+      }
+    }
+  },
+  "address": {
+    "newTitle": "New address",
+    "editTitle": "Edit address",
+    "searchLabel": "Search for an address",
+    "searchPlaceholder": "Enter your address",
+    "selectedTitle": "Selected address",
+    "label": "Address name",
+    "labelPlaceholder": "Home, Work...",
+    "instructions": "Instructions",
+    "instructionsPlaceholder": "Floor, door, note...",
+    "defaultAddress": "Default address",
+    "saveButton": "Save address",
+    "editButton": "Edit address",
+    "errors": {
+      "alreadyExists": "This address is already saved",
+      "labelExists": "This name already exists. Choose another name.",
+      "labelRequired": "The name is required",
+      "labelMinLength": "Minimum 2 characters",
+      "sameAsOriginal": "This address is identical to the current address."
+    }
+  },
+  "basket": {
+    "title": "Basket",
+    "empty": "Your basket is empty",
+    "subtotal": "Subtotal",
+    "serviceFee": "Service fee {{percent}}%",
+    "total": "Total",
+    "checkout": "Checkout ({{total}} CHF)"
+  },
+  "cart": {
+    "title": "My cart",
+    "empty": "Your cart is empty",
+    "browseProducts": "Browse products",
+    "size": "Size",
+    "unitPrice": "Unit price",
+    "total": "Total",
+    "cartTotal": "Cart total",
+    "clearCart": "Clear cart",
+    "checkout": "Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderDetails": "Order details",
+    "continueShopping": "Continue shopping",
+    "customer": {
+      "defaultName": "Your name",
+      "phoneRequired": "Phone number required",
+      "phoneRequiredDescription": "Add a phone number so the restaurant or delivery person can contact you."
+    },
+    "orderType": {
+      "delivery": {
+        "title": "Delivery",
+        "description": "Receive the order at your address"
+      },
+      "pickup": {
+        "title": "Takeaway",
+        "description": "Pick up at the restaurant"
+      }
+    },
+    "delivery": {
+      "deliverable": "Deliverable address",
+      "unavailable": "Delivery unavailable at this address",
+      "outOfZone": "This address is outside the delivery area.",
+      "addressRequired": "Address required",
+      "addressRequiredDescription": "Add an address to see delivery options",
+      "addAddress": "Add a delivery address"
+    },
+    "deliveryTime": {
+      "desiredTime": "Desired time"
+    },
+    "note": {
+      "label": "Note",
+      "add": "Add a note",
+      "edit": "Edit note",
+      "placeholder": "Note for the restaurant"
+    },
+    "payment": {
+      "title": "Payment",
+      "twintDescription": "Fast and secure payment",
+      "cash": "Cash",
+      "cashDescription": "Payment on delivery or pickup"
+    },
+    "summary": {
+      "title": "Order summary",
+      "subtotal": "Subtotal",
+      "serviceFee": "Service fee",
+      "delivery": "Delivery",
+      "total": "Total"
+    },
+    "submit": {
+      "loading": "Order in progress...",
+      "pay": "Order and pay"
+    }
+  },
+  "checkoutAddress": {
+    "title": "Delivery address",
+    "emptyTitle": "No saved address",
+    "emptyDescription": "Add an address to continue your order.",
+    "default": "Default",
+    "add": "Add an address",
+    "useSelected": "Use this address"
+  },
+  "customerDetails": {
+    "title": "Your details",
+    "firstname": "First name",
+    "lastname": "Last name",
+    "phone": "Phone number",
+    "errors": {
+      "invalidSwissPhone": "Invalid Swiss number. Example: +41 79 123 45 67",
+      "phoneRequired": "Phone number is required."
+    }
+  },
+  "orderNote": {
+    "title": "Note for the restaurant",
+    "label": "Special instructions",
+    "placeholder": "E.g: no onions, sauce on the side, call on arrival...",
+    "characters": "characters",
+    "clear": "Remove note",
+    "errors": {
+      "maxLength": "The note must not exceed 500 characters."
+    }
+  },
+  "product": {
+    "sizes": "Sizes",
+    "min": "min",
+    "max": "max",
+    "addToCart": "Add to cart",
+    "keepShopping": "Keep shopping"
+  },
+  "productList": {
+    "searchPlaceholder": "Search in Miam's",
+    "all": "All",
+    "from": "From",
+    "item": "item",
+    "items": "items",
+    "article": "item",
+    "articles": "items"
+  },
+  "profile": {
+    "title": "My profile",
+    "subtitle": "Manage your Portal Coffee account",
+    "tabs": {
+      "profile": "Profile",
+      "addresses": "Addresses",
+      "security": "Security",
+      "preferences": "Preferences",
+      "orders": "Orders"
+    },
+    "personalInfo": {
+      "title": "Personal information",
+      "description": "This information is used for your orders and deliveries.",
+      "email": "Email",
+      "emailInfo": "Your email is managed by Keycloak and cannot be changed from the app.",
+      "dateOfBirth": "Date of birth",
+      "saving": "Saving...",
+      "saveChanges": "Save changes"
+    },
+    "addresses": {
+      "title": "Delivery addresses",
+      "description": "Add your addresses to order faster.",
+      "emptyDescription": "Add an address to speed up your next orders.",
+      "addFirst": "Add my first address",
+      "setDefault": "Set as default"
+    },
+    "security": {
+      "title": "Account",
+      "description": "Manage your account security settings.",
+      "passwordTitle": "Password",
+      "passwordDescription": "To protect your account, password changes are handled in a secure area."
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customize your notifications and customer preferences.",
+      "promotionsTitle": "Messages and promotions",
+      "promotionsDescription": "Receive news, offers and discounts."
+    },
+    "orders": {
+      "title": "Orders",
+      "description": "Find your recent orders.",
+      "emptyTitle": "No orders displayed",
+      "emptyDescription": "Your order history can be displayed here."
+    }
+  },
+  "deliveryTime": {
+    "title": "Delivery time",
+    "asap": "As soon as possible",
+    "schedule": "Schedule for later",
+    "scheduledFor": "Scheduled for"
+  },
+  "orders": {
+    "title": "My orders",
+    "subtitle": "Find your recent orders and track their progress.",
+    "emptyTitle": "No orders",
+    "emptyDescription": "You have not placed any orders yet.",
+    "orderNow": "Order now",
+    "errorTitle": "Unable to load orders",
+    "errorDescription": "Please try again in a few moments.",
+    "retry": "Retry",
+    "type": "Type",
+    "delivery": "Delivery",
+    "pickup": "Takeaway",
+    "total": "Total",
+    "trackOrder": "Track order",
+    "createdAt": "Ordered on",
+    "deliveryTime": "Desired time",
+    "active": "Active orders",
+    "history": "Order history",
+    "badges": {
+      "active": "In progress",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  }
+}

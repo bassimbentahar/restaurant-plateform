@@ -4,5 +4,7 @@
   "private": true,
   "scripts": {
     "start": "ng serve client-app"
+  },
+  "dependencies": {
   }
 }

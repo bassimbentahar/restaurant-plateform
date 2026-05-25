@@ -24,6 +24,7 @@ import {
 import {UserAddress, UserAddressRequest} from '../../models/user-address.model';
 import {environment} from '../../../environments/environment';
 import {AddressService} from '../../services/AddressService';
+import {TranslatePipe} from "@ngx-translate/core";
 
 declare const google: any;
 
@@ -43,7 +44,8 @@ declare const google: any;
     IonLabel,
     IonInput,
     IonButton,
-    IonToggle
+    IonToggle,
+    TranslatePipe
   ]
 })
 export class AddressModal implements OnInit, AfterViewInit {

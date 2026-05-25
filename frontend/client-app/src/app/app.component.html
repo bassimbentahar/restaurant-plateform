@@ -2,7 +2,7 @@
   <ion-menu side="start" contentId="main-content" type="overlay">
     <ion-header>
       <ion-toolbar>
-        <ion-title>Menu</ion-title>
+        <ion-title>{{ 'app.menu' | translate }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -17,12 +17,12 @@
             @if (user$ | async; as user) {
               <ion-label>{{ user.firstname }} {{ user.lastname }}</ion-label>
             } @else {
-              <ion-label>Guest</ion-label>
+              <ion-label>{{ 'auth.guest' | translate }}</ion-label>
             }
           </ion-text>
         } @else {
           <ion-text color="medium">
-            <h2>Guest</h2>
+            <h2>{{ 'auth.guest' | translate }}</h2>
           </ion-text>
         }
       </div>
@@ -36,7 +36,7 @@
               (click)="navigateTo(item.route!, item.requiresAuth ?? false)"
             >
               <ion-icon slot="start" [name]="item.icon"></ion-icon>
-              <ion-label>{{ item.label }}</ion-label>
+              <ion-label>{{ item.label | translate }}</ion-label>
             </ion-item>
           }
         }
@@ -44,14 +44,14 @@
         @if (!isLoggedIn()) {
           <ion-item button detail="false" (click)="goToAuth()">
             <ion-icon slot="start" name="log-in-outline"></ion-icon>
-            <ion-label>Login</ion-label>
+            <ion-label>{{ 'auth.login' | translate }}</ion-label>
           </ion-item>
         }
 
         @if (isLoggedIn()) {
           <ion-item button detail="false" (click)="logout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
-            <ion-label>Logout</ion-label>
+            <ion-label>{{ 'auth.logout' | translate }}</ion-label>
           </ion-item>
         }
       </ion-list>
@@ -65,9 +65,13 @@
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
 
-        <ion-title>{{ pageTitle() }}</ion-title>
+        <ion-title>{{ pageTitle() | translate }}</ion-title>
 
         <ion-buttons slot="end">
+          <ion-button (click)="openLanguagePopover($event)">
+            {{ currentLanguage.toUpperCase() }}
+          </ion-button>
+
           <ion-button (click)="goToCart()">
             <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
             @if (cartCount() > 0) {
@@ -80,4 +84,20 @@
 
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </div>
+
+  <ion-popover
+    [isOpen]="isLanguagePopoverOpen"
+    [event]="languagePopoverEvent"
+    (didDismiss)="isLanguagePopoverOpen = false"
+  >
+    <ng-template>
+      <ion-list>
+        @for (language of languages; track language.code) {
+          <ion-item button (click)="changeLanguage(language.code)">
+            <ion-label>{{ language.short }} — {{ language.label }}</ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    </ng-template>
+  </ion-popover>
 </ion-app>

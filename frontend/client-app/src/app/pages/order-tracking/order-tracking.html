@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'order.tracking.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading()) {
+    <div class="tracking-page">
+      <ion-card class="status-card skeleton-card">
+        <ion-card-content>
+          <div class="skeleton-line skeleton-small"></div>
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line"></div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="skeleton-card">
+        <ion-card-content>
+          <div class="skeleton-line skeleton-section-title"></div>
+
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton-step">
+              <div class="skeleton-circle"></div>
+              <div class="skeleton-step-content">
+                <div class="skeleton-line skeleton-step-title"></div>
+                <div class="skeleton-line skeleton-step-text"></div>
+              </div>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+    </div>
+  } @else {
+    <div class="tracking-page">
+      <ion-card class="status-card">
+        <ion-card-content>
+          <div class="status-card__top">
+            <div>
+              <span class="eyebrow">{{ 'order.tracking.order' | translate }}</span>
+              <h1>{{ order()?.orderNumber }}</h1>
+            </div>
+
+            <div class="status-badge" [class.cancelled]="isCancelled()">
+              {{ statusLabelKey() | translate }}
+            </div>
+          </div>
+
+          <div class="total-line">
+            <span>{{ 'order.tracking.total' | translate }}</span>
+            <strong>{{ order()?.total | number:'1.2-2' }} CHF</strong>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      @if (isCancelled()) {
+        <ion-card class="cancelled-card">
+          <ion-card-content>
+            <ion-icon name="close-circle-outline"></ion-icon>
+            <h2>{{ statusLabelKey() | translate }}</h2>
+            <p>{{ 'order.tracking.cancelledMessage' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-card>
+          <ion-card-content>
+            <h2 class="section-title">
+              {{ 'order.tracking.progression' | translate }}
+            </h2>
+
+            <div class="timeline">
+              @for (step of steps(); track step.status; let i = $index) {
+                <div
+                  class="timeline-step"
+                  [class.done]="i <= currentStepIndex()"
+                  [class.active]="i === currentStepIndex()"
+                >
+                  <div class="timeline-step__icon">
+                    <ion-icon [name]="step.icon"></ion-icon>
+                  </div>
+
+                  <div class="timeline-step__content">
+                    <strong>{{ step.titleKey | translate }}</strong>
+                    <span>{{ step.descriptionKey | translate }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <div class="actions">
+        <ion-button expand="block" (click)="goToOrders()">
+          {{ 'order.tracking.viewOrders' | translate }}
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" color="medium" (click)="goHome()">
+          {{ 'order.tracking.backToMenu' | translate }}
+        </ion-button>
+      </div>
+    </div>
+  }
+</ion-content>

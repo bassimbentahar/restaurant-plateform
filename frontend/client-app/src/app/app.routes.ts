@@ -40,9 +40,27 @@ export const routes: Routes = [
       import('./pages/checkout/checkout').then((m) => m.Checkout),
   },
   {
+    path: 'orders/:id/confirmation',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/order-tracking/order-tracking').then(m => m.OrderTracking),
+  },
+  {
     path: 'cart',
     loadComponent: () =>
       import('./pages/cart/cart').then((m) => m.Cart),
+  },
+  {
+    path: 'orders',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/orders/orders').then(m => m.Orders),
+  },
+  {
+    path: 'orders/:id/tracking',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/order-tracking/order-tracking').then(m => m.OrderTracking),
   },
   {
     path: '',

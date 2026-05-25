@@ -8,6 +8,9 @@ import { AppComponent } from './app/app.component';
 import {Auth, authInterceptor, errorInterceptor, loggingInterceptor} from 'shared';
 import { environment } from './environments/environment';
 import {provideHttpClient, withInterceptors} from "@angular/common/http";
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import {LanguageService} from "./app/services/language";
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -20,7 +23,19 @@ bootstrapApplication(AppComponent, {
       authInterceptor,
       errorInterceptor
     ])),
+    provideTranslateService({
+      lang: 'fr',
+      fallbackLang: 'fr',
+      loader: provideTranslateHttpLoader({
+        prefix: '/i18n/',
+        suffix: '.json',
+      }),
+    }),
 
+    provideAppInitializer(() => {
+      const languageService = inject(LanguageService);
+      languageService.init();
+    }),
 
     provideAppInitializer(() => {
       const auth = inject(Auth);

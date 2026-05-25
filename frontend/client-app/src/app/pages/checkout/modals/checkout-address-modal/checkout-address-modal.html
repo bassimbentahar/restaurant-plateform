@@ -1,7 +1,7 @@
 <ion-content>
   <div class="checkout-address-modal">
     <div class="modal-header">
-      <h2>Adresse de livraison</h2>
+      <h2>{{ 'checkoutAddress.title' | translate }}</h2>
 
       <button class="close-btn" type="button" (click)="close()">
         <ion-icon name="close-outline"></ion-icon>
@@ -16,8 +16,8 @@
       @if (addresses().length === 0) {
         <div class="empty-state">
           <ion-icon name="location-outline"></ion-icon>
-          <h3>Aucune adresse enregistrée</h3>
-          <p>Ajoutez une adresse pour continuer votre commande.</p>
+          <h3>{{ 'checkoutAddress.emptyTitle' | translate }}</h3>
+          <p>{{ 'checkoutAddress.emptyDescription' | translate }}</p>
         </div>
       } @else {
         <div class="address-list">
@@ -37,7 +37,7 @@
                   <strong>{{ address.label }}</strong>
 
                   @if (address.defaultAddress) {
-                    <span>Par défaut</span>
+                    <span>{{ 'checkoutAddress.default' | translate }}</span>
                   }
                 </div>
 
@@ -73,7 +73,7 @@
       <div class="modal-actions">
         <ion-button expand="block" fill="outline" (click)="openCreateAddress()">
           <ion-icon name="add-outline" slot="start"></ion-icon>
-          Ajouter une adresse
+          {{ 'checkoutAddress.add' | translate }}
         </ion-button>
 
         <ion-button
@@ -81,7 +81,7 @@
           [disabled]="!selectedAddressId()"
           (click)="confirm()"
         >
-          Utiliser cette adresse
+          {{ 'checkoutAddress.useSelected' | translate }}
         </ion-button>
       </div>
     }

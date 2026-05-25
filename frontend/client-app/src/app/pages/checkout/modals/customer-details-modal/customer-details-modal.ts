@@ -10,6 +10,7 @@ import {
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
 import {swissPhoneValidator} from "../../../../validators/swiss-phone.validator";
+import {TranslatePipe} from "@ngx-translate/core";
 
 export interface CustomerDetailsModal {
   firstname: string;
@@ -26,6 +27,7 @@ export interface CustomerDetailsModal {
     IonContent,
     IonButton,
     IonIcon,
+    TranslatePipe,
   ],
   templateUrl: './customer-details-modal.html',
   styleUrl: './customer-details-modal.scss',

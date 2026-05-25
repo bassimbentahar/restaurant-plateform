@@ -9,6 +9,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
+import {TranslatePipe} from "@ngx-translate/core";
 
 export interface OrderNoteModalResult {
   note: string;
@@ -23,6 +24,7 @@ export interface OrderNoteModalResult {
     IonContent,
     IonButton,
     IonIcon,
+    TranslatePipe,
   ],
   templateUrl: './order-note-modal.html',
   styleUrl: './order-note-modal.scss',

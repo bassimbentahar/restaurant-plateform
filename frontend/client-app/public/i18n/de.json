@@ -1,0 +1,214 @@
+{
+  "language": {
+    "fr": "Französisch",
+    "en": "Englisch",
+    "de": "Deutsch",
+    "switchToFrench": "FR",
+    "switchToEnglish": "EN",
+    "switchToGerman": "DE"
+  },
+  "app": {
+    "title": "Portal Coffee",
+    "menu": "Menü"
+  },
+  "checkout": {
+    "title": "Bezahlung",
+    "orderDetails": "Bestelldetails",
+    "continueShopping": "Weiter einkaufen",
+    "customer": {
+      "defaultName": "Ihr Name",
+      "phoneRequired": "Telefonnummer erforderlich",
+      "phoneRequiredDescription": "Fügen Sie eine Telefonnummer hinzu, damit das Restaurant oder der Kurier Sie kontaktieren kann."
+    },
+    "orderType": {
+      "delivery": {
+        "title": "Lieferung",
+        "description": "Bestellung an Ihre Adresse erhalten"
+      },
+      "pickup": {
+        "title": "Zum Mitnehmen",
+        "description": "Abholung im Restaurant"
+      }
+    },
+    "delivery": {
+      "deliverable": "Adresse lieferbar",
+      "unavailable": "Lieferung an diese Adresse nicht verfügbar",
+      "outOfZone": "Diese Adresse liegt ausserhalb des Liefergebiets.",
+      "addressRequired": "Adresse erforderlich",
+      "addressRequiredDescription": "Fügen Sie eine Adresse hinzu, um Lieferoptionen zu sehen",
+      "addAddress": "Lieferadresse hinzufügen"
+    },
+    "deliveryTime": {
+      "desiredTime": "Gewünschte Zeit"
+    },
+    "note": {
+      "label": "Notiz",
+      "add": "Notiz hinzufügen",
+      "edit": "Notiz bearbeiten",
+      "placeholder": "Notiz für das Restaurant"
+    },
+    "payment": {
+      "title": "Zahlung",
+      "twintDescription": "Schnelle und sichere Zahlung",
+      "cash": "Barzahlung",
+      "cashDescription": "Zahlung bei Lieferung oder Abholung"
+    },
+    "summary": {
+      "title": "Bestellübersicht",
+      "subtotal": "Zwischensumme",
+      "serviceFee": "Servicegebühr",
+      "delivery": "Lieferung",
+      "total": "Total"
+    },
+    "submit": {
+      "loading": "Bestellung läuft...",
+      "pay": "Bestellen und bezahlen"
+    }
+  },
+  "auth": {
+    "guest": "Gast",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "welcomeTitle": "Willkommen bei Portal Coffee",
+    "welcomeDescription": "Melden Sie sich an, um schneller zu bestellen, Ihre Bestellungen zu verfolgen und Ihren Verlauf einzusehen.",
+    "register": "Konto erstellen",
+    "continueGuest": "Ohne Konto fortfahren"
+  },
+  "pages": {
+    "home": "Startseite",
+    "profile": "Profil",
+    "products": "Produkte",
+    "productDetails": "Produktdetails",
+    "cart": "Mein Warenkorb",
+    "checkout": "Bezahlung",
+    "category": "Kategorie",
+    "aboutUs": "Über uns",
+    "contact": "Kontakt",
+    "news": "Neuigkeiten",
+    "orders": "Meine Bestellungen"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "total": "Total",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "order": {
+    "tracking": {
+      "title": "Bestellverfolgung",
+      "order": "Bestellung",
+      "total": "Total",
+      "progression": "Fortschritt",
+      "viewOrders": "Meine Bestellungen",
+      "backToMenu": "Zurück zum Menü",
+      "cancelledMessage": "Die Bestellung wird nicht vorbereitet. Kontaktieren Sie das Restaurant bei Bedarf."
+    },
+    "status": {
+      "pending": "Bestellung gesendet",
+      "confirmed": "Bestellung bestätigt",
+      "preparing": "In Vorbereitung",
+      "ready": {
+        "pickup": "Abholbereit",
+        "delivery": "Bestellung bereit"
+      },
+      "outForDelivery": "Unterwegs",
+      "delivered": {
+        "pickup": "Abgeholt",
+        "delivery": "Geliefert"
+      },
+      "cancelled": "Bestellung storniert",
+      "rejected": "Bestellung abgelehnt",
+      "default": "Bestellverfolgung"
+    },
+    "steps": {
+      "pending": {
+        "title": "Bestellung gesendet",
+        "description": "Wir haben Ihre Bestellung erhalten."
+      },
+      "confirmed": {
+        "title": "Bestellung bestätigt",
+        "description": "Das Restaurant hat Ihre Bestellung angenommen."
+      },
+      "preparing": {
+        "title": "In Vorbereitung",
+        "description": "Ihre Bestellung wird vorbereitet."
+      },
+      "ready": {
+        "pickup": {
+          "title": "Abholbereit",
+          "description": "Ihre Bestellung ist zur Abholung bereit."
+        },
+        "delivery": {
+          "title": "Bereit",
+          "description": "Ihre Bestellung ist bereit."
+        }
+      },
+      "outForDelivery": {
+        "title": "Unterwegs",
+        "description": "Ihre Bestellung ist unterwegs."
+      },
+      "delivered": {
+        "pickup": {
+          "title": "Abgeholt",
+          "description": "Guten Appetit!"
+        },
+        "delivery": {
+          "title": "Geliefert",
+          "description": "Guten Appetit!"
+        }
+      }
+    }
+  },
+  "deliveryTime": {
+    "title": "Lieferzeit",
+    "asap": "So schnell wie möglich",
+    "schedule": "Später planen",
+    "scheduledFor": "Geplant für"
+  },
+  "orders": {
+    "title": "Meine Bestellungen",
+    "subtitle": "Hier finden Sie Ihre letzten Bestellungen und deren Status.",
+    "emptyTitle": "Keine Bestellungen",
+    "emptyDescription": "Sie haben noch keine Bestellung aufgegeben.",
+    "orderNow": "Jetzt bestellen",
+    "errorTitle": "Bestellungen konnten nicht geladen werden",
+    "errorDescription": "Bitte versuchen Sie es in Kürze erneut.",
+    "retry": "Erneut versuchen",
+    "type": "Typ",
+    "delivery": "Lieferung",
+    "pickup": "Zum Mitnehmen",
+    "total": "Total",
+    "trackOrder": "Bestellung verfolgen",
+    "createdAt": "Bestellt am",
+    "deliveryTime": "Gewünschte Zeit",
+    "active": "Aktive Bestellungen",
+    "history": "Bestellverlauf",
+    "badges": {
+      "active": "In Bearbeitung",
+      "delivered": "Geliefert",
+      "cancelled": "Storniert"
+    }
+  },
+  "address": {
+    "newTitle": "Neue Adresse",
+    "editTitle": "Adresse bearbeiten",
+    "searchLabel": "Adresse suchen",
+    "searchPlaceholder": "Adresse eingeben",
+    "selectedTitle": "Ausgewählte Adresse",
+    "label": "Adressname",
+    "labelPlaceholder": "Zuhause, Arbeit...",
+    "instructions": "Anweisungen",
+    "instructionsPlaceholder": "Etage, Tür, Hinweis...",
+    "defaultAddress": "Standardadresse",
+    "saveButton": "Adresse speichern",
+    "editButton": "Adresse bearbeiten",
+    "errors": {
+      "alreadyExists": "Diese Adresse ist bereits gespeichert",
+      "labelExists": "Dieser Name existiert bereits",
+      "labelRequired": "Name ist erforderlich",
+      "labelMinLength": "Mindestens 2 Zeichen",
+      "sameAsOriginal": "Diese Adresse ist identisch"
+    }
+  }
+}

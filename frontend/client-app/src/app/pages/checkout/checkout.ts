@@ -26,6 +26,10 @@ import {
   locationOutline,
   receiptOutline,
   timeOutline,
+  documentTextOutline,
+  chevronForwardOutline,
+  addOutline,
+  personOutline
 } from 'ionicons/icons';
 import { CartService } from '../../services/cart.service';
 import {CustomerDetailsModal} from "./modals/customer-details-modal/customer-details-modal";
@@ -37,6 +41,10 @@ import {modalEnterAnimation, modalLeaveAnimation} from "../../animations/modal.a
 import {DeliveryTimeModal, DeliveryTimeResult} from "./modals/delivery-time-modal/delivery-time-modal";
 import {RestaurantDeliveryService} from "../../services/RestaurantDeliveryService";
 import {OrderNoteModal, OrderNoteModalResult} from "./modals/order-note-modal/order-note-modal";
+import {OrderService} from "../../services/OrderService";
+import {finalize} from "rxjs";
+import {CreateOrderRequest} from "../../models/Order.model";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-checkout',
@@ -53,7 +61,8 @@ import {OrderNoteModal, OrderNoteModalResult} from "./modals/order-note-modal/or
     IonRadioGroup,
     IonRadio,
     IonButton,
-    IonIcon
+    IonIcon,
+    TranslatePipe
   ],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
@@ -66,7 +75,9 @@ export class Checkout implements OnInit {
   private readonly userService = inject(UserService);
   private readonly addressService = inject(AddressService);
   private readonly restaurantDeliveryService = inject(RestaurantDeliveryService);
-
+  private readonly orderService = inject(OrderService);
+  readonly submitting = signal(false);
+  readonly noteValue = signal('');
   //TODO séparer par restaurant
   restaurantId = "01000000-0000-0000-0000-000000000001";
   readonly deliveryTimeLabel = signal('Dès que possible');
@@ -96,7 +107,8 @@ export class Checkout implements OnInit {
     const validation = this.deliveryValidation();
     const hasPhone = !!this.form.controls.phone.value?.trim();
 
-    return this.form.invalid ||
+    return this.submitting() ||
+      this.form.invalid ||
       !hasPhone ||
       this.items().length === 0 ||
       (isDelivery && (!validation || !validation.deliverable));
@@ -130,6 +142,10 @@ export class Checkout implements OnInit {
       checkmarkCircleOutline,
       alertCircleOutline,
       informationCircleOutline,
+      documentTextOutline,
+      chevronForwardOutline,
+      addOutline,
+      personOutline,
     });
   }
 
@@ -138,6 +154,7 @@ export class Checkout implements OnInit {
       this.router.navigate(['/home']);
       return;
     }
+
 
     // USER
     this.userService.loadMe().subscribe(user => {
@@ -190,6 +207,10 @@ export class Checkout implements OnInit {
         console.error('FAILED TO LOAD ADDRESSES', error);
       },
     });
+
+    this.form.controls.note.valueChanges.subscribe((note) => {
+      this.noteValue.set(note ?? '');
+    });
   }
 
   submitOrder(): void {
@@ -198,52 +219,76 @@ export class Checkout implements OnInit {
       return;
     }
 
-    const request = {
-      ...this.form.getRawValue(),
+    const raw = this.form.getRawValue();
+
+    const request: CreateOrderRequest = {
+      restaurantId: this.restaurantId,
+
+      addressId: this.orderType() === 'DELIVERY'
+        ? this.selectedAddress()?.id ?? null
+        : null,
+
+      orderType: this.orderType(),
+
+      deliveryTimeType: raw.deliveryTime as 'ASAP' | 'SCHEDULED',
+      scheduledDate: this.scheduledDate(),
+      scheduledTime: this.scheduledTime(),
+
+      customerFirstname: raw.firstname.trim(),
+      customerLastname: raw.lastname.trim(),
+      customerPhone: raw.phone.trim(),
+
+      note: this.noteValue().trim(),
+
+      subtotal: this.roundMoney(this.subtotal()),
+      serviceFee: this.roundMoney(this.serviceFee()),
+      deliveryFee: this.roundMoney(this.deliveryFee()),
+      total: this.roundMoney(this.total()),
+
       items: this.items().map((item) => ({
         productId: item.productId,
         productName: item.productName,
-        productImage: item.productImage,
-        deliveryTimeType: this.form.controls.deliveryTime.value,
-        scheduledDate: this.scheduledDate(),
-        scheduledTime: this.scheduledTime(),
+
+        variantId: item.selectedVariant?.variantId ?? null,
+        variantName: item.selectedVariant?.variantName ?? null,
+
         quantity: item.quantity,
 
-        selectedVariant: item.selectedVariant
-          ? {
-            variantId: item.selectedVariant.variantId,
-            variantName: item.selectedVariant.variantName,
-            basePrice: item.selectedVariant.basePrice,
-          }
-          : null,
+        baseUnitPrice: this.roundMoney(item.baseUnitPrice),
+        unitFinalPrice: this.roundMoney(item.unitFinalPrice),
+        lineTotalPrice: this.roundMoney(item.lineTotalPrice),
 
-        selectedOptions: item.selectedOptions.map((option) => ({
+        specialInstructions: item.specialInstructions?.trim() || '',
+
+        options: item.selectedOptions.map((option) => ({
           optionGroupId: option.optionGroupId,
           optionGroupName: option.optionGroupName,
-          optionId: option.optionId,
+
+          optionItemId: option.optionId,
           optionName: option.optionName,
-          priceDelta: option.priceDelta,
+
+          priceDelta: this.roundMoney(option.priceDelta),
         })),
-
-        baseUnitPrice: item.baseUnitPrice,
-        unitFinalPrice: item.unitFinalPrice,
-        lineTotalPrice: item.lineTotalPrice,
-
-        specialInstructions: item.specialInstructions ?? '',
       })),
-      subtotal: this.subtotal(),
-      serviceFee: this.serviceFee(),
-      deliveryFee: this.deliveryFee(),
-      total: this.total(),
     };
 
-    console.log('ORDER REQUEST', request);
+    this.submitting.set(true);
 
-    // Plus tard :
-    // this.orderService.createOrder(request).subscribe(order => {
-    //   this.cartService.clear();
-    //   this.router.navigate(['/orders', order.id, 'confirmation']);
-    // });
+    this.orderService.createOrder(request)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: (order) => {
+          this.cartService.clearCart();
+          this.router.navigate(['/orders', order.id, 'confirmation']);
+        },
+        error: (error) => {
+          console.error('CREATE ORDER ERROR', error);
+        },
+      });
+  }
+
+  private roundMoney(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
   goBackToMenu(): void {
@@ -344,14 +389,11 @@ export class Checkout implements OnInit {
       address.longitude,
     ).subscribe({
       next: (validation) => {
-        console.log('DELIVERY VALIDATION RESULT', validation);
 
         this.deliveryValidation.set(validation);
         this.deliveryFeeValue.set(validation.deliverable ? validation.deliveryFee : 0);
       },
       error: (error) => {
-        console.error('DELIVERY VALIDATION ERROR', error);
-
         this.deliveryValidation.set({
           deliverable: false,
           deliveryFee: 0,
@@ -422,8 +464,12 @@ export class Checkout implements OnInit {
     const { data, role } = await modal.onWillDismiss<OrderNoteModalResult>();
 
     if (role === 'save' && data) {
-      this.form.patchValue({
-        note: data.note,
+      this.noteValue.set(data.note ?? '');
+
+      queueMicrotask(() => {
+        this.form.patchValue({
+          note: data.note ?? '',
+        });
       });
     }
   }

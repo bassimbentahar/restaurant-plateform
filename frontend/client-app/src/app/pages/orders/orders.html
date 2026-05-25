@@ -1,0 +1,155 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshOrders($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  @if (loading()) {
+    <div class="orders-page">
+      <div class="orders-list">
+        @for (i of [1,2,3,4]; track i) {
+          <ion-card class="order-card skeleton">
+            <ion-card-content>
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line small"></div>
+            </ion-card-content>
+          </ion-card>
+        }
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="state-wrapper">
+      <ion-icon name="alert-circle-outline" class="state-icon error"></ion-icon>
+      <h2>{{ 'orders.errorTitle' | translate }}</h2>
+      <p>{{ 'orders.errorDescription' | translate }}</p>
+
+      <ion-button (click)="loadOrders()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        {{ 'orders.retry' | translate }}
+      </ion-button>
+    </div>
+  } @else if (!hasOrders()) {
+    <div class="state-wrapper">
+      <ion-icon name="receipt-outline" class="state-icon"></ion-icon>
+      <h2>{{ 'orders.emptyTitle' | translate }}</h2>
+      <p>{{ 'orders.emptyDescription' | translate }}</p>
+
+      <ion-button (click)="goToMenu()">
+        {{ 'orders.orderNow' | translate }}
+      </ion-button>
+    </div>
+  } @else {
+    <div class="orders-page">
+      <div class="page-header">
+        <h1>{{ 'orders.title' | translate }}</h1>
+        <p>{{ 'orders.subtitle' | translate }}</p>
+      </div>
+
+      @if (activeOrders().length > 0) {
+        <section class="orders-section orders-section--active">
+          <div class="section-heading">
+            <h2>{{ 'orders.active' | translate }}</h2>
+            <span>{{ activeOrders().length }}</span>
+          </div>
+
+          <div class="orders-list">
+            @for (order of activeOrders(); track trackByOrderId($index, order)) {
+              <ng-container
+                *ngTemplateOutlet="orderCardTemplate; context: { order: order, highlighted: true }"
+              ></ng-container>
+            }
+          </div>
+        </section>
+      }
+
+      @if (pastOrders().length > 0) {
+        <section class="orders-section">
+          <div class="section-heading">
+            <h2>{{ 'orders.history' | translate }}</h2>
+            <span>{{ pastOrders().length }}</span>
+          </div>
+
+          <div class="orders-list">
+            @for (order of pastOrders(); track trackByOrderId($index, order)) {
+              <ng-container
+                *ngTemplateOutlet="orderCardTemplate; context: { order: order, highlighted: false }"
+              ></ng-container>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+
+  <ng-template #orderCardTemplate let-order="order" let-highlighted="highlighted">
+    <ion-card
+      class="order-card"
+      [class.order-card--active]="highlighted"
+      button
+      (click)="openTracking(order)"
+    >
+      <ion-card-content>
+        <div class="order-card__top">
+          <div>
+            <span class="eyebrow">{{ 'order.tracking.order' | translate }}</span>
+            <h2>{{ order.orderNumber }}</h2>
+          </div>
+
+          <div class="badges-column">
+            <span class="order-state-badge" [ngClass]="orderStateClass(order)">
+              {{ orderStateKey(order) | translate }}
+            </span>
+
+            <span class="status-badge">
+              {{ statusLabelKey(order) | translate }}
+            </span>
+          </div>
+        </div>
+
+        <div class="order-card__meta">
+          <div>
+            <span>{{ 'orders.type' | translate }}</span>
+            <strong>
+              {{ (order.orderType === 'PICKUP' ? 'orders.pickup' : 'orders.delivery') | translate }}
+            </strong>
+          </div>
+
+          <div>
+            <span>{{ 'orders.total' | translate }}</span>
+            <strong>{{ order.total | number:'1.2-2' }} CHF</strong>
+          </div>
+        </div>
+
+        <div class="order-card__bottom">
+          <div class="order-info-pill">
+            <span class="order-info-pill__label">
+              {{ 'orders.createdAt' | translate }}
+            </span>
+            <strong>
+              {{ order.createdAt | date:'dd.MM.yyyy HH:mm' }}
+            </strong>
+          </div>
+
+          <div class="order-info-pill">
+            <span class="order-info-pill__label">
+              {{ 'orders.deliveryTime' | translate }}
+            </span>
+
+            @if (deliveryTimeData(order).type === 'ASAP') {
+              <strong>{{ 'deliveryTime.asap' | translate }}</strong>
+            } @else {
+              <strong>
+                {{ 'deliveryTime.scheduledFor' | translate }}
+                {{ $any(deliveryTimeData(order)).date | date:'dd.MM.yyyy HH:mm' }}
+              </strong>
+            }
+          </div>
+
+          <div class="details-link">
+            {{ 'orders.trackOrder' | translate }}
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

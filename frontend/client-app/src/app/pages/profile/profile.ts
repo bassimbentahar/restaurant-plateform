@@ -16,6 +16,7 @@ import {Auth} from "shared";
 import {AddressService} from "../../services/AddressService";
 import {AddressModal} from "../address-modal/address-modal";
 import {swissPhoneValidator} from "../../validators/swiss-phone.validator";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +31,8 @@ import {swissPhoneValidator} from "../../validators/swiss-phone.validator";
     IonButton,
     IonAvatar,
     IonIcon,
-    IonToggle
+    IonToggle,
+    TranslatePipe
   ]
 })
 export class Profile implements OnInit {

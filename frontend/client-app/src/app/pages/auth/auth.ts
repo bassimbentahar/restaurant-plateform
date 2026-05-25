@@ -2,6 +2,7 @@ import {Component, inject} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import { IonButton, IonContent } from '@ionic/angular/standalone';
 import {Auth} from "shared";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-auth',
@@ -11,7 +12,8 @@ import {Auth} from "shared";
   imports: [
     IonContent,
     IonButton,
-    RouterLink
+    RouterLink,
+    TranslatePipe
   ]
 })
 export class AuthPage {

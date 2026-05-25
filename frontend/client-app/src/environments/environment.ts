@@ -8,5 +8,6 @@ export const environment = {
     pkce: true,
   },
   apiUrl: 'http://localhost:8080',
+  wsUrl: 'ws://localhost:8080',
   googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk'
 };

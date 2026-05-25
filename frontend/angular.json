@@ -22,6 +22,10 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "client-app/src/main.ts",
+            "polyfills": [
+              "zone.js",
+              "client-app/src/polyfills.ts"
+            ],
             "tsConfig": "client-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [

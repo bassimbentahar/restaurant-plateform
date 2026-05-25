@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>My Cart</ion-title>
+    <ion-title>{{ 'cart.title' | translate }}</ion-title>
 
     <ion-buttons slot="end">
       @if (cartCount() > 0) {
@@ -20,8 +20,10 @@
   @if (items().length === 0) {
     <div class="empty-cart">
       <ion-icon name="cart-outline" class="empty-icon"></ion-icon>
-      <h2>Your cart is empty</h2>
-      <ion-button (click)="backToProducts()">Browse products</ion-button>
+      <h2>{{ 'cart.empty' | translate }}</h2>
+      <ion-button (click)="backToProducts()">
+        {{ 'cart.browseProducts' | translate }}
+      </ion-button>
     </div>
   } @else {
     <ion-grid>
@@ -48,7 +50,7 @@
 
                     @if (item.selectedVariant) {
                       <p class="muted">
-                        Size: {{ item.selectedVariant.variantName }}
+                        {{ 'cart.size' | translate }}: {{ item.selectedVariant.variantName }}
                       </p>
                     }
 
@@ -71,7 +73,7 @@
 
                     <div class="price-block">
                       <p>
-                        Unit price:
+                        {{ 'cart.unitPrice' | translate }}:
                         <strong>
                           {{ currency().currencySymbol }} {{ item.unitFinalPrice }}
                         </strong>
@@ -90,7 +92,7 @@
                       </div>
 
                       <p class="line-total">
-                        Total:
+                        {{ 'cart.total' | translate }}:
                         <strong>
                           {{ currency().currencySymbol }} {{ item.lineTotalPrice }}
                         </strong>
@@ -107,17 +109,17 @@
 
     <div class="cart-summary">
       <h2>
-        Cart total:
+        {{ 'cart.cartTotal' | translate }}:
         <span>{{ currency().currencySymbol }} {{ cartTotal() }}</span>
       </h2>
 
       <div class="summary-actions">
         <ion-button fill="outline" color="medium" (click)="clearCart()">
-          Clear cart
+          {{ 'cart.clearCart' | translate }}
         </ion-button>
 
         <ion-button (click)="checkout()">
-          Checkout
+          {{ 'cart.checkout' | translate }}
         </ion-button>
       </div>
     </div>

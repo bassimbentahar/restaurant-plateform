@@ -1,8 +1,7 @@
 <ion-content>
   <div class="modal-card">
-
     <div class="modal-header">
-      <h2>Your details</h2>
+      <h2>{{ 'customerDetails.title' | translate }}</h2>
 
       <button class="close-btn" type="button" (click)="close()">
         <ion-icon name="close-outline"></ion-icon>
@@ -10,19 +9,18 @@
     </div>
 
     <form [formGroup]="form" class="form">
-
       <div class="form-field">
-        <label>First name</label>
+        <label>{{ 'customerDetails.firstname' | translate }}</label>
         <input formControlName="firstname" />
       </div>
 
       <div class="form-field">
-        <label>Last name</label>
+        <label>{{ 'customerDetails.lastname' | translate }}</label>
         <input formControlName="lastname" />
       </div>
 
       <div class="form-field">
-        <label>Phone number</label>
+        <label>{{ 'customerDetails.phone' | translate }}</label>
         <input
           formControlName="phone"
           type="tel"
@@ -30,21 +28,22 @@
           (blur)="formatSwissPhone()"
         />
       </div>
+
       @if (hasPhoneError()) {
         <div class="error-message">
-          Numéro suisse invalide. Exemple : +41 79 123 45 67
+          {{ 'customerDetails.errors.invalidSwissPhone' | translate }}
         </div>
       }
+
       @if (hasPhoneRequiredError()) {
         <div class="error-message">
-          Le numéro de téléphone est obligatoire.
+          {{ 'customerDetails.errors.phoneRequired' | translate }}
         </div>
       }
+
       <ion-button expand="block" class="save-btn" (click)="save()">
-        Save
+        {{ 'common.save' | translate }}
       </ion-button>
-
     </form>
-
   </div>
 </ion-content>

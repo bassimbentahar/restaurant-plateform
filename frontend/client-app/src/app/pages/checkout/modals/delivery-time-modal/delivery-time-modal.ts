@@ -14,6 +14,7 @@ import {
   DeliverySlotDay,
 } from '../../../../models/delivery-slots.model';
 import {DeliverySlotService} from "../../../../services/DeliverySlotService";
+import {TranslatePipe} from "@ngx-translate/core";
 
 export interface DeliveryTimeResult {
   type: 'ASAP' | 'SCHEDULED';
@@ -32,6 +33,7 @@ export interface DeliveryTimeResult {
     IonButton,
     IonIcon,
     IonSpinner,
+    TranslatePipe,
   ],
   templateUrl: './delivery-time-modal.html',
   styleUrl: './delivery-time-modal.scss',

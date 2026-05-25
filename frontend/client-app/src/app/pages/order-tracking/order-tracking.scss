@@ -1,0 +1,268 @@
+ion-content {
+  --background: #f7f2ed;
+}
+
+.tracking-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+ion-card {
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(47, 33, 24, 0.08);
+}
+
+.status-card {
+  background: #fff;
+}
+
+.status-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  .eyebrow {
+    display: block;
+    color: #8a817a;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  h1 {
+    margin: 6px 0 0;
+    font-size: 26px;
+    font-weight: 900;
+    color: #2f2118;
+  }
+}
+
+.status-badge {
+  background: rgba(122, 84, 56, 0.12);
+  color: #7a5438;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &.cancelled {
+    background: #fff1f1;
+    color: #d32f2f;
+  }
+}
+
+.total-line {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #eee2d8;
+  display: flex;
+  justify-content: space-between;
+  font-size: 17px;
+
+  strong {
+    color: #2f2118;
+    font-weight: 900;
+  }
+}
+
+.section-title {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #2f2118;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  padding-bottom: 24px;
+  opacity: 0.45;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 44px;
+    left: 21px;
+    width: 2px;
+    height: calc(100% - 44px);
+    background: #e5ddd6;
+  }
+
+  &.done,
+  &.active {
+    opacity: 1;
+  }
+
+  &.done:not(:last-child)::after {
+    background: #7a5438;
+  }
+
+  &.active .timeline-step__icon {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 6px rgba(122, 84, 56, 0.12);
+  }
+}
+
+.timeline-step__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f4eee8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7a5438;
+  transition: 0.2s ease;
+
+  ion-icon {
+    font-size: 22px;
+  }
+}
+
+.timeline-step__content {
+  padding-top: 2px;
+
+  strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 900;
+    color: #2f2118;
+  }
+
+  span {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: #6f625a;
+    line-height: 1.35;
+  }
+}
+
+.cancelled-card {
+  text-align: center;
+  background: #fff1f1;
+
+  ion-icon {
+    font-size: 48px;
+    color: #d32f2f;
+  }
+
+  h2 {
+    margin: 12px 0 6px;
+    color: #2f2118;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0;
+    color: #6f625a;
+  }
+}
+
+.actions {
+  margin-top: 18px;
+
+  ion-button {
+    --border-radius: 16px;
+    height: 52px;
+    font-weight: 900;
+  }
+
+  ion-button:not([fill='clear']) {
+    --background: #7a5438;
+  }
+}
+.skeleton-card {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.skeleton-line,
+.skeleton-circle {
+  background: linear-gradient(
+      90deg,
+      #eee2d8 25%,
+      #f8f2ec 37%,
+      #eee2d8 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.35s ease infinite;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.skeleton-small {
+  width: 90px;
+}
+
+.skeleton-title {
+  width: 220px;
+  height: 26px;
+}
+
+.skeleton-section-title {
+  width: 160px;
+  height: 22px;
+  margin-bottom: 22px;
+}
+
+.skeleton-step {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.skeleton-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+.skeleton-step-title {
+  width: 55%;
+  height: 16px;
+}
+
+.skeleton-step-text {
+  width: 75%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
+}
+@media (max-width: 640px) {
+  .tracking-page {
+    padding: 16px;
+  }
+
+  .status-card__top {
+    flex-direction: column;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+}

@@ -1,276 +1,279 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Checkout</ion-title>
+    <ion-title>{{ 'checkout.title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form [formGroup]="form">
-  <div class="checkout-page">
-    <main class="checkout-main">
-      <ion-card>
-        <ion-card-content>
-          <div class="section-title">
-            <ion-icon name="receipt-outline"></ion-icon>
-            <h2>Détails de commande</h2>
-          </div>
+    <div class="checkout-page">
+      <main class="checkout-main">
+        <ion-card>
+          <ion-card-content>
+            <div class="section-title">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <h2>{{ 'checkout.orderDetails' | translate }}</h2>
+            </div>
 
-          <!-- 👤 CUSTOMER -->
-          <button class="checkout-row" type="button" (click)="openCustomerDetailsModal()">
-            <ion-icon name="person-outline"></ion-icon>
+            <button class="checkout-row" type="button" (click)="openCustomerDetailsModal()">
+              <ion-icon name="person-outline"></ion-icon>
 
-            <div class="checkout-row__content">
-              <strong>
-                {{ form.controls.firstname.value || 'Votre nom' }}
-                {{ form.controls.lastname.value }}
-              </strong>
-              @if (!form.controls.phone.value) {
-                <div class="delivery-status delivery-status--warning clickable" (click)="openCustomerDetailsModal()">
+              <div class="checkout-row__content">
+                <strong>
+                  {{ form.controls.firstname.value || ('checkout.customer.defaultName' | translate) }}
+                  {{ form.controls.lastname.value }}
+                </strong>
+
+                @if (!form.controls.phone.value) {
+                  <div class="delivery-status delivery-status--warning clickable" (click)="openCustomerDetailsModal()">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+
+                    <div>
+                      <strong>{{ 'checkout.customer.phoneRequired' | translate }}</strong>
+                      <span>{{ 'checkout.customer.phoneRequiredDescription' | translate }}</span>
+                    </div>
+
+                    <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+                  </div>
+                } @else {
+                  <span>{{ form.controls.phone.value }}</span>
+                }
+              </div>
+
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+
+            <ion-radio-group formControlName="orderType">
+              <div class="choice-grid">
+                <label class="choice-card">
+                  <ion-radio value="DELIVERY"></ion-radio>
+                  <div>
+                    <strong>{{ 'checkout.orderType.delivery.title' | translate }}</strong>
+                    <span>{{ 'checkout.orderType.delivery.description' | translate }}</span>
+                  </div>
+                </label>
+
+                <label class="choice-card">
+                  <ion-radio value="PICKUP"></ion-radio>
+                  <div>
+                    <strong>{{ 'checkout.orderType.pickup.title' | translate }}</strong>
+                    <span>{{ 'checkout.orderType.pickup.description' | translate }}</span>
+                  </div>
+                </label>
+              </div>
+            </ion-radio-group>
+
+            @if (form.controls.orderType.value === 'DELIVERY') {
+              @if (deliveryValidation() && deliveryValidation()?.deliverable === true) {
+                <div class="delivery-status delivery-status--success">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  <div>
+                    <strong>{{ 'checkout.delivery.deliverable' | translate }}</strong>
+                    <span>
+                      {{ 'checkout.summary.delivery' | translate }}:
+                      {{ deliveryValidation()?.deliveryFee | number:'1.2-2' }} CHF
+                      @if (deliveryValidation()?.zoneName) {
+                        · {{ deliveryValidation()?.zoneName }}
+                      }
+                    </span>
+                    <button
+                      type="button"
+                      class="delivery-status__action"
+                      (click)="openAddressModal()"
+                    >
+                      {{ 'address.editTitle' | translate }}
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @if (deliveryValidation() && deliveryValidation()?.deliverable === false) {
+                <div class="delivery-status delivery-status--danger">
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                  <div>
+                    <strong>{{ 'checkout.delivery.unavailable' | translate }}</strong>
+                    <span>
+                      {{ deliveryValidation()?.reason || ('checkout.delivery.outOfZone' | translate) }}
+                    </span>
+                    <button
+                      type="button"
+                      class="delivery-status__action"
+                      (click)="openAddressModal()"
+                    >
+                      {{ 'address.editTitle' | translate }}
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @if (!deliveryValidation()) {
+                <div class="delivery-status delivery-status--warning clickable" (click)="openAddressModal()">
                   <ion-icon name="information-circle-outline"></ion-icon>
 
                   <div>
-                    <strong>Numéro de téléphone requis</strong>
-                    <span>Ajoutez un numéro pour que le restaurant ou le livreur puisse vous contacter.</span>
+                    <strong>{{ 'checkout.delivery.addressRequired' | translate }}</strong>
+                    <span>{{ 'checkout.delivery.addressRequiredDescription' | translate }}</span>
                   </div>
 
                   <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
                 </div>
-                } @else{
-                <span>{{ form.controls.phone.value }}</span>
-                }
-            </div>
+              }
 
-            <ion-icon name="chevron-forward-outline"></ion-icon>
-          </button>
+              @if (form.controls.orderType.value === 'DELIVERY' && !selectedAddress()) {
+                <ion-button
+                  expand="block"
+                  class="add-address-btn"
+                  (click)="openAddressModal()"
+                >
+                  <ion-icon name="add-outline" slot="start"></ion-icon>
+                  {{ 'checkout.delivery.addAddress' | translate }}
+                </ion-button>
+              }
+            }
 
-          <!-- DELIVERY / PICKUP -->
-          <ion-radio-group formControlName="orderType">
-            <div class="choice-grid">
-              <label class="choice-card">
-                <ion-radio value="DELIVERY"></ion-radio>
-                <div>
-                  <strong>Livraison</strong>
-                  <span>Recevoir la commande à votre adresse</span>
-                </div>
-              </label>
+            <button class="checkout-row" type="button" (click)="openDeliveryTimeModal()">
+              <ion-icon name="time-outline"></ion-icon>
 
-              <label class="choice-card">
-                <ion-radio value="PICKUP"></ion-radio>
-                <div>
-                  <strong>À emporter</strong>
-                  <span>Retrait au restaurant</span>
-                </div>
-              </label>
-            </div>
-          </ion-radio-group>
-
-          <!-- 📍 ADDRESS -->
-          @if (form.controls.orderType.value === 'DELIVERY') {
-            @if (deliveryValidation() && deliveryValidation()?.deliverable === true) {
-              <div class="delivery-status delivery-status--success">
-                <ion-icon name="checkmark-circle-outline"></ion-icon>
-                <div>
-                  <strong>Adresse livrable</strong>
-                  <span>
-                    Livraison : {{ deliveryValidation()?.deliveryFee | number:'1.2-2' }} CHF
-                              @if (deliveryValidation()?.zoneName) {
-                                · {{ deliveryValidation()?.zoneName }}
-                              }
-                  </span>
-                  <button
-                    type="button"
-                    class="delivery-status__action"
-                    (click)="openAddressModal()"
-                  >
-                    Modifier l’adresse
-                  </button>
-                </div>
+              <div class="checkout-row__content">
+                <strong>{{ deliveryTimeLabel() }}</strong>
+                <span>{{ 'checkout.deliveryTime.desiredTime' | translate }}</span>
               </div>
-            }
 
-            @if (deliveryValidation() && deliveryValidation()?.deliverable === false) {
-              <div class="delivery-status delivery-status--danger">
-                <ion-icon name="alert-circle-outline"></ion-icon>
-                <div>
-                  <strong>Livraison indisponible à cette adresse</strong>
-                  <span>
-                    {{ deliveryValidation()?.reason || 'Cette adresse est hors zone de livraison.' }}
-                  </span>
-                  <button
-                    type="button"
-                    class="delivery-status__action"
-                    (click)="openAddressModal()"
-                  >
-                    Modifier l’adresse
-                  </button>
-                </div>
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+
+            <button class="checkout-row" type="button" (click)="openOrderNoteModal()">
+              <ion-icon name="document-text-outline"></ion-icon>
+
+              <div class="checkout-row__content">
+                <strong>
+                  {{ (noteValue() ? 'checkout.note.edit' : 'checkout.note.add') | translate }}
+                </strong>
+                <span>
+                  {{ noteValue() || ('checkout.note.placeholder' | translate) }}
+                </span>
               </div>
-            }
 
-            @if (!deliveryValidation()) {
-              <div class="delivery-status delivery-status--warning clickable" (click)="openAddressModal()">
-                <ion-icon name="information-circle-outline"></ion-icon>
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+          </ion-card-content>
+        </ion-card>
 
-                <div>
-                  <strong>Adresse requise</strong>
-                  <span>Ajoutez une adresse pour voir les options de livraison</span>
-                </div>
+        <ion-card>
+          <ion-card-content>
+            <div class="section-title">
+              <ion-icon name="card-outline"></ion-icon>
+              <h2>{{ 'checkout.payment.title' | translate }}</h2>
+            </div>
 
-                <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+            <ion-radio-group formControlName="paymentMethod">
+              <div class="choice-grid">
+                <label class="choice-card">
+                  <ion-radio value="TWINT"></ion-radio>
+                  <div>
+                    <strong>TWINT</strong>
+                    <span>{{ 'checkout.payment.twintDescription' | translate }}</span>
+                  </div>
+                </label>
+
+                <label class="choice-card">
+                  <ion-radio value="CASH"></ion-radio>
+                  <div>
+                    <strong>{{ 'checkout.payment.cash' | translate }}</strong>
+                    <span>{{ 'checkout.payment.cashDescription' | translate }}</span>
+                  </div>
+                </label>
               </div>
-            }
-            @if (form.controls.orderType.value === 'DELIVERY' && !selectedAddress()) {
-              <ion-button
-                expand="block"
-                class="add-address-btn"
-                (click)="openAddressModal()"
-              >
-                <ion-icon name="add-outline" slot="start"></ion-icon>
-                Ajouter une adresse de livraison
-              </ion-button>
-            }
-          }          <!-- ⏱ TIME -->
-          <button class="checkout-row" type="button" (click)="openDeliveryTimeModal()">
-            <ion-icon name="time-outline"></ion-icon>
+            </ion-radio-group>
+          </ion-card-content>
+        </ion-card>
+      </main>
 
-            <div class="checkout-row__content">
-              <strong>{{ deliveryTimeLabel() }}</strong>
-              <span>Heure souhaitée</span>
-            </div>
+      <aside class="checkout-summary">
+        <ion-card>
+          <ion-card-content>
+            <h2>{{ 'checkout.summary.title' | translate }}</h2>
 
-            <ion-icon name="chevron-forward-outline"></ion-icon>
-          </button>
+            <div class="summary-items">
+              @for (item of items(); track item.id) {
+                <div class="summary-item">
+                  <div>
+                    <strong>{{ item.quantity }} × {{ item.productName }}</strong>
 
-          <!-- 📝 NOTE -->
-          <button class="checkout-row" type="button" (click)="openOrderNoteModal()">
-            <ion-icon name="document-text-outline"></ion-icon>
+                    @if (item.selectedVariant) {
+                      <span>{{ item.selectedVariant.variantName }}</span>
+                    }
 
-            <div class="checkout-row__content">
-              <strong>
-                {{ form.controls.note.value ? 'Modifier la note' : 'Ajouter une note' }}
-              </strong>
-              <span>
-                {{ form.controls.note.value || 'Note pour le restaurant' }}
-              </span>
-            </div>
+                    @if (item.selectedOptions.length > 0) {
+                      @for (option of item.selectedOptions; track option.optionId) {
+                        <span>
+                          {{ option.optionGroupName }}: {{ option.optionName }}
+                          @if (option.priceDelta > 0) {
+                            (+{{ option.priceDelta | number:'1.2-2' }} CHF)
+                          }
+                        </span>
+                      }
+                    }
 
-            <ion-icon name="chevron-forward-outline"></ion-icon>
-          </button>
-
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-content>
-          <div class="section-title">
-            <ion-icon name="card-outline"></ion-icon>
-            <h2>Paiement</h2>
-          </div>
-
-          <ion-radio-group formControlName="paymentMethod">
-            <div class="choice-grid">
-              <label class="choice-card">
-                <ion-radio value="TWINT"></ion-radio>
-                <div>
-                  <strong>TWINT</strong>
-                  <span>Paiement rapide et sécurisé</span>
-                </div>
-              </label>
-
-              <label class="choice-card">
-                <ion-radio value="CASH"></ion-radio>
-                <div>
-                  <strong>Cash</strong>
-                  <span>Paiement à la livraison ou au retrait</span>
-                </div>
-              </label>
-            </div>
-          </ion-radio-group>
-        </ion-card-content>
-      </ion-card>
-    </main>
-
-    <aside class="checkout-summary">
-      <ion-card>
-        <ion-card-content>
-          <h2>Résumé de commande</h2>
-
-          <div class="summary-items">
-            @for (item of items(); track item.id) {
-              <div class="summary-item">
-                <div>
-                  <strong>{{ item.quantity }} × {{ item.productName }}</strong>
-
-                  @if (item.selectedVariant) {
-                    <span>
-                        {{ item.selectedVariant.variantName }}
-                    </span>
-                  }
-
-                  @if (item.selectedOptions.length > 0) {
-                    @for (option of item.selectedOptions; track option.optionId) {
+                    @if (item.specialInstructions) {
                       <span>
-                        {{ option.optionGroupName }}: {{ option.optionName }}
-                        @if (option.priceDelta > 0) {
-                          (+{{ option.priceDelta | number:'1.2-2' }} CHF)
-                        }
+                        {{ 'checkout.note.label' | translate }}: {{ item.specialInstructions }}
                       </span>
                     }
-                  }
 
-                  @if (item.specialInstructions) {
-                    <span>
-                      Note: {{ item.specialInstructions }}
-                    </span>
-                  }
-
-                  <span>{{ item.lineTotalPrice | number:'1.2-2' }} CHF</span>
+                    <span>{{ item.lineTotalPrice | number:'1.2-2' }} CHF</span>
+                  </div>
                 </div>
+              }
+            </div>
+
+            <div class="summary-lines">
+              <div>
+                <span>{{ 'checkout.summary.subtotal' | translate }}</span>
+                <strong>{{ subtotal() | number:'1.2-2' }} CHF</strong>
               </div>
-            }
-          </div>
 
-          <div class="summary-lines">
-            <div>
-              <span>Sous-total</span>
-              <strong>{{ subtotal() | number:'1.2-2' }} CHF</strong>
+              <div>
+                <span>{{ 'checkout.summary.serviceFee' | translate }}</span>
+                <strong>{{ serviceFee() | number:'1.2-2' }} CHF</strong>
+              </div>
+
+              <div>
+                <span>{{ 'checkout.summary.delivery' | translate }}</span>
+                <strong>{{ deliveryFee() | number:'1.2-2' }} CHF</strong>
+              </div>
+
+              <div class="summary-total">
+                <span>{{ 'checkout.summary.total' | translate }}</span>
+                <strong>{{ total() | number:'1.2-2' }} CHF</strong>
+              </div>
             </div>
 
-            <div>
-              <span>Frais de service</span>
-              <strong>{{ serviceFee() | number:'1.2-2' }} CHF</strong>
-            </div>
+            <ion-button
+              expand="block"
+              size="large"
+              class="submit-btn"
+              [disabled]="cannotSubmit()"
+              (click)="submitOrder()"
+            >
+              @if (submitting()) {
+                {{ 'checkout.submit.loading' | translate }}
+              } @else {
+                {{ 'checkout.submit.pay' | translate }}
+              }
+            </ion-button>
 
-            <div>
-              <span>Livraison</span>
-              <strong>{{ deliveryFee() | number:'1.2-2' }} CHF</strong>
-            </div>
-
-            <div class="summary-total">
-              <span>Total</span>
-              <strong>{{ total() | number:'1.2-2' }} CHF</strong>
-            </div>
-          </div>
-
-          <ion-button
-            expand="block"
-            size="large"
-            class="submit-btn"
-            [disabled]="cannotSubmit()"
-            (click)="submitOrder()"
-          >
-            Commander et payer
-          </ion-button>
-          <ion-button
-            expand="block"
-            fill="clear"
-            color="medium"
-            (click)="goBackToMenu()"
-          >
-            Continuer mes achats
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </aside>
-  </div>
+            <ion-button
+              expand="block"
+              fill="clear"
+              color="medium"
+              (click)="goBackToMenu()"
+            >
+              {{ 'checkout.continueShopping' | translate }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </aside>
+    </div>
   </form>
 </ion-content>

@@ -1,34 +1,34 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      {{ fromUpdate ? 'Modifier l’adresse' : 'Nouvelle adresse' }}
+      {{ (fromUpdate ? 'address.editTitle' : 'address.newTitle') | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-
   <form [formGroup]="addressForm" (ngSubmit)="save()" class="address-form">
 
     <div class="search-box">
-      <ion-label>Rechercher une adresse</ion-label>
+      <ion-label>{{ 'address.searchLabel' | translate }}</ion-label>
 
       <input
         id="address-autocomplete-input"
         class="google-address-input"
         type="text"
-        placeholder="Tapez votre adresse"
+        [placeholder]="'address.searchPlaceholder' | translate"
       />
+
       @if (addressExists) {
         <div class="error-message">
-          Cette adresse est déjà enregistrée
+          {{ 'address.errors.alreadyExists' | translate }}
         </div>
       }
     </div>
 
     @if (addressForm.value.street) {
       <div class="address-preview">
-        <h3>Adresse sélectionnée</h3>
+        <h3>{{ 'address.selectedTitle' | translate }}</h3>
 
         <p>
           {{ addressForm.value.street }}
@@ -40,12 +40,11 @@
     }
 
     <div class="form-section">
-
       <ion-item>
-        <ion-label position="stacked">Nom de l’adresse</ion-label>
+        <ion-label position="stacked">{{ 'address.label' | translate }}</ion-label>
         <ion-input
           formControlName="label"
-          placeholder="Maison, Travail..."
+          [placeholder]="'address.labelPlaceholder' | translate"
           [class.input-error]="labelExists"
           [class.shake]="shakeLabel">
         </ion-input>
@@ -53,37 +52,38 @@
 
       @if (labelExists) {
         <div class="error-message">
-          Ce nom existe déjà. Choisissez un autre nom.
+          {{ 'address.errors.labelExists' | translate }}
         </div>
       }
+
       @if (addressForm.get('label')?.touched && addressForm.get('label')?.invalid) {
         <div class="error-message">
           @if (addressForm.get('label')?.errors?.['required']) {
-            Le nom est obligatoire
+            {{ 'address.errors.labelRequired' | translate }}
           }
           @if (addressForm.get('label')?.errors?.['minlength']) {
-            Minimum 2 caractères
+            {{ 'address.errors.labelMinLength' | translate }}
           }
         </div>
       }
 
       <ion-item>
-        <ion-label position="stacked">Instructions</ion-label>
+        <ion-label position="stacked">{{ 'address.instructions' | translate }}</ion-label>
         <ion-input
           formControlName="instructions"
-          placeholder="Étage, porte, remarque...">
+          [placeholder]="'address.instructionsPlaceholder' | translate">
         </ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label>Adresse par défaut</ion-label>
+        <ion-label>{{ 'address.defaultAddress' | translate }}</ion-label>
         <ion-toggle formControlName="defaultAddress"></ion-toggle>
       </ion-item>
-
     </div>
+
     @if (addressForm.errors?.['sameAsOriginal'] && addressForm.dirty) {
       <div class="error-message">
-        Cette adresse est identique à l’adresse actuelle.
+        {{ 'address.errors.sameAsOriginal' | translate }}
       </div>
     }
 
@@ -92,12 +92,11 @@
       type="submit"
       class="save-btn"
       [disabled]="addressForm.invalid || labelExists || addressExists">
-      {{ fromUpdate ? 'Modifier l’adresse' : 'Enregistrer l’adresse' }}
+      {{ (fromUpdate ? 'address.editButton' : 'address.saveButton') | translate }}
     </ion-button>
+
     <ion-button expand="block" fill="clear" type="button" (click)="cancel()">
-      Annuler
+      {{ 'common.cancel' | translate }}
     </ion-button>
-
   </form>
-
 </ion-content>

@@ -5,11 +5,12 @@ import { addIcons } from 'ionicons';
 import { add, remove, trashOutline } from 'ionicons/icons';
 import { CartService } from '../../services/cart.service';
 import {Router} from "@angular/router";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-basket-panel',
   standalone: true,
-  imports: [CommonModule, IonButton, IonIcon],
+  imports: [CommonModule, IonButton, IonIcon, TranslatePipe],
   templateUrl: './basket-panel.html',
   styleUrl: './basket-panel.scss',
 })

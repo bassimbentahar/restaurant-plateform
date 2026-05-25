@@ -49,7 +49,8 @@ import './zone-flags';
  */
 import 'zone.js';  // Included with Angular CLI.
 
-
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+(window as any).global = window;

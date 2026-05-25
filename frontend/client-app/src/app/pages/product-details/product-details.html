@@ -16,14 +16,15 @@
       <ion-grid>
         <ion-row class="product-image-row">
           @if (!hasImageError(menuItem)) {
-          <img
-            class="product-image"
-            [src]="imageService.getImageUrl(menuItem.thumb)"
-            (error)="onImageError(menuItem)"
-            [alt]="menuItem.title"
-          />
+            <img
+              class="product-image"
+              [src]="imageService.getImageUrl(menuItem.thumb)"
+              (error)="onImageError(menuItem)"
+              [alt]="menuItem.title"
+            />
           }
         </ion-row>
+
         <ion-row>
           <ion-col size="12" class="favourite-col">
             <ion-button fill="clear" (click)="toggleFavourite()">
@@ -44,7 +45,7 @@
 
         @if (menuItem.variants?.length) {
           <ion-list class="size-list">
-            <ion-list-header>Sizes</ion-list-header>
+            <ion-list-header>{{ 'product.sizes' | translate }}</ion-list-header>
 
             <ion-radio-group
               [value]="selectedVariant()?.id"
@@ -110,7 +111,8 @@
                       <span class="required">*</span>
                     }
                     <small class="group-rule">
-                      min {{ group.minSelect }} / max {{ group.maxSelect }}
+                      {{ 'product.min' | translate }} {{ group.minSelect }} /
+                      {{ 'product.max' | translate }} {{ group.maxSelect }}
                     </small>
                   </ion-list-header>
 
@@ -152,7 +154,7 @@
           <ion-col size="7">
             <ion-button expand="block" (click)="addToCart()">
               <ion-icon slot="start" name="cart-outline"></ion-icon>
-              Add to cart
+              {{ 'product.addToCart' | translate }}
             </ion-button>
           </ion-col>
         </ion-row>
@@ -160,7 +162,7 @@
         <ion-row class="summary-row">
           <ion-col size="12">
             <h3>
-              Total:
+              {{ 'common.total' | translate }}:
               {{ currency().currencySymbol }} {{ totalPrice() }}
             </h3>
           </ion-col>
@@ -175,13 +177,13 @@
     <ion-row>
       <ion-col size="6">
         <ion-button expand="block" (click)="checkout()">
-          Checkout
+          {{ 'cart.checkout' | translate }}
         </ion-button>
       </ion-col>
 
       <ion-col size="6">
         <ion-button expand="block" fill="outline" (click)="toProducts()">
-          Keep shopping
+          {{ 'product.keepShopping' | translate }}
         </ion-button>
       </ion-col>
     </ion-row>

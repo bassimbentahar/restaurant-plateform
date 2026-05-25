@@ -8,5 +8,6 @@ export const environment = {
     pkce: true,
   },
   apiUrl: 'https://api-dev.portalcoffee.ch',
+  wsUrl: 'wss://api-dev.portalcoffee.ch',
   googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk'
 };

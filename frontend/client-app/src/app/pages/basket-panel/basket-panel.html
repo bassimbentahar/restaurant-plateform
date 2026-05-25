@@ -1,11 +1,11 @@
 <div class="basket-panel">
   <div class="basket-header">
-    <h2>Basket</h2>
+    <h2>{{ 'basket.title' | translate }}</h2>
   </div>
 
   @if (items().length === 0) {
     <div class="basket-empty">
-      Your basket is empty
+      {{ 'basket.empty' | translate }}
     </div>
   } @else {
     <div class="basket-items">
@@ -39,20 +39,20 @@
 
     <div class="basket-summary">
       <div class="row">
-        <span>Subtotal</span>
+        <span>{{ 'basket.subtotal' | translate }}</span>
         <span>{{ subtotal() | number:'1.2-2' }} CHF</span>
       </div>
       <div class="row">
-        <span>Service fee 6%</span>
+        <span>{{ 'basket.serviceFee' | translate:{ percent: 6 } }}</span>
         <span>{{ serviceFee() | number:'1.2-2' }} CHF</span>
       </div>
       <div class="row total">
-        <span>Total</span>
+        <span>{{ 'basket.total' | translate }}</span>
         <span>{{ total() | number:'1.2-2' }} CHF</span>
       </div>
 
       <ion-button expand="block" (click)="goToCheckout()">
-        Checkout ({{ total() | number:'1.2-2' }} CHF)
+        {{ 'basket.checkout' | translate:{ total: (total() | number:'1.2-2') } }}
       </ion-button>
     </div>
   }

@@ -29,6 +29,7 @@ import {CartService} from '../../services/cart.service';
 import {ProductService} from "../../services/product.service";
 import {ImageService} from "../../services/image.service";
 import { ModalController } from '@ionic/angular/standalone';
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-product-details',
@@ -53,6 +54,7 @@ import { ModalController } from '@ionic/angular/standalone';
     IonToolbar,
     IonHeader,
     IonFooter,
+    TranslatePipe,
   ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',

@@ -22,6 +22,7 @@ import {
 import { AddressService } from '../../../../services/AddressService';
 import { UserAddress, UserAddressRequest } from '../../../../models/user-address.model';
 import {AddressModal} from "../../../address-modal/address-modal";
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-checkout-address-modal',
@@ -32,6 +33,7 @@ import {AddressModal} from "../../../address-modal/address-modal";
     IonButton,
     IonIcon,
     IonSpinner,
+    TranslatePipe,
   ],
   templateUrl: './checkout-address-modal.html',
   styleUrl: './checkout-address-modal.scss',

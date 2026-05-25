@@ -32,6 +32,7 @@ import {
 import { Currency } from '../../models/currency.model';
 import { CartItem } from '../../models/cart-item.model';
 import { CartService } from '../../services/cart.service';
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-cart',
@@ -54,6 +55,7 @@ import { CartService } from '../../services/cart.service';
     IonItem,
     IonLabel,
     IonList,
+    TranslatePipe,
   ],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',

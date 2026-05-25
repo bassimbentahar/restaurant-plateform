@@ -1,0 +1,330 @@
+{
+  "language": {
+    "fr": "Français",
+    "en": "Anglais",
+    "de": "Allemand",
+    "switchToFrench": "FR",
+    "switchToEnglish": "EN",
+    "switchToGerman": "DE"
+  },
+
+  "app": {
+    "title": "Portal Coffee",
+    "menu": "Menu"
+  },
+
+  "auth": {
+    "guest": "Invité",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "welcomeTitle": "Bienvenue chez Portal Coffee",
+    "welcomeDescription": "Connectez-vous pour commander plus rapidement, suivre vos commandes et retrouver votre historique.",
+    "register": "Créer un compte",
+    "continueGuest": "Continuer sans compte"
+  },
+
+  "pages": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "products": "Produits",
+    "productDetails": "Détails du produit",
+    "cart": "Mon panier",
+    "checkout": "Paiement",
+    "category": "Catégorie",
+    "aboutUs": "À propos",
+    "contact": "Contact",
+    "news": "Actualités",
+    "orders": "Mes commandes"
+  },
+
+  "common": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "total": "Total",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+
+  "order": {
+    "tracking": {
+      "title": "Suivi de commande",
+      "order": "Commande",
+      "total": "Total",
+      "progression": "Progression",
+      "viewOrders": "Voir mes commandes",
+      "backToMenu": "Retour au menu",
+      "cancelledMessage": "La commande ne sera pas préparée. Contactez le restaurant si nécessaire."
+    },
+    "status": {
+      "pending": "Commande envoyée",
+      "confirmed": "Commande confirmée",
+      "preparing": "En préparation",
+      "ready": {
+        "pickup": "Prête à récupérer",
+        "delivery": "Commande prête"
+      },
+      "outForDelivery": "En livraison",
+      "delivered": {
+        "pickup": "Commande récupérée",
+        "delivery": "Commande livrée"
+      },
+      "cancelled": "Commande annulée",
+      "rejected": "Commande refusée",
+      "default": "Suivi de commande"
+    },
+    "steps": {
+      "pending": {
+        "title": "Commande envoyée",
+        "description": "Nous avons bien reçu votre commande."
+      },
+      "confirmed": {
+        "title": "Commande confirmée",
+        "description": "Le restaurant a accepté votre commande."
+      },
+      "preparing": {
+        "title": "En préparation",
+        "description": "Votre commande est en cours de préparation."
+      },
+      "ready": {
+        "pickup": {
+          "title": "Prête à récupérer",
+          "description": "Votre commande est prête à être récupérée."
+        },
+        "delivery": {
+          "title": "Prête",
+          "description": "Votre commande est prête."
+        }
+      },
+      "outForDelivery": {
+        "title": "En livraison",
+        "description": "Votre commande est en route."
+      },
+      "delivered": {
+        "pickup": {
+          "title": "Récupérée",
+          "description": "Bon appétit !"
+        },
+        "delivery": {
+          "title": "Livrée",
+          "description": "Bon appétit !"
+        }
+      }
+    }
+  },
+
+  "basket": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "subtotal": "Sous-total",
+    "serviceFee": "Frais de service {{percent}}%",
+    "total": "Total",
+    "checkout": "Paiement ({{total}} CHF)"
+  },
+
+  "cart": {
+    "title": "Mon panier",
+    "empty": "Votre panier est vide",
+    "browseProducts": "Voir les produits",
+    "size": "Taille",
+    "unitPrice": "Prix unitaire",
+    "total": "Total",
+    "cartTotal": "Total du panier",
+    "clearCart": "Vider le panier",
+    "checkout": "Paiement"
+  },
+
+  "checkout": {
+    "title": "Paiement",
+    "orderDetails": "Détails de commande",
+    "continueShopping": "Continuer mes achats",
+
+    "customer": {
+      "defaultName": "Votre nom",
+      "phoneRequired": "Numéro de téléphone requis",
+      "phoneRequiredDescription": "Ajoutez un numéro pour que le restaurant ou le livreur puisse vous contacter."
+    },
+
+    "orderType": {
+      "delivery": {
+        "title": "Livraison",
+        "description": "Recevoir la commande à votre adresse"
+      },
+      "pickup": {
+        "title": "À emporter",
+        "description": "Retrait au restaurant"
+      }
+    },
+
+    "delivery": {
+      "deliverable": "Adresse livrable",
+      "unavailable": "Livraison indisponible à cette adresse",
+      "outOfZone": "Cette adresse est hors zone de livraison.",
+      "addressRequired": "Adresse requise",
+      "addressRequiredDescription": "Ajoutez une adresse pour voir les options de livraison",
+      "addAddress": "Ajouter une adresse de livraison"
+    },
+
+    "deliveryTime": {
+      "desiredTime": "Heure souhaitée"
+    },
+
+    "note": {
+      "label": "Note",
+      "add": "Ajouter une note",
+      "edit": "Modifier la note",
+      "placeholder": "Note pour le restaurant"
+    },
+
+    "payment": {
+      "title": "Paiement",
+      "twintDescription": "Paiement rapide et sécurisé",
+      "cash": "Cash",
+      "cashDescription": "Paiement à la livraison ou au retrait"
+    },
+
+    "summary": {
+      "title": "Résumé de commande",
+      "subtotal": "Sous-total",
+      "serviceFee": "Frais de service",
+      "delivery": "Livraison",
+      "total": "Total"
+    },
+
+    "submit": {
+      "loading": "Commande en cours...",
+      "pay": "Commander et payer"
+    }
+  },
+
+  "checkoutAddress": {
+    "title": "Adresse de livraison",
+    "emptyTitle": "Aucune adresse enregistrée",
+    "emptyDescription": "Ajoutez une adresse pour continuer votre commande.",
+    "default": "Par défaut",
+    "add": "Ajouter une adresse",
+    "useSelected": "Utiliser cette adresse"
+  },
+
+  "customerDetails": {
+    "title": "Vos informations",
+    "firstname": "Prénom",
+    "lastname": "Nom",
+    "phone": "Numéro de téléphone",
+    "errors": {
+      "invalidSwissPhone": "Numéro suisse invalide. Exemple : +41 79 123 45 67",
+      "phoneRequired": "Le numéro de téléphone est obligatoire."
+    }
+  },
+
+  "deliveryTime": {
+    "title": "Heure de livraison",
+    "asap": "Dès que possible",
+    "schedule": "Planifier plus tard",
+    "scheduledFor": "Prévu pour"
+  },
+
+  "orderNote": {
+    "title": "Note pour le restaurant",
+    "label": "Instructions spéciales",
+    "placeholder": "Ex: sans oignons, sauce à part, appeler à l’arrivée...",
+    "characters": "caractères",
+    "clear": "Supprimer la note",
+    "errors": {
+      "maxLength": "La note ne doit pas dépasser 500 caractères."
+    }
+  },
+
+  "product": {
+    "sizes": "Tailles",
+    "min": "min",
+    "max": "max",
+    "addToCart": "Ajouter au panier",
+    "keepShopping": "Continuer mes achats"
+  },
+
+  "productList": {
+    "searchPlaceholder": "Rechercher dans Miam's",
+    "all": "Tous",
+    "from": "À partir de",
+    "item": "article",
+    "items": "articles",
+    "article": "article",
+    "articles": "articles"
+  },
+
+  "profile": {
+    "title": "Mon profil",
+    "subtitle": "Gérez votre compte Portal Coffee",
+
+    "tabs": {
+      "profile": "Profil",
+      "addresses": "Adresses",
+      "security": "Sécurité",
+      "preferences": "Préférences",
+      "orders": "Commandes"
+    },
+
+    "personalInfo": {
+      "title": "Informations personnelles",
+      "description": "Ces informations sont utilisées pour vos commandes et livraisons.",
+      "email": "Email",
+      "emailInfo": "Votre email est géré par Keycloak et ne peut pas être modifié depuis l’application.",
+      "dateOfBirth": "Date de naissance",
+      "saving": "Enregistrement...",
+      "saveChanges": "Enregistrer les modifications"
+    },
+
+    "addresses": {
+      "title": "Adresses de livraison",
+      "description": "Ajoutez vos adresses pour commander plus rapidement.",
+      "emptyDescription": "Ajoutez une adresse pour accélérer vos prochaines commandes.",
+      "addFirst": "Ajouter ma première adresse",
+      "setDefault": "Définir par défaut"
+    },
+
+    "security": {
+      "title": "Compte",
+      "description": "Gérez les paramètres de sécurité de votre compte.",
+      "passwordTitle": "Mot de passe",
+      "passwordDescription": "Pour protéger votre compte, la modification du mot de passe se fait dans un espace sécurisé."
+    },
+
+    "preferences": {
+      "title": "Préférences",
+      "description": "Personnalisez vos notifications et vos préférences client.",
+      "promotionsTitle": "Messages et promotions",
+      "promotionsDescription": "Recevoir les nouveautés, offres et réductions."
+    },
+
+    "orders": {
+      "title": "Commandes",
+      "description": "Retrouvez vos commandes récentes.",
+      "emptyTitle": "Aucune commande affichée",
+      "emptyDescription": "Votre historique de commandes pourra être affiché ici."
+    }
+  },
+  "orders": {
+    "title": "Mes commandes",
+    "subtitle": "Retrouvez vos commandes récentes et suivez leur progression.",
+    "emptyTitle": "Aucune commande",
+    "emptyDescription": "Vous n’avez pas encore passé de commande.",
+    "orderNow": "Commander maintenant",
+    "errorTitle": "Impossible de charger les commandes",
+    "errorDescription": "Veuillez réessayer dans quelques instants.",
+    "retry": "Réessayer",
+    "type": "Type",
+    "delivery": "Livraison",
+    "pickup": "À emporter",
+    "total": "Total",
+    "trackOrder": "Suivre la commande",
+    "createdAt": "Commandée le",
+    "deliveryTime": "Heure souhaitée",
+    "active": "Commandes en cours",
+    "history": "Historique des commandes",
+    "badges": {
+      "active": "En cours",
+      "delivered": "Livrée",
+      "cancelled": "Annulée"
+    }
+  }
+}
