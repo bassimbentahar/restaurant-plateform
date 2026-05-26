@@ -19,4 +19,6 @@ public class KafkaTopicConfig {
   public NewTopic orderStatusChangedTopic() {
     return new NewTopic(ORDER_STATUS_CHANGED_TOPIC, 1, (short) 1);
   }
+
+
 }
