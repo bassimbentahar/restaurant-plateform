@@ -3,11 +3,13 @@ package com.restaurant.restaurantbackend.product.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.restaurant.restaurantbackend.product.dto.ResolvedOptionGroup;
 import com.restaurant.restaurantbackend.product.dto.request.ProductOptionGroupRequest;
 import com.restaurant.restaurantbackend.product.dto.response.ProductOptionGroupResponse;
 import com.restaurant.restaurantbackend.product.dto.response.ProductOptionItemResponse;
 import com.restaurant.restaurantbackend.product.option.OptionGroup;
-import com.restaurant.restaurantbackend.product.option.OptionItem;
+import com.restaurant.restaurantbackend.product.option.item.OptionItem;
+import com.restaurant.restaurantbackend.product.rule.dto.EffectiveOptionGroupRules;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,11 +26,7 @@ public class ProductOptionGroupMapper {
       return null;
     }
 
-    List<ProductOptionItemResponse> options = group.getItems() == null
-      ? List.of()
-      : group.getItems().stream()
-      .map(optionItemMapper::toResponse)
-      .toList();
+    List<ProductOptionItemResponse> options = toOptionItemResponses(group);
 
     boolean multiple = group.getMaxSelections() != null && group.getMaxSelections() > 1;
     String displayType = multiple ? "checkbox" : "radio";
@@ -46,6 +44,14 @@ public class ProductOptionGroupMapper {
       group.getDisplayOrder(),
       options
     );
+  }
+
+  private List<ProductOptionItemResponse> toOptionItemResponses(OptionGroup group) {
+    return group.getItems() == null
+      ? List.of()
+      : group.getItems().stream()
+      .map(optionItemMapper::toResponse)
+      .toList();
   }
 
   public OptionGroup toEntity(ProductOptionGroupRequest request) {
@@ -68,8 +74,41 @@ public class ProductOptionGroupMapper {
         items.add(item);
       }
     }
+
     group.setItems(items);
 
     return group;
+  }
+
+  public ProductOptionGroupResponse toResponse(ResolvedOptionGroup resolved) {
+    if (resolved == null) {
+      return null;
+    }
+
+    OptionGroup group = resolved.optionGroup();
+    EffectiveOptionGroupRules rules = resolved.rules();
+
+    List<ProductOptionItemResponse> options = resolved.items() == null
+      ? List.of()
+      : resolved.items().stream()
+      .map(optionItemMapper::toResponse)
+      .toList();
+
+    boolean multiple = rules.maxSelections() != null && rules.maxSelections() > 1;
+    String displayType = multiple ? "checkbox" : "radio";
+
+    return new ProductOptionGroupResponse(
+      group.getId(),
+      group.getName(),
+      group.getDescription(),
+      displayType,
+      rules.required(),
+      multiple,
+      rules.minSelections(),
+      rules.maxSelections(),
+      rules.visible(),
+      resolved.displayOrder(),
+      options
+    );
   }
 }

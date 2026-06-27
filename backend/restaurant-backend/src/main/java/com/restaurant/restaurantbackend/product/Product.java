@@ -1,9 +1,9 @@
 package com.restaurant.restaurantbackend.product;
 
 import com.restaurant.restaurantbackend.common.BaseEntity;
-import com.restaurant.restaurantbackend.product.category.ProductCategory;
+import com.restaurant.restaurantbackend.product.category.productCategoryLink.ProductCategoryLink;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
-import com.restaurant.restaurantbackend.product.option.OptionGroup;
+import com.restaurant.restaurantbackend.product.option.ProductOptionGroupLink;
 import com.restaurant.restaurantbackend.product.variant.ProductVariant;
 import com.restaurant.restaurantbackend.restaurant.Restaurant;
 import jakarta.persistence.*;
@@ -11,7 +11,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -79,9 +78,9 @@ public class Product extends BaseEntity {
   @JoinColumn(name = "restaurant_id", nullable = false)
   private Restaurant restaurant;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "category_id")
-  private ProductCategory category;
+  @OneToMany(mappedBy = "product", orphanRemoval = true, cascade = CascadeType.ALL)
+  @OrderBy("displayOrder ASC")
+  private List<ProductCategoryLink> categories;
 
   @OneToMany(mappedBy = "product", orphanRemoval = true, cascade = CascadeType.ALL)
   @OrderBy("displayOrder ASC")
@@ -91,14 +90,13 @@ public class Product extends BaseEntity {
   @OrderBy("displayOrder ASC")
   private List<ProductVariant> variants;
 
-  @ManyToMany
-  @JoinTable(
-    name = "product_option_groups",
-    joinColumns = @JoinColumn(name = "product_id"),
-    inverseJoinColumns = @JoinColumn(name = "option_group_id")
+  @OneToMany(
+    mappedBy = "product",
+    orphanRemoval = true,
+    cascade = CascadeType.ALL
   )
   @OrderBy("displayOrder ASC")
-  private List<OptionGroup> optionGroups;
+  private List<ProductOptionGroupLink> optionGroups;
 
   public BigDecimal calculatePrice(){
     return null;

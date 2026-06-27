@@ -3,18 +3,26 @@ package com.restaurant.restaurantbackend.product.category;
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CategoryMapper {
 
-  public ProductCategoryResponse toProductSummaryResponse(ProductCategory category) {
-    if (category == null) {
-      return null;
+  public List<ProductCategoryResponse> toProductCategoriesResponse(
+    List<ProductCategory> categories
+  ) {
+
+    if (categories == null) {
+      return List.of();
     }
 
-    return new ProductCategoryResponse(
-      category.getId(),
-      category.getName(),
-      category.getSlug()
-    );
+    return categories
+      .stream()
+      .map(category -> new ProductCategoryResponse(
+        category.getId(),
+        category.getName(),
+        category.getSlug()
+      ))
+      .toList();
   }
 }

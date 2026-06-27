@@ -1,39 +1,47 @@
 package com.restaurant.restaurantbackend.product.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.restaurant.restaurantbackend.product.Product;
 import com.restaurant.restaurantbackend.product.category.CategoryMapper;
-import com.restaurant.restaurantbackend.product.category.ProductCategory;
+import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
+import com.restaurant.restaurantbackend.product.category.productCategoryLink.ProductCategoryLink;
+import com.restaurant.restaurantbackend.product.dto.ResolvedProduct;
 import com.restaurant.restaurantbackend.product.dto.request.ProductCreateRequest;
-import com.restaurant.restaurantbackend.product.dto.response.*;
+import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
+import com.restaurant.restaurantbackend.product.dto.response.ProductResponse;
+import com.restaurant.restaurantbackend.product.dto.response.ProductSummaryResponse;
+import com.restaurant.restaurantbackend.product.dto.response.ProductVariantResponse;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
-import com.restaurant.restaurantbackend.product.option.OptionGroup;
 import com.restaurant.restaurantbackend.product.variant.ProductVariant;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Component
 public class ProductMapper {
 
+  private static final int DEFAULT_PREPARATION_TIME_MINUTES = 10;
+
   private final CategoryMapper categoryMapper;
   private final ProductImageMapper productImageMapper;
   private final ProductVariantMapper productVariantMapper;
-  private final ProductOptionGroupMapper optionGroupMapper;
 
   public ProductMapper(
     CategoryMapper categoryMapper,
     ProductImageMapper productImageMapper,
-    ProductVariantMapper productVariantMapper,
-    ProductOptionGroupMapper optionGroupMapper
+    ProductVariantMapper productVariantMapper
   ) {
     this.categoryMapper = categoryMapper;
     this.productImageMapper = productImageMapper;
     this.productVariantMapper = productVariantMapper;
-    this.optionGroupMapper = optionGroupMapper;
   }
 
   public List<ProductSummaryResponse> toProductSummaryResponses(List<Product> products) {
+    if (products == null || products.isEmpty()) {
+      return List.of();
+    }
+
     return products.stream()
       .map(this::toProductSummaryResponse)
       .toList();
@@ -53,21 +61,16 @@ public class ProductMapper {
       product.getBasePrice(),
       product.isAvailable(),
       product.isFeatured(),
-      categoryMapper.toProductSummaryResponse(product.getCategory())
+      mapCategories(product)
     );
   }
 
-  public List<ProductResponse> toProductResponses(List<Product> products) {
-    if (products == null) return null;
-    return products.stream()
-      .map(this::toProductResponse)
-      .toList();
-  }
-
-  public ProductResponse toProductResponse(Product product) {
-    if (product == null) {
+  public ProductResponse toProductResponse(ResolvedProduct resolved) {
+    if (resolved == null || resolved.product() == null) {
       return null;
     }
+
+    Product product = resolved.product();
 
     List<ProductImageResponse> images = product.getImages() == null
       ? List.of()
@@ -75,16 +78,10 @@ public class ProductMapper {
       .map(productImageMapper::toResponse)
       .toList();
 
-    List<ProductVariantResponse> variants = product.getVariants() == null
+    List<ProductVariantResponse> variants = resolved.variants() == null
       ? List.of()
-      : product.getVariants().stream()
-      .map(variant -> productVariantMapper.toResponse(variant, product))
-      .toList();
-
-    List<ProductOptionGroupResponse> optionGroups = product.getOptionGroups() == null
-      ? List.of()
-      : product.getOptionGroups().stream()
-      .map(optionGroupMapper::toResponse)
+      : resolved.variants().stream()
+      .map(productVariantMapper::toResponse)
       .toList();
 
     return new ProductResponse(
@@ -105,63 +102,125 @@ public class ProductMapper {
       product.getCalories(),
       product.getIngredientsText(),
       product.getAllergensText(),
-      categoryMapper.toProductSummaryResponse(product.getCategory()),
+      mapCategories(product),
       images,
       variants,
-      optionGroups,
       product.getCreatedDate(),
       product.getLastModifiedDate()
     );
   }
 
-  public Product toEntity(ProductCreateRequest request, ProductCategory category) {
+  public Product toEntity(ProductCreateRequest request) {
     if (request == null) {
       return null;
     }
 
     Product product = new Product();
-    product.setSku(request.sku());
-    product.setSlug(request.slug());
-    product.setTitle(request.title());
-    product.setShortDescription(request.shortDescription());
-    product.setDescription(request.description());
-    product.setThumb(request.thumb());
+
+
+    product.setSku(trimToNull(request.sku()));
+    product.setSlug(null);
+    product.setTitle(trimToNull(request.title()));
+    product.setShortDescription(trimToNull(request.shortDescription()));
+    product.setDescription(trimToNull(request.description()));
+    product.setThumb(trimToNull(request.thumb()));
+
     product.setBasePrice(request.basePrice());
-    product.setAvailable(request.isAvailable());
-    product.setFeatured(request.isFeatured());
-    product.setArchived(request.isArchived());
-    product.setPreparationTimeMinutes(request.preparationTimeMinutes());
+
+    product.setAvailable(defaultTrue(request.isAvailable()));
+    product.setFeatured(defaultFalse(request.isFeatured()));
+    product.setArchived(defaultFalse(request.isArchived()));
+
+    product.setPreparationTimeMinutes(
+      resolvePreparationTimeMinutes(request.preparationTimeMinutes())
+    );
+
     product.setAvailableFrom(request.availableFrom());
     product.setAvailableTo(request.availableTo());
     product.setCalories(request.calories());
-    product.setIngredientsText(request.ingredientsText());
-    product.setAllergensText(request.allergensText());
-    product.setCategory(category);
+    product.setIngredientsText(trimToNull(request.ingredientsText()));
+    product.setAllergensText(trimToNull(request.allergensText()));
 
-    List<ProductImage> images = new ArrayList<>();
-    if (request.images() != null) {
-      for (var imageRequest : request.images()) {
-        images.add(productImageMapper.toEntity(imageRequest, product));
-      }
-    }
-    product.setImages(images);
-
-    List<ProductVariant> variants = new ArrayList<>();
-    if (request.variants() != null) {
-      for (var variantRequest : request.variants()) {
-        variants.add(productVariantMapper.toEntity(variantRequest, product));
-      }
-    }
-    product.setVariants(variants);
-
-    List<OptionGroup> optionGroups = new ArrayList<>();
-    if (request.optionGroups() != null) {
-      for (var optionGroupRequest : request.optionGroups()) {
-        optionGroups.add(optionGroupMapper.toEntity(optionGroupRequest));
-      }
-    }
-    product.setOptionGroups(optionGroups);
+    product.setImages(mapImages(request, product));
+    product.setVariants(mapVariants(request, product));
 
     return product;
+  }
+
+  private List<ProductImage> mapImages(
+    ProductCreateRequest request,
+    Product product
+  ) {
+    if (request.images() == null || request.images().isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<ProductImage> images = new ArrayList<>();
+
+    for (var imageRequest : request.images()) {
+      images.add(productImageMapper.toEntity(imageRequest, product));
+    }
+
+    return images;
+  }
+
+  private List<ProductVariant> mapVariants(
+    ProductCreateRequest request,
+    Product product
+  ) {
+    if (request.variants() == null || request.variants().isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<ProductVariant> variants = new ArrayList<>();
+
+    for (var variantRequest : request.variants()) {
+      variants.add(productVariantMapper.toEntity(variantRequest, product));
+    }
+
+    return variants;
+  }
+
+  private List<ProductCategoryResponse> mapCategories(Product product) {
+    if (product.getCategories() == null || product.getCategories().isEmpty()) {
+      return List.of();
+    }
+
+    return categoryMapper.toProductCategoriesResponse(
+      product.getCategories().stream()
+        .sorted(
+          Comparator.comparingInt(
+            link -> link.getDisplayOrder() == null ? 0 : link.getDisplayOrder()
+          )
+        )
+        .map(ProductCategoryLink::getCategory)
+        .toList()
+    );
+  }
+
+  private int resolvePreparationTimeMinutes(Integer preparationTimeMinutes) {
+    if (preparationTimeMinutes == null) {
+      return DEFAULT_PREPARATION_TIME_MINUTES;
+    }
+
+    return preparationTimeMinutes;
+  }
+
+  private boolean defaultTrue(Boolean value) {
+    return value == null || value;
+  }
+
+  private boolean defaultFalse(Boolean value) {
+    return Boolean.TRUE.equals(value);
+  }
+
+  private String trimToNull(String value) {
+    if (value == null) {
+      return null;
+    }
+
+    String trimmedValue = value.trim();
+
+    return trimmedValue.isEmpty() ? null : trimmedValue;
   }
 }

@@ -1,5 +1,6 @@
-package com.restaurant.restaurantbackend.product.option;
+package com.restaurant.restaurantbackend.product.option.item;
 
+import com.restaurant.restaurantbackend.product.option.OptionGroup;
 import jakarta.persistence.*;
 import lombok.*;
 

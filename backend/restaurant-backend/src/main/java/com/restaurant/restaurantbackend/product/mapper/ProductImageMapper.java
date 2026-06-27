@@ -32,7 +32,7 @@ public class ProductImageMapper {
     image.setUrl(request.url());
     image.setAltText(request.altText());
     image.setDisplayOrder(request.displayOrder() != null ? request.displayOrder() : 0);
-    image.setPrimary(request.isPrimary());
+    image.setPrimary(request.primary());
     image.setProduct(product);
     return image;
   }

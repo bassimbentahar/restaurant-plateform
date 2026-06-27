@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import com.restaurant.restaurantbackend.product.dto.request.ProductOptionItemRequest;
 import com.restaurant.restaurantbackend.product.dto.response.ProductOptionItemResponse;
 import com.restaurant.restaurantbackend.product.option.OptionGroup;
-import com.restaurant.restaurantbackend.product.option.OptionItem;
+import com.restaurant.restaurantbackend.product.option.item.OptionItem;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -6,8 +6,8 @@ public record ProductOptionItemRequest(
   String name,
   String description,
   BigDecimal priceAdjustment,
-  boolean isDefault,
-  boolean isAvailable,
+  Boolean isDefault,
+  Boolean isAvailable,
   Integer displayOrder
 ) {
 }

@@ -3,6 +3,7 @@ package com.restaurant.restaurantbackend.product.dto.response;
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public record ProductSummaryResponse(
@@ -14,6 +15,6 @@ public record ProductSummaryResponse(
   BigDecimal basePrice,
   boolean isAvailable,
   boolean isFeatured,
-  ProductCategoryResponse category
+  List<ProductCategoryResponse> categories
 ) {
 }

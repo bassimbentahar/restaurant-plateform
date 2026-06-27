@@ -1,4 +1,4 @@
-package com.restaurant.restaurantbackend.product.option;
+package com.restaurant.restaurantbackend.product.option.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,5 +1,8 @@
 package com.restaurant.restaurantbackend.product.dto.request;
 
+import com.restaurant.restaurantbackend.product.rule.dto.ProductRuleRequest;
+import com.restaurant.restaurantbackend.product.variant.dto.ProductVariantRequest;
+
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -13,18 +16,20 @@ public record ProductCreateRequest(
   String description,
   String thumb,
   BigDecimal basePrice,
-  boolean isAvailable,
-  boolean isFeatured,
-  boolean isArchived,
+  Boolean isAvailable,
+  Boolean isFeatured,
+  Boolean isArchived,
   Integer preparationTimeMinutes,
   LocalTime availableFrom,
   LocalTime availableTo,
   Integer calories,
   String ingredientsText,
   String allergensText,
-  UUID categoryId,
+  List<UUID> categoryIds,
   List<ProductImageRequest> images,
+  List<ProductOptionGroupAssignmentRequest> optionGroups,
   List<ProductVariantRequest> variants,
-  List<ProductOptionGroupRequest> optionGroups
+  List<ProductRuleRequest> rules
+
 ) {
 }

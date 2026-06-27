@@ -26,10 +26,9 @@ public record ProductResponse(
   Integer calories,
   String ingredientsText,
   String allergensText,
-  ProductCategoryResponse category,
+  List<ProductCategoryResponse> categories,
   List<ProductImageResponse> images,
   List<ProductVariantResponse> variants,
-  List<ProductOptionGroupResponse> optionGroups,
   LocalDateTime createdAt,
   LocalDateTime updatedAt
 ) {}

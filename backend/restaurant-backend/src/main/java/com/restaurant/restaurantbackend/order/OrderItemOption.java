@@ -2,7 +2,7 @@ package com.restaurant.restaurantbackend.order;
 
 import com.restaurant.restaurantbackend.common.BaseEntity;
 import com.restaurant.restaurantbackend.product.option.OptionGroup;
-import com.restaurant.restaurantbackend.product.option.OptionItem;
+import com.restaurant.restaurantbackend.product.option.item.OptionItem;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
