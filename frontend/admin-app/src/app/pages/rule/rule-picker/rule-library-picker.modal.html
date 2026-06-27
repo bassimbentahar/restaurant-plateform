@@ -1,0 +1,124 @@
+<ion-content class="rule-library-picker">
+  <div class="picker-header">
+    <div>
+      <span class="picker-eyebrow">
+        {{ 'adminProductWizard.conditions.libraryPicker.eyebrow' | translate }}
+      </span>
+
+      <h2>{{ 'adminProductWizard.conditions.libraryPicker.title' | translate }}</h2>
+      <p>{{ 'adminProductWizard.conditions.libraryPicker.subtitle' | translate }}</p>
+    </div>
+
+    <ion-button fill="clear" type="button" (click)="close()">
+      {{ 'common.cancel' | translate }}
+    </ion-button>
+  </div>
+
+  <ion-item class="picker-search">
+    <ion-label position="stacked">
+      {{ 'adminProductWizard.conditions.libraryPicker.searchLabel' | translate }}
+    </ion-label>
+
+    <ion-input
+      [value]="searchTerm()"
+      [placeholder]="'adminProductWizard.conditions.libraryPicker.searchPlaceholder' | translate"
+      (ionInput)="updateSearch($event.detail.value)"
+    />
+  </ion-item>
+
+  <ion-segment
+    class="picker-filters"
+    [value]="selectedFilterId()"
+    scrollable="true"
+    (ionChange)="updateFilter($event.detail.value)"
+  >
+    @for (filter of filters(); track filter.id) {
+      <ion-segment-button [value]="filter.id">
+        @if (filter.type === 'system') {
+          {{ filter.labelKey | translate }}
+        } @else {
+          {{ filter.label }}
+        }
+      </ion-segment-button>
+    }
+  </ion-segment>
+
+  @if (filteredRules().length === 0) {
+    <div class="picker-empty">
+      <h3>{{ 'adminProductWizard.conditions.libraryPicker.emptyTitle' | translate }}</h3>
+      <p>{{ 'adminProductWizard.conditions.libraryPicker.emptyText' | translate }}</p>
+    </div>
+  }
+
+  <div class="rule-library-grid">
+    @for (rule of filteredRules(); track rule.id) {
+      <article class="library-rule-card">
+        <div class="library-rule-card-header">
+          <div>
+            <div class="library-rule-badges">
+              @if (isDisabled(rule)) {
+                <ion-badge color="medium">
+                  {{ 'adminProductWizard.conditions.libraryPicker.alreadyAddedBadge' | translate }}
+                </ion-badge>
+              }
+
+              @if (rule.favorite) {
+                <ion-badge color="warning">
+                  {{ 'adminProductWizard.conditions.organization.favoriteBadge' | translate }}
+                </ion-badge>
+              }
+
+              @if (rule.customerVisible) {
+                <ion-badge color="success">
+                  {{ 'adminProductWizard.conditions.libraryPicker.customerMessageBadge' | translate }}
+                </ion-badge>
+              }
+            </div>
+
+            <h3>{{ rule.name }}</h3>
+
+            <p>
+              {{
+                rule.description ||
+                ('adminProductWizard.conditions.libraryPicker.noDescription' | translate)
+              }}
+            </p>
+          </div>
+        </div>
+
+        @if (rule.tags.length > 0) {
+          <div class="library-rule-tags">
+            @for (tag of rule.tags; track tag.id) {
+              <span class="library-rule-tag">
+                {{ tag.name }}
+              </span>
+            }
+          </div>
+        }
+
+        <div class="library-rule-footer">
+          <small>
+            @if (isDisabled(rule)) {
+              {{ 'adminProductWizard.conditions.libraryPicker.alreadyAddedHelp' | translate }}
+            } @else {
+              {{ 'adminProductWizard.conditions.libraryPicker.copyHelp' | translate }}
+            }
+          </small>
+
+          <ion-button
+            size="small"
+            type="button"
+            [disabled]="isDisabled(rule)"
+            (click)="selectRule(rule)"
+          >
+            @if (isDisabled(rule)) {
+              {{ 'adminProductWizard.conditions.libraryPicker.alreadyAddedAction' | translate }}
+            } @else {
+              {{ 'adminProductWizard.conditions.libraryPicker.useRule' | translate }}
+            }
+          </ion-button>
+        </div>
+      </article>
+    }
+  </div>
+</ion-content>

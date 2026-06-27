@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.menu-library-card {
+  display: grid;
+  gap: 14px;
+  height: 100%;
+  padding: 18px;
+  border: 1px solid rgba(231, 226, 216, 0.95);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(154, 91, 34, 0.06), transparent 16rem),
+    #ffffff;
+  box-shadow: 0 16px 36px rgba(21, 18, 15, 0.07);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.menu-library-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(154, 91, 34, 0.35);
+  box-shadow: 0 22px 52px rgba(21, 18, 15, 0.10);
+}
+
+.menu-library-card--disabled {
+  opacity: 0.68;
+}
+
+.card-top,
+.card-tags,
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+h3 {
+  margin: 0;
+  color: #15120f;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p {
+  min-height: 42px;
+  margin: 0;
+  color: #6f665c;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.card-metadata {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.card-metadata span {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #fbfaf8;
+}
+
+.card-metadata small {
+  color: #93887a;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-metadata strong {
+  overflow: hidden;
+  color: #15120f;
+  font-size: 14px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-tags span {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #713f12;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.card-actions {
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.card-actions ion-button {
+  min-height: 36px;
+  font-weight: 850;
+  --border-radius: 12px;
+}
+
+ion-badge {
+  font-weight: 850;
+}

@@ -1,0 +1,235 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ 'adminMenuLibrary.choiceEditor.title' | translate }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" type="button" (click)="close()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="choice-editor-modal">
+  <section class="editor-intro admin-section-title">
+    <h2>{{ 'adminMenuLibrary.choiceEditor.heading' | translate }}</h2>
+    <p>{{ 'adminMenuLibrary.choiceEditor.help' | translate }}</p>
+  </section>
+
+  <section class="editor-form">
+    <div class="field-block">
+      <ion-item>
+        <ion-label position="stacked">
+          {{ 'adminMenuLibrary.choiceEditor.name' | translate }}
+        </ion-label>
+
+        <ion-input
+          [value]="name()"
+          [placeholder]="'adminMenuLibrary.choiceEditor.namePlaceholder' | translate"
+          (ionInput)="updateName($event.detail.value)"
+        />
+      </ion-item>
+
+      @if (nameMessageKey()) {
+        <p class="admin-error-message admin-error-message--inline">
+          {{ nameMessageKey()! | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="field-block">
+      <ion-item>
+        <ion-label position="stacked">
+          {{ 'adminMenuLibrary.choiceEditor.description' | translate }}
+        </ion-label>
+
+        <ion-textarea
+          autoGrow="true"
+          [value]="description()"
+          [placeholder]="'adminMenuLibrary.choiceEditor.descriptionPlaceholder' | translate"
+          (ionInput)="updateDescription($event.detail.value)"
+        />
+      </ion-item>
+    </div>
+
+    <div class="field-block">
+      <ion-item>
+        <ion-label>
+          {{ 'adminMenuLibrary.choiceEditor.required' | translate }}
+        </ion-label>
+
+        <ion-toggle
+          [checked]="required()"
+          (ionChange)="updateRequired($event.detail.checked)"
+        />
+      </ion-item>
+    </div>
+
+    <div class="selection-grid">
+      <div class="field-block">
+        <ion-item>
+          <ion-label position="stacked">
+            {{ 'adminMenuLibrary.choiceEditor.min' | translate }}
+          </ion-label>
+
+          <ion-input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            [value]="minSelections() ?? ''"
+            (keydown)="blockInvalidIntegerKeys($event)"
+            (ionInput)="updateMinSelections($event.detail.value)"
+            (ionBlur)="normalizeMinSelectionsOnBlur()"
+          />
+        </ion-item>
+
+        @if (minSelectionMessageKey()) {
+          <p class="admin-error-message admin-error-message--inline">
+            {{ minSelectionMessageKey()! | translate }}
+          </p>
+        }
+      </div>
+
+      <div class="field-block">
+        <ion-item>
+          <ion-label position="stacked">
+            {{ 'adminMenuLibrary.choiceEditor.max' | translate }}
+          </ion-label>
+
+          <ion-input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            [value]="maxSelections() ?? ''"
+            (keydown)="blockInvalidIntegerKeys($event)"
+            (ionInput)="updateMaxSelections($event.detail.value)"
+            (ionBlur)="normalizeMaxSelectionsOnBlur()"
+          />
+        </ion-item>
+
+        @if (maxSelectionMessageKey()) {
+          <p class="admin-error-message admin-error-message--inline">
+            {{ maxSelectionMessageKey()! | translate }}
+          </p>
+        }
+      </div>
+    </div>
+
+    @if (shouldShowMinMaxError()) {
+      <div class="admin-error-message">
+        <ion-icon name="warning-outline"></ion-icon>
+        <span>
+          {{ 'adminMenuLibrary.choiceEditor.validation.minGreaterThanMax' | translate }}
+        </span>
+      </div>
+    }
+  </section>
+
+  <section class="options-section">
+    <div class="options-header">
+      <div>
+        <h3>{{ 'adminMenuLibrary.choiceEditor.options' | translate }}</h3>
+        <p>
+          {{
+            'adminMenuLibrary.choiceEditor.optionsHelp'
+              | translate: { count: availableOptionCount() }
+          }}
+        </p>
+      </div>
+
+      <ion-button fill="outline" type="button" (click)="addOption()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminMenuLibrary.choiceEditor.addOption' | translate }}
+      </ion-button>
+    </div>
+
+    @if (optionsMessageKey()) {
+      <p class="admin-error-message admin-error-message--inline">
+        {{ optionsMessageKey()! | translate }}
+      </p>
+    }
+
+    <div class="options-list">
+      @for (item of items(); track item.id; let index = $index) {
+        <article class="option-row" [class.option-row--disabled]="!item.isAvailable">
+          <div class="option-row-top">
+            <div class="option-index">{{ index + 1 }}</div>
+
+            <div class="option-available-compact">
+              <span>{{ 'adminMenuLibrary.choiceEditor.optionAvailable' | translate }}</span>
+              <ion-toggle
+                [checked]="item.isAvailable"
+                (ionChange)="updateOptionAvailable(item.id, $event.detail.checked)"
+              />
+            </div>
+
+            <ion-button
+              class="option-delete-button"
+              fill="clear"
+              color="danger"
+              type="button"
+              (click)="removeOption(item.id)"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="option-fields">
+            <div class="field-block option-name-field">
+              <ion-item>
+                <ion-label position="stacked">
+                  {{ 'adminMenuLibrary.choiceEditor.optionName' | translate }}
+                </ion-label>
+
+                <ion-input
+                  [value]="item.name"
+                  [placeholder]="'adminMenuLibrary.choiceEditor.optionNamePlaceholder' | translate"
+                  (ionInput)="updateOptionName(item.id, $event.detail.value)"
+                />
+              </ion-item>
+
+              @if (itemMessageKeys()[item.id]) {
+                <p class="admin-error-message admin-error-message--inline">
+                  {{ itemMessageKeys()[item.id]! | translate }}
+                </p>
+              }
+            </div>
+
+            <ion-item class="option-price-field">
+              <ion-label position="stacked">
+                {{ 'adminMenuLibrary.choiceEditor.optionPrice' | translate }}
+              </ion-label>
+
+              <ion-input
+                type="text"
+                inputmode="decimal"
+                [value]="item.priceDelta ?? ''"
+                placeholder="0.00"
+                (keydown)="blockInvalidMoneyKeys($event)"
+                (ionInput)="updateOptionPriceDelta(item.id, $event.detail.value)"
+                (ionBlur)="normalizeOptionPriceDeltaOnBlur(item.id)"
+              />
+
+              <span slot="end" class="currency-suffix">CHF</span>
+            </ion-item>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</ion-content>
+
+<ion-footer class="choice-editor-footer">
+    <div class="footer-actions">
+        <ion-button fill="outline" type="button" (click)="close()">
+            {{ 'common.cancel' | translate }}
+        </ion-button>
+
+        <ion-button [disabled]="!isValid()" type="button" (click)="confirm()">
+            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+            {{ 'common.save' | translate }}
+        </ion-button>
+    </div>
+</ion-footer>

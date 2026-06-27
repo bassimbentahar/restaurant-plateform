@@ -1,0 +1,78 @@
+<ion-content class="menu-library-page">
+  <header class="library-header">
+    <div>
+      <span class="eyebrow">
+        {{ 'adminMenuLibrary.eyebrow' | translate }}
+      </span>
+
+      <h1>{{ 'adminMenuLibrary.title' | translate }}</h1>
+      <p>{{ 'adminMenuLibrary.subtitle' | translate }}</p>
+    </div>
+
+    <div class="library-actions">
+      <ion-button fill="outline" type="button" (click)="facade.load()">
+        <ion-icon slot="start" name="refresh-outline"></ion-icon>
+        {{ 'adminMenuLibrary.actions.refresh' | translate }}
+      </ion-button>
+
+      <ion-button type="button" (click)="createCurrentType()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminMenuLibrary.actions.create' | translate }}
+      </ion-button>
+    </div>
+  </header>
+
+  <section class="library-tabs-panel">
+    <ion-segment
+      [value]="facade.selectedTab()"
+      scrollable="true"
+      (ionChange)="facade.selectTab($event.detail.value)"
+    >
+      @for (tab of facade.tabs; track tab.id) {
+        <ion-segment-button [value]="tab.id">
+          <ion-icon [name]="tab.icon"></ion-icon>
+          <span>{{ tab.labelKey | translate }}</span>
+          <small>{{ facade.counts()[tab.id] }}</small>
+        </ion-segment-button>
+      }
+    </ion-segment>
+
+    <div class="active-tab-help">
+      <strong>{{ facade.activeTab().labelKey | translate }}</strong>
+      <p>{{ facade.activeTab().helpKey | translate }}</p>
+    </div>
+  </section>
+
+  @if (facade.error()) {
+    <div class="library-error">
+      {{ facade.error()! | translate }}
+    </div>
+  }
+
+  @if (facade.loading()) {
+    <div class="library-loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>{{ 'adminMenuLibrary.loading' | translate }}</span>
+    </div>
+  } @else if (facade.cards().length === 0) {
+    <div class="library-empty">
+      <h2>{{ 'adminMenuLibrary.empty.title' | translate }}</h2>
+      <p>{{ 'adminMenuLibrary.empty.text' | translate }}</p>
+
+      <ion-button type="button" (click)="createCurrentType()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminMenuLibrary.actions.create' | translate }}
+      </ion-button>
+    </div>
+  } @else {
+    <section class="library-grid">
+      @for (card of facade.cards(); track card.id) {
+        <app-menu-library-card
+          [card]="card"
+          (edit)="editCard($event)"
+          (duplicate)="duplicateCard($event)"
+        />
+      }
+    </section>
+  }
+</ion-content>

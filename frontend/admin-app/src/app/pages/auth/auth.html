@@ -1,0 +1,25 @@
+<ion-content class="auth-page">
+  <div class="auth-container">
+
+    <img src="assets/logo.png" alt="Portal Coffee" class="logo" />
+
+    <h1>{{ 'auth.welcomeTitle' | translate }}</h1>
+
+    <p>
+      {{ 'auth.welcomeDescription' | translate }}
+    </p>
+
+    <ion-button expand="block" (click)="login()">
+      {{ 'auth.login' | translate }}
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" (click)="register()">
+      {{ 'auth.register' | translate }}
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" routerLink="/home">
+      {{ 'auth.continueGuest' | translate }}
+    </ion-button>
+
+  </div>
+</ion-content>

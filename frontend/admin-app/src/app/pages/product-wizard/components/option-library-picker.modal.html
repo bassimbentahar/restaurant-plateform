@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ 'adminProductWizard.choices.library.modalTitle' | translate }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="library-modal">
+  <section class="modal-intro admin-section-title">
+    <div class="intro-icon">
+      <ion-icon name="library-outline"></ion-icon>
+    </div>
+
+    <div>
+      <h2>{{ 'adminProductWizard.choices.library.title' | translate }}</h2>
+      <p>{{ 'adminProductWizard.choices.library.description' | translate }}</p>
+    </div>
+  </section>
+
+  <ion-searchbar
+    debounce="250"
+    [placeholder]="'adminProductWizard.choices.library.searchPlaceholder' | translate"
+    (ionInput)="updateSearchTerm($event.detail.value)"
+  />
+
+  @if (filteredChoices().length === 0) {
+    <div class="empty-library">
+      <h3>{{ 'adminProductWizard.choices.library.emptyTitle' | translate }}</h3>
+      <p>{{ 'adminProductWizard.choices.library.emptyText' | translate }}</p>
+
+      <ion-button (click)="createCustomChoice()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminProductWizard.choices.library.createCustom' | translate }}
+      </ion-button>
+    </div>
+  } @else {
+    <ion-list class="library-list">
+      @for (choice of filteredChoices(); track trackById($index, choice)) {
+        <ion-item
+          button
+          detail="false"
+          lines="none"
+          class="library-choice-item"
+          (click)="selectChoice(choice)"
+        >
+          <ion-icon slot="start" name="library-outline"></ion-icon>
+
+          <ion-label>
+            <h3>{{ choice.name }}</h3>
+
+            @if (choice.description) {
+              <p>{{ choice.description }}</p>
+            }
+
+            <small>
+              {{ choice.items.length }}
+              {{ 'adminProductWizard.choices.library.optionsCount' | translate }}
+              · {{ choice.minSelections }} à {{ choice.maxSelections }}
+            </small>
+
+            <div class="item-preview">
+              @for (item of choice.items.slice(0, 4); track item.id) {
+                <span>
+                  {{ item.name }}
+
+                  @if (item.priceDelta > 0) {
+                    +{{ item.priceDelta | number: '1.2-2' }} CHF
+                  }
+                </span>
+              }
+
+              @if (choice.items.length > 4) {
+                <span>+{{ choice.items.length - 4 }}</span>
+              }
+            </div>
+          </ion-label>
+
+          <ion-button slot="end" size="small">
+            {{ 'adminProductWizard.choices.library.add' | translate }}
+          </ion-button>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <div class="create-custom-footer">
+    <div>
+      <strong>{{ 'adminProductWizard.choices.library.notFoundTitle' | translate }}</strong>
+      <p>{{ 'adminProductWizard.choices.library.notFoundText' | translate }}</p>
+    </div>
+
+    <ion-button fill="outline" (click)="createCustomChoice()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      {{ 'adminProductWizard.choices.library.createCustom' | translate }}
+    </ion-button>
+  </div>
+</ion-content>

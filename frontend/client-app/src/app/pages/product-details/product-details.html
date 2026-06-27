@@ -69,13 +69,14 @@
           </ion-list>
         }
 
-        @if (menuItem.optionGroups?.length) {
-          @for (group of menuItem.optionGroups; track group.id) {
+        @if (currentOptionGroups().length) {
+          @for (group of currentOptionGroups(); track group.id) {
             @if (group.isAvailable !== false) {
               @if (group.displayType === 'radio' || group.displayType === 'select' || group.displayType === 'buttons') {
                 <ion-list class="extra-list">
                   <ion-list-header>
                     {{ group.name }}
+
                     @if (group.required) {
                       <span class="required">*</span>
                     }
@@ -90,10 +91,11 @@
                         <ion-item>
                           <ion-label>
                             {{ option.name }}
+
                             @if (option.priceDelta > 0) {
                               <span class="offer-p">
-                                + {{ currency().currencySymbol }} {{ option.priceDelta }}
-                              </span>
+                        + {{ currency().currencySymbol }} {{ option.priceDelta }}
+                      </span>
                             }
                           </ion-label>
 
@@ -107,9 +109,11 @@
                 <ion-list class="extra-list">
                   <ion-list-header>
                     {{ group.name }}
+
                     @if (group.required) {
                       <span class="required">*</span>
                     }
+
                     <small class="group-rule">
                       {{ 'product.min' | translate }} {{ group.minSelect }} /
                       {{ 'product.max' | translate }} {{ group.maxSelect }}
@@ -121,10 +125,11 @@
                       <ion-item>
                         <ion-label>
                           {{ option.name }}
+
                           @if (option.priceDelta > 0) {
                             <span class="offer-p">
-                              + {{ currency().currencySymbol }} {{ option.priceDelta }}
-                            </span>
+                      + {{ currency().currencySymbol }} {{ option.priceDelta }}
+                    </span>
                           }
                         </ion-label>
 

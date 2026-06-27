@@ -1,0 +1,176 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{
+        'adminProductWizard.choiceConfiguration.title'
+          | translate: { name: choice.name }
+      }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="choice-configuration-modal">
+  <section class="configuration-intro admin-section-title">
+    <h2>
+      {{
+        'adminProductWizard.choiceConfiguration.intro.title'
+          | translate: { name: choice.name }
+      }}
+    </h2>
+
+    <p>
+      {{ 'adminProductWizard.choiceConfiguration.intro.description' | translate }}
+    </p>
+
+    @if (choice.usedInProductCount) {
+      <small>
+        {{
+          'adminProductWizard.choiceConfiguration.intro.usedInProducts'
+            | translate: { count: choice.usedInProductCount }
+        }}
+      </small>
+    }
+  </section>
+
+  <section class="configuration-form">
+    <div class="field-block">
+      <ion-item>
+        <ion-label>
+          {{ 'adminProductWizard.choiceConfiguration.fields.required' | translate }}
+        </ion-label>
+
+        <ion-toggle
+          [checked]="required()"
+          (ionChange)="updateRequired($event.detail.checked)"
+        />
+      </ion-item>
+    </div>
+
+    <div class="field-block">
+      <ion-item>
+        <ion-label position="stacked">
+          {{ 'adminProductWizard.choiceConfiguration.fields.minSelections' | translate }}
+        </ion-label>
+
+        <ion-input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [value]="minSelections() ?? ''"
+          (keydown)="blockInvalidNumberKeys($event)"
+          (ionInput)="updateMinSelections($event.detail.value)"
+          (ionBlur)="normalizeMinSelectionsOnBlur()"
+        />
+      </ion-item>
+
+      @if (minSelectionMessageKey()) {
+        <p class="admin-error-message admin-error-message--inline">
+          {{ minSelectionMessageKey()! | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="field-block">
+      <ion-item>
+        <ion-label position="stacked">
+          {{ 'adminProductWizard.choiceConfiguration.fields.maxSelections' | translate }}
+        </ion-label>
+
+        <ion-input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [value]="maxSelections() ?? ''"
+          (keydown)="blockInvalidNumberKeys($event)"
+          (ionInput)="updateMaxSelections($event.detail.value)"
+          (ionBlur)="normalizeMaxSelectionsOnBlur()"
+        />
+      </ion-item>
+
+      @if (maxSelectionMessageKey()) {
+        <p class="admin-error-message admin-error-message--inline">
+          {{ maxSelectionMessageKey()! | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="field-block">
+      <ion-item>
+        <ion-label position="stacked">
+          {{ 'adminProductWizard.choiceConfiguration.fields.displayOrder' | translate }}
+        </ion-label>
+
+        <ion-input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [value]="displayOrder() ?? ''"
+          (keydown)="blockInvalidNumberKeys($event)"
+          (ionInput)="updateDisplayOrder($event.detail.value)"
+          (ionBlur)="normalizeDisplayOrderOnBlur()"
+        />
+      </ion-item>
+    </div>
+
+    @if (isMinGreaterThanMax()) {
+      <div class="admin-error-message">
+        <ion-icon name="warning-outline"></ion-icon>
+        <span>
+          {{
+            'adminProductWizard.choiceConfiguration.validation.minGreaterThanMax'
+              | translate
+          }}
+        </span>
+      </div>
+    }
+  </section>
+
+  <section class="configuration-preview">
+    <div class="admin-section-title">
+      <h3>
+        {{ 'adminProductWizard.choiceConfiguration.preview.title' | translate }}
+      </h3>
+    </div>
+
+    @if (choice.items.length === 0) {
+      <p class="empty-options">
+        {{
+          'adminProductWizard.choiceConfiguration.preview.emptyOptions'
+            | translate
+        }}
+      </p>
+    } @else {
+      <div class="option-tags">
+        @for (item of choice.items; track item.id) {
+          <span>
+            {{ item.name }}
+
+            @if (item.priceDelta > 0) {
+              +{{ item.priceDelta | number: '1.2-2' }} CHF
+            }
+          </span>
+        }
+      </div>
+    }
+  </section>
+
+  <div class="configuration-actions">
+    <ion-button fill="outline" (click)="close()">
+      {{ 'adminProductWizard.choiceConfiguration.actions.cancel' | translate }}
+    </ion-button>
+
+    <ion-button [disabled]="!isValid()" (click)="confirm()">
+      <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+      {{
+        'adminProductWizard.choiceConfiguration.actions.addToProduct'
+          | translate
+      }}
+    </ion-button>
+  </div>
+</ion-content>

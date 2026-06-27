@@ -1,0 +1,101 @@
+/* =========================
+   Admin reusable local fallback
+========================= */
+
+.admin-section-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 22px;
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    color: #101828;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  p,
+  .section-help {
+    margin: 0;
+    max-width: 760px;
+    color: #667085;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+}
+
+.admin-field-help {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.admin-error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid #fecdca;
+  border-radius: 14px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    font-size: 18px;
+    color: #d92d20;
+  }
+}
+
+.admin-error-message--inline {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #fecdca;
+  border-radius: 12px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* Compatibility with old classes */
+.field-warning,
+.configuration-error,
+.choice-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid #fecdca;
+  border-radius: 14px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}

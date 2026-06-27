@@ -1,0 +1,514 @@
+<ion-content class="product-wizard-page">
+  <div class="wizard-header">
+    <div>
+      <ion-text color="medium">
+        <p class="eyebrow">{{ 'adminProductWizard.assistant' | translate }}</p>
+      </ion-text>
+
+      <h1>{{ 'adminProductWizard.title' | translate }}</h1>
+      <p>{{ 'adminProductWizard.subtitle' | translate }}</p>
+    </div>
+
+    <div class="wizard-actions">
+      <ion-button fill="outline" [disabled]="facade.saving()" (click)="saveDraft()">
+        @if (facade.saving()) {
+          {{ 'adminProductWizard.actions.saving' | translate }}
+        } @else {
+          {{ 'adminProductWizard.actions.saveDraft' | translate }}
+        }
+      </ion-button>
+
+      <ion-button [disabled]="!facade.canSubmit()" (click)="publishProduct()">
+        {{ 'adminProductWizard.actions.publish' | translate }}
+      </ion-button>
+    </div>
+  </div>
+
+  @if (facade.error()) {
+    <div class="page-error">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>{{ facade.error() }}</span>
+    </div>
+  }
+
+  <div class="stepper">
+    @for (step of store.steps; track step.id) {
+      <button
+        type="button"
+        class="step"
+        [class.active]="currentStep() === step.id"
+        [class.done]="store.currentStepIndex() > step.index"
+        (click)="setStep(step.id)"
+      >
+        <span>{{ step.index }}</span>
+        <strong>{{ step.label | translate }}</strong>
+      </button>
+    }
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" sizeLg="8">
+        <ion-card class="editor-card">
+          <ion-card-content>
+            @switch (currentStep()) {
+              @case ('general') {
+                <section class="step-content">
+                  <div class="admin-section-title">
+                    <h2>{{ 'adminProductWizard.general.title' | translate }}</h2>
+                    <p class="section-help">{{ 'adminProductWizard.general.help' | translate }}</p>
+                  </div>
+
+                  <ion-item>
+                    <ion-label position="stacked">{{ 'adminProductWizard.general.productName' | translate }}</ion-label>
+                    <ion-input
+                      [value]="draft().title"
+                      [placeholder]="'adminProductWizard.general.productNamePlaceholder' | translate"
+                      (ionInput)="updateTitle($event.detail.value)"
+                    />
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">{{ 'adminProductWizard.general.shortDescription' | translate }}</ion-label>
+                    <ion-input
+                      [value]="draft().shortDescription"
+                      [placeholder]="'adminProductWizard.general.shortDescriptionPlaceholder' | translate"
+                      (ionInput)="updateShortDescription($event.detail.value)"
+                    />
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">{{ 'adminProductWizard.general.description' | translate }}</ion-label>
+                    <ion-textarea
+                      [value]="draft().description"
+                      autoGrow="true"
+                      [placeholder]="'adminProductWizard.general.descriptionPlaceholder' | translate"
+                      (ionInput)="updateDescription($event.detail.value)"
+                    />
+                  </ion-item>
+
+                  <div class="category-picker-card">
+                    <div>
+                      <ion-label>{{ 'adminProductWizard.category.label' | translate }}</ion-label>
+
+                      @if (draft().categoryIds.length > 0) {
+                        <div class="category-chip-list">
+                          @for (category of store.categories(); track category.id) {
+                            @if (draft().categoryIds.includes(category.id)) {
+                              <ion-badge color="primary">{{ category.name }}</ion-badge>
+                            }
+                          }
+                        </div>
+                      } @else {
+                        <strong>{{ 'adminProductWizard.category.noneSelected' | translate }}</strong>
+                        <p>{{ 'adminProductWizard.category.noneSelectedHelp' | translate }}</p>
+                      }
+                    </div>
+
+                    <ion-button fill="outline" size="small" (click)="openCategoryPicker()">
+                      {{ 'adminProductWizard.category.chooseOrCreate' | translate }}
+                    </ion-button>
+                  </div>
+
+                  <div class="info-box">{{ 'adminProductWizard.general.tip' | translate }}</div>
+                </section>
+              }
+
+              @case ('pricing') {
+                <section class="step-content">
+                  <div class="admin-section-title">
+                    <h2>{{ 'adminProductWizard.pricing.title' | translate }}</h2>
+                    <p class="section-help">{{ 'adminProductWizard.pricing.help' | translate }}</p>
+                  </div>
+
+                  <ion-item>
+                    <ion-label position="stacked">{{ 'adminProductWizard.pricing.basePrice' | translate }}</ion-label>
+                    <ion-input
+                      type="number"
+                      inputmode="decimal"
+                      [value]="draft().basePrice"
+                      [placeholder]="'adminProductWizard.pricing.basePricePlaceholder' | translate"
+                      (ionInput)="updateBasePrice($event.detail.value)"
+                    />
+                    <ion-note slot="end">CHF</ion-note>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">{{ 'adminProductWizard.pricing.compareAtPrice' | translate }}</ion-label>
+                    <ion-input
+                      type="number"
+                      inputmode="decimal"
+                      [value]="draft().compareAtPrice"
+                      [placeholder]="'adminProductWizard.pricing.compareAtPricePlaceholder' | translate"
+                      (ionInput)="updateCompareAtPrice($event.detail.value)"
+                    />
+                    <ion-note slot="end">CHF</ion-note>
+                  </ion-item>
+
+                  <div class="info-box">{{ 'adminProductWizard.pricing.tip' | translate }}</div>
+                </section>
+              }
+
+              @case ('formats') {
+                <app-formats-step
+                  [variants]="draft().variants"
+                  [basePrice]="draft().basePrice"
+                  (addVariant)="store.addVariant()"
+                  (variantNameChange)="store.updateVariant($event.variantId, { name: $event.value })"
+                  (variantPriceAdjustmentChange)="store.updateVariant($event.variantId, { priceAdjustment: $event.value })"
+                  (setDefaultVariant)="store.setDefaultVariant($event)"
+                  (variantAvailableChange)="store.updateVariant($event.variantId, { isAvailable: $event.value })"
+                  (configureVariantChoices)="configureVariantChoices($event)"
+                  (removeVariant)="store.removeVariant($event)"
+                />
+              }
+
+              @case ('choices') {
+                <app-choices-step
+                  [choices]="draft().choices"
+                  [availableLibraryChoices]="store.availableLibraryChoices()"
+                  (openLibrary)="openLibraryPicker()"
+                  (createCustomChoice)="store.addCustomChoice()"
+                  (configureChoice)="openExistingChoiceConfiguration($event)"
+                  (adaptChoiceByFormat)="adaptChoiceByFormat($event)"
+                  (duplicateLibraryChoiceAsCustom)="store.duplicateLibraryChoiceAsCustom($event)"
+                  (removeChoice)="store.removeChoice($event)"
+
+                  (choiceNameChange)="store.updateChoice($event.choiceId, { name: $event.value })"
+                  (choiceRequiredChange)="store.updateChoice($event.choiceId, { required: $event.value })"
+                  (choiceMinSelectionsChange)="store.updateChoice($event.choiceId, { minSelections: $event.value })"
+                  (choiceMaxSelectionsChange)="store.updateChoice($event.choiceId, { maxSelections: $event.value })"
+
+                  (addChoiceItem)="store.addChoiceItem($event)"
+                  (itemNameChange)="store.updateChoiceItem($event.choiceId, $event.itemId, { name: $event.value })"
+                  (itemPriceDeltaChange)="store.updateChoiceItem($event.choiceId, $event.itemId, { priceDelta: $event.value })"
+                  (itemAvailableChange)="store.updateChoiceItem($event.choiceId, $event.itemId, { isAvailable: $event.value })"
+                  (itemVisibilityChange)="store.updateChoiceItemVisibilityForProduct($event.choiceId, $event.itemId, $event.visible)"
+                  (removeChoiceItem)="store.removeChoiceItem($event.choiceId, $event.itemId)"
+                />
+              }
+
+              @case ('format-configuration') {
+                <section class="step-content">
+                  <div class="admin-section-title">
+                    <h2>{{ 'adminProductWizard.formatConfiguration.title' | translate }}</h2>
+                    <p class="section-help">{{ 'adminProductWizard.formatConfiguration.help' | translate }}</p>
+                  </div>
+
+                  @if (draft().variants.length === 0) {
+                    <div class="empty-state">
+                      <h3>{{ 'adminProductWizard.formatConfiguration.noFormatTitle' | translate }}</h3>
+                      <p>{{ 'adminProductWizard.formatConfiguration.noFormatText' | translate }}</p>
+                    </div>
+                  } @else {
+                    <div class="format-config-layout">
+                      <div class="format-tabs">
+                        @for (variant of draft().variants; track trackById($index, variant)) {
+                          <button
+                            type="button"
+                            class="format-tab"
+                            [class.active]="selectedVariant()?.id === variant.id"
+                            (click)="store.selectVariant(variant.id)"
+                          >
+                            <strong>{{ variant.name }}</strong>
+                            <span>{{ draft().basePrice + variant.priceAdjustment | number: '1.2-2' }} CHF</span>
+                          </button>
+                        }
+                      </div>
+
+                      @if (selectedVariant(); as variant) {
+                        <div class="format-config-panel">
+                          <div class="format-config-header">
+                            <div>
+                              <h3>{{ variant.name }}</h3>
+                              <p>
+                                {{ 'adminProductWizard.formatConfiguration.finalPrice' | translate }}
+                                {{ draft().basePrice + variant.priceAdjustment | number: '1.2-2' }} CHF
+                              </p>
+                            </div>
+
+                            <ion-button size="small" (click)="openLibraryPickerForSelectedFormat()">
+                              <ion-icon slot="start" name="library-outline"></ion-icon>
+                              {{ 'adminProductWizard.formatConfiguration.addChoiceToFormat' | translate }}
+                            </ion-button>
+                          </div>
+
+                          @if (selectedFormatChoices().length === 0) {
+                            <div class="empty-state">
+                              <h3>{{ 'adminProductWizard.formatConfiguration.emptyChoicesTitle' | translate }}</h3>
+                              <p>{{ 'adminProductWizard.formatConfiguration.emptyChoicesText' | translate }}</p>
+                            </div>
+                          }
+
+                          <div class="format-choice-list">
+                            @for (choice of selectedFormatChoices(); track trackById($index, choice)) {
+                              <div class="format-choice-card">
+                                <div class="format-choice-header">
+                                  <div>
+                                    <h4>{{ choice.name }}</h4>
+                                    <ion-badge [color]="choice.scope === 'common' ? 'primary' : 'success'">
+                                      {{
+                                        (
+                                          choice.scope === 'common'
+                                            ? 'adminProductWizard.formatConfiguration.commonChoice'
+                                            : 'adminProductWizard.formatConfiguration.formatChoice'
+                                        ) | translate
+                                      }}
+                                    </ion-badge>
+                                  </div>
+
+                                  @if (choice.scope === 'variant') {
+                                    <ion-button
+                                      fill="clear"
+                                      color="danger"
+                                      size="small"
+                                      (click)="store.removeChoiceFromVariant(variant.id, choice.optionGroupId)"
+                                    >
+                                      <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                                    </ion-button>
+                                  }
+                                </div>
+
+                                <div class="format-choice-fields">
+                                  <ion-item>
+                                    <ion-label>{{ 'adminProductWizard.formatConfiguration.required' | translate }}</ion-label>
+                                    <ion-toggle
+                                      [checked]="choice.required"
+                                      (ionChange)="updateFormatChoiceRequired(variant.id, choice.optionGroupId, $event.detail.checked)"
+                                    />
+                                  </ion-item>
+
+                                  <ion-item>
+                                    <ion-label position="stacked">{{ 'adminProductWizard.formatConfiguration.minSelections' | translate }}</ion-label>
+                                    <ion-input
+                                      type="number"
+                                      inputmode="numeric"
+                                      [value]="choice.minSelections"
+                                      (keydown)="blockInvalidNumberKeys($event)"
+                                      (ionInput)="updateFormatChoiceMinSelections(variant.id, choice.optionGroupId, $event.detail.value)"
+                                    />
+                                  </ion-item>
+
+                                  <ion-item>
+                                    <ion-label position="stacked">{{ 'adminProductWizard.formatConfiguration.maxSelections' | translate }}</ion-label>
+                                    <ion-input
+                                      type="number"
+                                      inputmode="numeric"
+                                      [value]="choice.maxSelections"
+                                      (keydown)="blockInvalidNumberKeys($event)"
+                                      (ionInput)="updateFormatChoiceMaxSelections(variant.id, choice.optionGroupId, $event.detail.value)"
+                                    />
+                                  </ion-item>
+
+                                  <ion-item>
+                                    <ion-label position="stacked">{{ 'adminProductWizard.formatConfiguration.includedSelections' | translate }}</ion-label>
+                                    <ion-input
+                                      type="number"
+                                      inputmode="numeric"
+                                      [value]="choice.includedSelections"
+                                      (keydown)="blockInvalidNumberKeys($event)"
+                                      (ionInput)="updateFormatChoiceIncludedSelections(variant.id, choice.optionGroupId, $event.detail.value)"
+                                    />
+                                  </ion-item>
+                                </div>
+
+                                <div class="format-choice-options">
+                                  @for (item of choice.items; track trackById($index, item)) {
+                                    <div class="format-option-row">
+                                      <span>{{ item.name }}</span>
+                                      @if (item.priceDelta > 0) {
+                                        <strong>+{{ item.priceDelta | number: '1.2-2' }} CHF</strong>
+                                      } @else {
+                                        <small>{{ 'adminProductWizard.choices.includedPrice' | translate }}</small>
+                                      }
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="info-box">{{ 'adminProductWizard.formatConfiguration.tip' | translate }}</div>
+                  }
+                </section>
+              }
+
+              @case ('rules') {
+                <app-rules-step
+                  [rules]="draft().rules"
+                  [variants]="draft().variants"
+                  [selectedFormatChoices]="selectedFormatChoices()"
+                  [businessRuleTemplates]="businessRuleTemplates"
+                  [conditionDayOptions]="conditionDayOptions"
+                  [orderTypeOptions]="orderTypeOptions"
+
+                  (createRule)="addRule($event)"
+                  (createAdvancedRule)="createAdvancedCondition()"
+                  (openLibrary)="openRuleLibraryPicker()"
+
+                  (ruleLabelChange)="updateConditionLabel($event.ruleId, $event.value)"
+                  (ruleDescriptionChange)="store.updateRuleDescription($event.ruleId, $event.value || '')"
+                  (ruleTypeChange)="updateConditionType($event.ruleId, $event.value)"
+                  (ruleEnabledChange)="updateConditionEnabled($event.ruleId, $event.value)"
+                  (ruleRemove)="removeCondition($event)"
+
+                  (targetTypeChange)="updateConditionTargetType($event.ruleId, $event.value)"
+                  (variantTargetChange)="updateConditionVariantTarget($event.ruleId, $event.value)"
+                  (optionGroupTargetChange)="updateConditionOptionGroupTarget($event.ruleId, $event.value)"
+
+                  (orderTypeChange)="updateConditionOrderType($event.ruleId, $event.value)"
+                  (daySelectionChange)="toggleConditionDay($event.ruleId, $event.day, $event.checked)"
+                  (timeFromChange)="updateConditionTimeFrom($event.ruleId, $event.value)"
+                  (timeToChange)="updateConditionTimeTo($event.ruleId, $event.value)"
+
+                  (availableChange)="updateConditionAvailable($event.ruleId, $event.value)"
+                  (visibleChange)="updateConditionVisible($event.ruleId, $event.value)"
+                  (requiredChange)="updateConditionRequired($event.ruleId, $event.value)"
+                  (minSelectionsChange)="updateConditionMinSelections($event.ruleId, $event.value)"
+                  (maxSelectionsChange)="updateConditionMaxSelections($event.ruleId, $event.value)"
+                  (includedSelectionsChange)="updateConditionIncludedSelections($event.ruleId, $event.value)"
+                  (priceDeltaChange)="updateConditionPriceDelta($event.ruleId, $event.value)"
+
+                  (reusableChange)="store.updateRuleReusable($event.ruleId, $event.value)"
+                  (favoriteChange)="store.updateRuleFavorite($event.ruleId, $event.value)"
+                  (tagsChange)="store.updateRuleTags($event.ruleId, $event.value)"
+                  (customerVisibleChange)="store.updateRuleCustomerVisible($event.ruleId, $event.value)"
+                  (customerTitleChange)="store.updateRuleCustomerTitle($event.ruleId, $event.value || '')"
+                  (customerDescriptionChange)="store.updateRuleCustomerDescription($event.ruleId, $event.value || '')"
+                />
+              }
+
+              @case ('preview') {
+                <section class="step-content">
+                  <div class="admin-section-title">
+                    <h2>{{ 'adminProductWizard.preview.title' | translate }}</h2>
+                    <p class="section-help">{{ 'adminProductWizard.preview.help' | translate }}</p>
+                  </div>
+
+                  @if (validationErrors().length > 0) {
+                    <div class="validation-panel">
+                      <h3>
+                        <ion-icon name="warning-outline"></ion-icon>
+                        {{ 'adminProductWizard.preview.correctionsNeeded' | translate }}
+                      </h3>
+                      @for (error of validationErrors(); track error.field) {
+                        <p>{{ error.message | translate }}</p>
+                      }
+                    </div>
+                  } @else {
+                    <div class="success-panel">
+                      <ion-icon name="checkmark-circle-outline"></ion-icon>
+                      {{ 'adminProductWizard.preview.canPublish' | translate }}
+                    </div>
+                  }
+
+                  <div class="publish-summary">
+                    <div>
+                      <strong>{{ draft().variants.length }}</strong>
+                      <span>{{ 'adminProductWizard.preview.formats' | translate }}</span>
+                    </div>
+                    <div>
+                      <strong>{{ draft().choices.length }}</strong>
+                      <span>{{ 'adminProductWizard.preview.choices' | translate }}</span>
+                    </div>
+                    <div>
+                      <strong>{{ draft().rules.length }}</strong>
+                      <span>{{ 'adminProductWizard.preview.conditions' | translate }}</span>
+                    </div>
+                  </div>
+                </section>
+              }
+            }
+
+            <div class="step-footer">
+              <ion-button fill="outline" [disabled]="store.currentStepIndex() === 1" (click)="previous()">
+                {{ 'adminProductWizard.actions.previous' | translate }}
+              </ion-button>
+
+              @if (currentStep() === 'preview') {
+                <ion-button [disabled]="!facade.canSubmit()" (click)="publishProduct()">
+                  {{ 'adminProductWizard.actions.publish' | translate }}
+                </ion-button>
+              } @else {
+                <ion-button (click)="next()">
+                  {{ 'adminProductWizard.actions.next' | translate }}
+                </ion-button>
+              }
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" sizeLg="4">
+        <aside class="preview-panel">
+          <div class="preview-phone">
+            <div class="preview-label">
+              <ion-icon name="eye-outline"></ion-icon>
+              {{ 'adminProductWizard.preview.clientPreview' | translate }}
+            </div>
+
+            <img [src]="draft().imageUrl || 'assets/img/product-placeholder.jpg'" alt="Product preview" />
+
+            <h2>{{ draft().title || ('adminProductWizard.preview.defaultProductName' | translate) }}</h2>
+            <p>{{ draft().shortDescription || ('adminProductWizard.preview.defaultDescription' | translate) }}</p>
+
+            <div class="preview-price">{{ previewPrice() | number: '1.2-2' }} CHF</div>
+
+            @if (draft().variants.length > 0) {
+              <ion-segment [value]="selectedVariant()?.id" (ionChange)="store.selectVariant($any($event.detail.value))">
+                @for (variant of draft().variants; track trackById($index, variant)) {
+                  <ion-segment-button [value]="variant.id">{{ variant.name }}</ion-segment-button>
+                }
+              </ion-segment>
+            }
+
+            <div class="preview-options">
+              @if (selectedFormatChoices().length === 0) {
+                <div class="preview-empty">{{ 'adminProductWizard.preview.emptyChoices' | translate }}</div>
+              }
+
+              @for (choice of selectedFormatChoices(); track trackById($index, choice)) {
+                <div class="preview-choice">
+                  <h3>{{ choice.name }}</h3>
+                  <p>
+                    {{
+                      (
+                        choice.required
+                          ? 'adminProductWizard.preview.required'
+                          : 'adminProductWizard.preview.optional'
+                      ) | translate
+                    }}
+                    · {{ choice.minSelections }} à {{ choice.maxSelections }}
+                    @if (choice.includedSelections > 0) {
+                      · {{ choice.includedSelections }} {{ 'adminProductWizard.formatConfiguration.includedShort' | translate }}
+                    }
+                  </p>
+
+                  @if (choice.items.length === 0) {
+                    <span class="preview-empty">{{ 'adminProductWizard.preview.noOption' | translate }}</span>
+                  }
+
+                  @for (item of choice.items; track trackById($index, item)) {
+                    <label [class.disabled]="!item.isAvailable">
+                      <input type="checkbox" [disabled]="!item.isAvailable" />
+                      <span>{{ item.name }}</span>
+                      @if (item.priceDelta > 0) {
+                        <strong>+{{ item.priceDelta | number: '1.2-2' }} CHF</strong>
+                      }
+                      @if (!item.isAvailable) {
+                        <small>{{ 'adminProductWizard.preview.unavailable' | translate }}</small>
+                      }
+                    </label>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </aside>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

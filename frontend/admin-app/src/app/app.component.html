@@ -1,0 +1,143 @@
+<ion-app>
+  <ion-menu
+    side="start"
+    contentId="main-content"
+    type="overlay"
+    class="admin-menu"
+  >
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ 'admin.title' | translate }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <section class="menu-profile">
+        <ion-avatar class="profile-avatar">
+          <img [src]="imageUrl()" alt="User profile" />
+        </ion-avatar>
+
+        @if (isLoggedIn()) {
+          @if (user$ | async; as user) {
+            <ion-text>
+              <h2>{{ user.firstname }} {{ user.lastname }}</h2>
+              <p>{{ 'admin.owner' | translate }}</p>
+            </ion-text>
+          } @else {
+            <ion-text>
+              <h2>{{ 'auth.guest' | translate }}</h2>
+            </ion-text>
+          }
+        } @else {
+          <ion-text color="medium">
+            <h2>{{ 'auth.guest' | translate }}</h2>
+          </ion-text>
+        }
+      </section>
+
+      <section class="restaurant-card">
+        <ion-icon name="business-outline"></ion-icon>
+
+        <div>
+          <strong>Portal Coffee</strong>
+          <span>{{ 'admin.restaurantActive' | translate }}</span>
+        </div>
+      </section>
+
+      <ion-list class="admin-nav">
+        @for (section of navigationSections(); track trackBySection($index)) {
+          @if (section.title) {
+            <ion-label class="nav-section-title">
+              {{ section.title | translate }}
+            </ion-label>
+          }
+
+          @for (item of section.items; track trackByItem($index, item)) {
+            @if (!item.requiresAuth || isLoggedIn()) {
+              <ion-item
+                button
+                detail="false"
+                lines="none"
+                class="admin-nav-item"
+                [class.active]="isActive(item)"
+                (click)="navigateTo(item)"
+              >
+                <ion-icon slot="start" [name]="item.icon"></ion-icon>
+
+                <ion-label>{{ item.label | translate }}</ion-label>
+
+                @if (item.badge) {
+                  <ion-badge slot="end" color="warning">
+                    {{ item.badge }}
+                  </ion-badge>
+                }
+              </ion-item>
+            }
+          }
+        }
+      </ion-list>
+
+      <section class="menu-footer">
+        @if (isLoggedIn()) {
+          <ion-item
+            button
+            detail="false"
+            lines="none"
+            class="logout-item"
+            (click)="logout()"
+          >
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>{{ 'auth.logout' | translate }}</ion-label>
+          </ion-item>
+        }
+      </section>
+    </ion-content>
+  </ion-menu>
+
+  <main class="app-shell">
+    <ion-header class="admin-header">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <ion-title>{{ pageTitle() | translate }}</ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="openLanguagePopover($event)">
+            <ion-icon slot="start" name="language-outline"></ion-icon>
+            {{ currentLanguage.toUpperCase() }}
+          </ion-button>
+
+          <ion-button
+            class="create-product-button"
+            (click)="goToCreateProduct()"
+          >
+            <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+            {{ 'admin.createProduct' | translate }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </main>
+
+  <ion-popover
+    [isOpen]="isLanguagePopoverOpen"
+    [event]="languagePopoverEvent"
+    (didDismiss)="isLanguagePopoverOpen = false"
+  >
+    <ng-template>
+      <ion-list>
+        @for (language of languages; track language.code) {
+          <ion-item button (click)="changeLanguage(language.code)">
+            <ion-label>
+              {{ language.short }} — {{ language.label }}
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    </ng-template>
+  </ion-popover>
+</ion-app>

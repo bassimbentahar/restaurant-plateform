@@ -1,0 +1,163 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ 'adminProductWizard.categoryPicker.title' | translate }}
+    </ion-title>
+
+    <ion-button slot="end" fill="clear" color="medium" (click)="dismiss()">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="category-picker-content">
+  <section class="modal-intro">
+    <div class="intro-icon">
+      <ion-icon name="folder-open-outline"></ion-icon>
+    </div>
+
+    <div>
+      <h2>{{ 'adminProductWizard.categoryPicker.heading' | translate }}</h2>
+      <p>{{ 'adminProductWizard.categoryPicker.description' | translate }}</p>
+    </div>
+  </section>
+
+  @if (selectedCount() > 0) {
+    <section class="selected-category-card">
+      <div>
+        <span>
+          {{ 'adminProductWizard.categoryPicker.selectedCategories' | translate }}
+        </span>
+
+        <div class="selected-chips">
+          @for (category of selectedCategories(); track category.id) {
+            <ion-badge color="success">
+              {{ category.name }}
+            </ion-badge>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <section class="search-section">
+    <ion-searchbar
+      [placeholder]="'adminProductWizard.categoryPicker.searchPlaceholder' | translate"
+      [value]="searchTerm()"
+      debounce="150"
+      (ionInput)="updateSearch($event.detail.value)"
+    />
+  </section>
+
+  <section class="category-list-section">
+    <div class="section-heading">
+      <div>
+        <h3>
+          {{ 'adminProductWizard.categoryPicker.existingCategories' | translate }}
+        </h3>
+
+        <p>
+          {{
+            'adminProductWizard.categoryPicker.selectedCount'
+              | translate: { count: selectedCount() }
+          }}
+        </p>
+      </div>
+    </div>
+
+    @if (filteredCategories().length > 0) {
+      <ion-list class="category-list" lines="none">
+        @for (category of filteredCategories(); track category.id) {
+          <ion-item
+            button
+            detail="false"
+            class="category-item"
+            [class.category-item-selected]="isSelected(category.id)"
+            (click)="toggleCategory(category.id)"
+          >
+            <div class="category-avatar" slot="start">
+              <ion-icon name="pricetag-outline"></ion-icon>
+            </div>
+
+            <ion-label>
+              <strong>{{ category.name }}</strong>
+              <p>{{ category.slug }}</p>
+            </ion-label>
+
+            <ion-checkbox
+              slot="end"
+              [checked]="isSelected(category.id)"
+              (click)="$event.stopPropagation()"
+              (ionChange)="toggleCategory(category.id)"
+            />
+          </ion-item>
+        }
+      </ion-list>
+    } @else {
+      <div class="empty-state">
+        <strong>
+          {{ 'adminProductWizard.categoryPicker.emptyTitle' | translate }}
+        </strong>
+
+        <p>
+          {{ 'adminProductWizard.categoryPicker.emptyText' | translate }}
+        </p>
+      </div>
+    }
+  </section>
+
+  <section class="create-category-section">
+    <div class="section-heading">
+      <div>
+        <h3>
+          {{ 'adminProductWizard.categoryPicker.newCategory' | translate }}
+        </h3>
+
+        <p>
+          {{ 'adminProductWizard.categoryPicker.newCategoryHelp' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <ion-item class="create-category-input">
+      <ion-label position="stacked">
+        {{ 'adminProductWizard.categoryPicker.categoryName' | translate }}
+      </ion-label>
+
+      <ion-input
+        [placeholder]="'adminProductWizard.categoryPicker.categoryNamePlaceholder' | translate"
+        [value]="newCategoryName()"
+        (ionInput)="updateNewCategoryName($event.detail.value)"
+      />
+    </ion-item>
+
+    @if (categoryAlreadyExists()) {
+      <ion-text color="warning">
+        <p class="field-message">
+          {{ 'adminProductWizard.categoryPicker.alreadyExists' | translate }}
+        </p>
+      </ion-text>
+    }
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      [disabled]="!canCreateCategory()"
+      (click)="createAndSelect()"
+    >
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      {{ 'adminProductWizard.categoryPicker.createAndSelect' | translate }}
+    </ion-button>
+  </section>
+
+  <section class="footer-actions">
+    <ion-button fill="clear" color="medium" (click)="dismiss()">
+      {{ 'common.cancel' | translate }}
+    </ion-button>
+
+    <ion-button [disabled]="!canConfirm()" (click)="confirmSelection()">
+      <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+      {{ 'adminProductWizard.categoryPicker.confirmSelection' | translate }}
+    </ion-button>
+  </section>
+</ion-content>

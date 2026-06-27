@@ -1,0 +1,290 @@
+<ion-content class="admin-products-page">
+  <header class="products-header">
+    <div class="products-title">
+      <span class="eyebrow">
+        {{ 'adminProducts.eyebrow' | translate }}
+      </span>
+
+      <h1>{{ 'adminProducts.title' | translate }}</h1>
+      <p>{{ 'adminProducts.subtitle' | translate }}</p>
+    </div>
+
+    <div class="header-actions">
+      <ion-button
+        fill="outline"
+        type="button"
+        [disabled]="loading()"
+        (click)="loadProducts()"
+      >
+        <ion-icon slot="start" name="refresh-outline"></ion-icon>
+        {{ 'adminProducts.actions.refresh' | translate }}
+      </ion-button>
+
+      <ion-button type="button" (click)="createProduct()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminProducts.actions.newProduct' | translate }}
+      </ion-button>
+    </div>
+  </header>
+
+  <section class="products-toolbar">
+    <div class="search-box">
+      <ion-icon name="search-outline"></ion-icon>
+
+      <ion-searchbar
+        [value]="searchTerm()"
+        [placeholder]="'adminProducts.search.placeholder' | translate"
+        [debounce]="180"
+        show-clear-button="focus"
+        (ionInput)="updateSearchTerm($event.detail.value)"
+      />
+    </div>
+
+    <div class="view-switch">
+      <span>{{ 'adminProducts.view.label' | translate }}</span>
+
+      <ion-segment
+        [value]="viewMode()"
+        (ionChange)="setViewMode($event.detail.value)"
+      >
+        <ion-segment-button value="cards">
+          <ion-icon name="grid-outline"></ion-icon>
+          <span>{{ 'adminProducts.view.cards' | translate }}</span>
+        </ion-segment-button>
+
+        <ion-segment-button value="list">
+          <ion-icon name="list-outline"></ion-icon>
+          <span>{{ 'adminProducts.view.list' | translate }}</span>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+  </section>
+
+  <section class="filters-panel">
+    <ion-segment
+      [value]="selectedFilter()"
+      scrollable="true"
+      (ionChange)="updateFilter($event.detail.value)"
+    >
+      @for (filter of filters; track filter.id) {
+        <ion-segment-button [value]="filter.id">
+          <span>{{ filter.labelKey | translate }}</span>
+          <small>{{ productCounts()[filter.id] }}</small>
+        </ion-segment-button>
+      }
+    </ion-segment>
+  </section>
+
+  @if (errorKey()) {
+    <section class="products-error">
+      {{ errorKey()! | translate }}
+    </section>
+  }
+
+  @if (loading()) {
+    <section class="products-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>{{ 'adminProducts.loading' | translate }}</span>
+    </section>
+  } @else if (products().length === 0) {
+    <section class="products-state products-state--empty">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <h2>{{ 'adminProducts.empty.firstTitle' | translate }}</h2>
+      <p>{{ 'adminProducts.empty.firstText' | translate }}</p>
+
+      <ion-button type="button" (click)="createProduct()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'adminProducts.actions.newProduct' | translate }}
+      </ion-button>
+    </section>
+  } @else if (filteredProducts().length === 0) {
+    <section class="products-state products-state--empty">
+      <ion-icon name="search-outline"></ion-icon>
+      <h2>{{ 'adminProducts.empty.noResultTitle' | translate }}</h2>
+      <p>{{ 'adminProducts.empty.noResultText' | translate }}</p>
+    </section>
+  } @else {
+    @if (viewMode() === 'cards') {
+      <section class="products-grid">
+        @for (product of filteredProducts(); track productId(product)) {
+          <article class="product-card">
+            <div class="product-image">
+              @if (productThumb(product)) {
+                <img
+                  [src]="productThumb(product)!"
+                  [alt]="productTitle(product)"
+                  loading="lazy"
+                  (error)="markProductImageAsBroken(product)"
+                />
+              } @else {
+                <div class="product-image-placeholder">
+                  <ion-icon name="image-outline"></ion-icon>
+                  <strong>{{ 'adminProducts.image.placeholderTitle' | translate }}</strong>
+                  <span>{{ 'adminProducts.image.placeholderHelp' | translate }}</span>
+                </div>
+              }
+
+              <div class="status-stack">
+                <ion-badge [color]="statusColor(product)">
+                  {{ statusLabelKey(product) | translate }}
+                </ion-badge>
+
+                @if (isFeatured(product)) {
+                  <ion-badge color="warning">
+                    <ion-icon name="star-outline"></ion-icon>
+                    {{ 'adminProducts.status.featured' | translate }}
+                  </ion-badge>
+                }
+              </div>
+            </div>
+
+            <div class="product-card-body">
+              <div>
+                <h2>{{ productTitle(product) }}</h2>
+
+                @if (productSlug(product)) {
+                  <span class="product-slug">{{ productSlug(product) }}</span>
+                }
+              </div>
+
+              <p>
+                {{
+                  productDescription(product) ||
+                    ('adminProducts.empty.noDescription' | translate)
+                }}
+              </p>
+
+              <div class="category-tags">
+                @if (productCategories(product).length > 0) {
+                  @for (category of productCategories(product); track categoryName(category)) {
+                    <span>
+                      <ion-icon name="folder-open-outline"></ion-icon>
+                      {{ categoryName(category) }}
+                    </span>
+                  }
+                } @else {
+                  <span>
+                    <ion-icon name="folder-open-outline"></ion-icon>
+                    {{ 'adminProducts.categories.none' | translate }}
+                  </span>
+                }
+              </div>
+
+              <div class="product-card-footer">
+                <div class="price-pill">
+                  <ion-icon name="pricetag-outline"></ion-icon>
+                  <span>
+                    {{ 'adminProducts.labels.from' | translate }}
+                    {{ productPrice(product) | number: '1.2-2' }} CHF
+                  </span>
+                </div>
+
+                <ion-button fill="outline" type="button" (click)="editProduct(product)">
+                  <ion-icon slot="start" name="create-outline"></ion-icon>
+                  {{ 'adminProducts.actions.edit' | translate }}
+                </ion-button>
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <section class="products-list-panel">
+        <div class="products-table" role="table">
+          <div class="products-table-header" role="row">
+            <span role="columnheader">
+              {{ 'adminProducts.table.product' | translate }}
+            </span>
+            <span role="columnheader">
+              {{ 'adminProducts.table.category' | translate }}
+            </span>
+            <span role="columnheader">
+              {{ 'adminProducts.table.price' | translate }}
+            </span>
+            <span role="columnheader">
+              {{ 'adminProducts.table.status' | translate }}
+            </span>
+            <span role="columnheader">
+              {{ 'adminProducts.table.actions' | translate }}
+            </span>
+          </div>
+
+          @for (product of filteredProducts(); track productId(product)) {
+            <article class="product-row" role="row">
+              <div class="product-cell product-cell--main" role="cell">
+                <div class="row-image">
+                  @if (productThumb(product)) {
+                    <img
+                      [src]="productThumb(product)!"
+                      [alt]="productTitle(product)"
+                      loading="lazy"
+                      (error)="markProductImageAsBroken(product)"
+                    />
+                  } @else {
+                    <div class="row-image-placeholder">
+                      <ion-icon name="image-outline"></ion-icon>
+                    </div>
+                  }
+                </div>
+
+                <div>
+                  <h3>{{ productTitle(product) }}</h3>
+
+                  @if (productSlug(product)) {
+                    <span>{{ productSlug(product) }}</span>
+                  }
+
+                  <p>
+                    {{
+                      productDescription(product) ||
+                        ('adminProducts.empty.noDescription' | translate)
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="product-cell" role="cell">
+                @if (productCategories(product).length > 0) {
+                  <div class="row-categories">
+                    @for (category of productCategories(product); track categoryName(category)) {
+                      <span>{{ categoryName(category) }}</span>
+                    }
+                  </div>
+                } @else {
+                  <span class="muted">
+                    {{ 'adminProducts.categories.none' | translate }}
+                  </span>
+                }
+              </div>
+
+              <div class="product-cell product-cell--price" role="cell">
+                {{ productPrice(product) | number: '1.2-2' }} CHF
+              </div>
+
+              <div class="product-cell" role="cell">
+                <div class="row-status">
+                  <ion-badge [color]="statusColor(product)">
+                    {{ statusLabelKey(product) | translate }}
+                  </ion-badge>
+
+                  @if (isFeatured(product)) {
+                    <ion-badge color="warning">
+                      {{ 'adminProducts.status.featured' | translate }}
+                    </ion-badge>
+                  }
+                </div>
+              </div>
+
+              <div class="product-cell product-cell--actions" role="cell">
+                <ion-button fill="outline" type="button" (click)="editProduct(product)">
+                  <ion-icon slot="start" name="create-outline"></ion-icon>
+                  {{ 'adminProducts.actions.edit' | translate }}
+                </ion-button>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+</ion-content>

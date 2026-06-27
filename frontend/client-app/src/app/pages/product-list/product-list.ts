@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {
   Component,
   OnInit,
@@ -9,8 +9,8 @@ import {
   QueryList,
   ElementRef
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 import {
   IonCard,
   IonCardContent,
@@ -25,13 +25,13 @@ import {
   IonSearchbar,
   IonSpinner, IonToolbar,
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { cartOutline, star } from 'ionicons/icons';
-import { Currency } from '../../models/currency.model';
-import { Product } from '../../models/product.model';
+import {addIcons} from 'ionicons';
+import {cartOutline, star} from 'ionicons/icons';
+import {Currency} from '../../models/currency.model';
+import {Product} from '../../models/product.model';
 import {ProductService} from "../../services/product.service";
 import {ImageService} from "../../services/image.service";
-import { ModalController } from '@ionic/angular/standalone';
+import {ModalController} from '@ionic/angular/standalone';
 import {ProductDetails} from "../product-details/product-details";
 import {BasketPanel} from "../basket-panel/basket-panel";
 import {CartService} from "../../services/cart.service";
@@ -130,6 +130,7 @@ export class ProductList implements OnInit {
 
     this.productService.getAllProducts().subscribe({
       next: (products) => {
+        console.log(products)
         const normalized = products.map((product) => ({
           ...product,
 
@@ -214,7 +215,7 @@ export class ProductList implements OnInit {
     await modal.present();
   }
 
-  scrollToTop(): void  {
+  scrollToTop(): void {
     this.setActiveCategory('all');
     const content = document.querySelector('ion-content');
     content?.scrollToTop?.(500);
@@ -269,7 +270,7 @@ export class ProductList implements OnInit {
 
   getStars(item: Product): number[] {
     const count = Math.round(this.getAverageRating(item));
-    return Array.from({ length: count }, (_, i) => i);
+    return Array.from({length: count}, (_, i) => i);
   }
 
   groupedCategories = computed(() => {
@@ -278,20 +279,21 @@ export class ProductList implements OnInit {
     const map = new Map<string, { id: string; name: string; items: Product[] }>();
 
     for (const item of items) {
-      const categoryId = item.category?.id;
-      const categoryName = item.category?.name;
+      for (const category of item.categories ?? []) {
+        const categoryId = category?.id;
+        const categoryName = category?.name;
 
-      if (!categoryId || !categoryName) continue;
+        if (!categoryId || !categoryName) continue;
 
-      if (!map.has(categoryId)) {
-        map.set(categoryId, {
-          id: categoryId,
-          name: categoryName,
-          items: [],
-        });
+        if (!map.has(categoryId)) {
+          map.set(categoryId, {
+            id: categoryId,
+            name: categoryName,
+            items: [],
+          });
+        }
+        map.get(categoryId)!.items.push(item);
       }
-
-      map.get(categoryId)!.items.push(item);
     }
 
     return Array.from(map.values());
@@ -300,7 +302,7 @@ export class ProductList implements OnInit {
   scrollToCategory(categoryId: string): void {
     const el = document.getElementById(`category-${categoryId}`);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({behavior: 'smooth', block: 'start'});
       this.setActiveCategory(categoryId);
     }
   }

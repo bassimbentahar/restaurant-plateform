@@ -1,0 +1,164 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'adminMenuLibrary.availabilityEditor.title' | translate }}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" type="button" (click)="close()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="rule-editor-modal">
+  <section class="editor-intro">
+    <h2>{{ 'adminMenuLibrary.availabilityEditor.heading' | translate }}</h2>
+    <p>{{ 'adminMenuLibrary.availabilityEditor.help' | translate }}</p>
+  </section>
+
+  <section class="editor-form">
+    <ion-item>
+      <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.name' | translate }}</ion-label>
+      <ion-input
+        [value]="name()"
+        [placeholder]="'adminMenuLibrary.availabilityEditor.namePlaceholder' | translate"
+        (ionInput)="updateName($event.detail.value)"
+      />
+    </ion-item>
+
+    @if (submitted() && !name().trim()) {
+      <p class="admin-error-message">
+        {{ 'adminMenuLibrary.availabilityEditor.validation.nameRequired' | translate }}
+      </p>
+    }
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.description' | translate }}</ion-label>
+      <ion-textarea
+        autoGrow="true"
+        [value]="description()"
+        [placeholder]="'adminMenuLibrary.availabilityEditor.descriptionPlaceholder' | translate"
+        (ionInput)="updateDescription($event.detail.value)"
+      />
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.type' | translate }}</ion-label>
+      <ion-select [value]="type()" (ionChange)="updateType($event.detail.value)">
+        <ion-select-option value="AVAILABILITY">
+          {{ 'adminMenuLibrary.ruleTypes.availability' | translate }}
+        </ion-select-option>
+        <ion-select-option value="VISIBILITY">
+          {{ 'adminMenuLibrary.ruleTypes.visibility' | translate }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <div class="toggle-grid">
+      <ion-item>
+        <ion-label>{{ 'adminMenuLibrary.availabilityEditor.active' | translate }}</ion-label>
+        <ion-toggle slot="end" [checked]="active()" (ionChange)="active.set($event.detail.checked)" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label>{{ 'adminMenuLibrary.offerEditor.favorite' | translate }}</ion-label>
+        <ion-toggle slot="end" [checked]="favorite()" (ionChange)="favorite.set($event.detail.checked)" />
+      </ion-item>
+    </div>
+
+    <div class="field-grid">
+      <ion-item>
+        <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.timeFrom' | translate }}</ion-label>
+        <ion-input type="time" [value]="timeFrom()" (ionInput)="updateTimeFrom($event.detail.value)" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.timeTo' | translate }}</ion-label>
+        <ion-input type="time" [value]="timeTo()" (ionInput)="updateTimeTo($event.detail.value)" />
+      </ion-item>
+    </div>
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.orderType' | translate }}</ion-label>
+      <ion-select [value]="orderType()" (ionChange)="updateOrderType($event.detail.value)">
+        <ion-select-option value="">{{ 'adminMenuLibrary.availabilityEditor.orderTypes.all' | translate }}</ion-select-option>
+        <ion-select-option value="PICKUP">{{ 'adminMenuLibrary.availabilityEditor.orderTypes.pickup' | translate }}</ion-select-option>
+        <ion-select-option value="DELIVERY">{{ 'adminMenuLibrary.availabilityEditor.orderTypes.delivery' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <div class="days-section">
+      <strong>{{ 'adminMenuLibrary.availabilityEditor.days' | translate }}</strong>
+
+      <div class="days-grid">
+        @for (day of days; track day) {
+          <ion-checkbox
+            [checked]="isDaySelected(day)"
+            (ionChange)="toggleDay(day, $event.detail.checked)"
+          >
+            {{ ('adminMenuLibrary.days.' + day) | translate }}
+          </ion-checkbox>
+        }
+      </div>
+    </div>
+
+    @if (type() === 'AVAILABILITY') {
+      <ion-item>
+        <ion-label>{{ 'adminMenuLibrary.availabilityEditor.available' | translate }}</ion-label>
+        <ion-toggle slot="end" [checked]="available()" (ionChange)="available.set($event.detail.checked)" />
+      </ion-item>
+    }
+
+    @if (type() === 'VISIBILITY') {
+      <ion-item>
+        <ion-label>{{ 'adminMenuLibrary.availabilityEditor.visible' | translate }}</ion-label>
+        <ion-toggle slot="end" [checked]="visible()" (ionChange)="visible.set($event.detail.checked)" />
+      </ion-item>
+    }
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'adminMenuLibrary.availabilityEditor.tags' | translate }}</ion-label>
+      <ion-input
+        [value]="tags()"
+        [placeholder]="'adminMenuLibrary.availabilityEditor.tagsPlaceholder' | translate"
+        (ionInput)="updateTags($event.detail.value)"
+      />
+    </ion-item>
+
+    <ion-item>
+      <ion-label>{{ 'adminMenuLibrary.offerEditor.customerVisible' | translate }}</ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="customerVisible()"
+        (ionChange)="customerVisible.set($event.detail.checked)"
+      />
+    </ion-item>
+
+    @if (customerVisible()) {
+      <ion-item>
+        <ion-label position="stacked">{{ 'adminMenuLibrary.offerEditor.customerTitle' | translate }}</ion-label>
+        <ion-input [value]="customerTitle()" (ionInput)="customerTitle.set($any($event.detail.value) || '')" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">{{ 'adminMenuLibrary.offerEditor.customerDescription' | translate }}</ion-label>
+        <ion-textarea autoGrow="true" [value]="customerDescription()" (ionInput)="customerDescription.set($any($event.detail.value) || '')" />
+      </ion-item>
+    }
+  </section>
+</ion-content>
+
+<ion-footer class="editor-footer">
+  <ion-toolbar>
+    <div class="footer-actions">
+      <ion-button fill="outline" type="button" (click)="close()">
+        {{ 'common.cancel' | translate }}
+      </ion-button>
+
+      <ion-button [disabled]="!isValid()" type="button" (click)="confirm()">
+        <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+        {{ 'common.save' | translate }}
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

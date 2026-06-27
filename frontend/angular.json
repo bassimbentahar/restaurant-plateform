@@ -126,7 +126,7 @@
               }
             ],
             "styles": [
-              "admin-app/src/styles.scss"
+              "admin-app/src/global.scss"
             ]
           },
           "configurations": {
@@ -173,6 +173,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 4201
+          },
           "configurations": {
             "production": {
               "buildTarget": "admin-app:build:production"

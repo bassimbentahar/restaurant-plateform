@@ -1,0 +1,176 @@
+<section class="step-content formats-step">
+  <div class="formats-hero">
+    <div class="admin-section-title">
+      <span class="formats-eyebrow">
+        {{ 'adminProductWizard.formatsPremium.eyebrow' | translate }}
+      </span>
+
+      <h2>{{ 'adminProductWizard.formats.title' | translate }}</h2>
+      <p>{{ 'adminProductWizard.formats.help' | translate }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="formats-add-card"
+      (click)="addVariant.emit()"
+    >
+      <span class="formats-add-icon">➕</span>
+      <span>
+        <strong>{{ 'adminProductWizard.formats.add' | translate }}</strong>
+        <small>{{ 'adminProductWizard.formatsPremium.addHelp' | translate }}</small>
+      </span>
+    </button>
+  </div>
+
+  <div class="formats-metrics">
+    <div>
+      <strong>{{ variants().length }}</strong>
+      <span>{{ 'adminProductWizard.formatsPremium.metrics.formats' | translate }}</span>
+    </div>
+
+    <div>
+      <strong>{{ availableVariantsCount() }}</strong>
+      <span>{{ 'adminProductWizard.formatsPremium.metrics.available' | translate }}</span>
+    </div>
+
+    <div>
+      <strong>{{ defaultVariant()?.name || '-' }}</strong>
+      <span>{{ 'adminProductWizard.formatsPremium.metrics.defaultFormat' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="formats-list">
+    @for (variant of variants(); track trackById($index, variant)) {
+      <article
+        class="format-card"
+        [class.format-card--default]="variant.isDefault"
+        [class.format-card--disabled]="!variant.isAvailable"
+      >
+        <header class="format-card-header">
+          <div class="format-title-area">
+            <div class="format-badges">
+              @if (variant.isDefault) {
+                <ion-badge color="warning">
+                  {{ 'adminProductWizard.formats.default' | translate }}
+                </ion-badge>
+              }
+
+              @if (variant.isAvailable) {
+                <ion-badge color="success">
+                  {{ 'adminProductWizard.formats.available' | translate }}
+                </ion-badge>
+              } @else {
+                <ion-badge color="medium">
+                  {{ 'adminProductWizard.formatsPremium.unavailable' | translate }}
+                </ion-badge>
+              }
+            </div>
+
+            <ion-item class="format-name-field">
+              <ion-label position="stacked">
+                {{ 'adminProductWizard.formats.format' | translate }}
+              </ion-label>
+
+              <ion-input
+                [value]="variant.name"
+                [placeholder]="'adminProductWizard.formats.placeholder' | translate"
+                (ionInput)="emitVariantNameChange(variant.id, $event.detail.value)"
+              />
+            </ion-item>
+          </div>
+
+          <div class="format-price-summary">
+            <span>{{ 'adminProductWizard.formats.finalPrice' | translate }}</span>
+            <strong>{{ getFinalPrice(variant) | number: '1.2-2' }} CHF</strong>
+            <small>
+              {{ 'adminProductWizard.pricing.basePrice' | translate }}
+              {{ basePrice() | number: '1.2-2' }} CHF
+            </small>
+          </div>
+        </header>
+
+        <section class="format-card-body">
+          <div class="format-field-grid">
+            <ion-item>
+              <ion-label position="stacked">
+                {{ 'adminProductWizard.formats.supplement' | translate }}
+              </ion-label>
+
+              <ion-input
+                type="number"
+                inputmode="decimal"
+                [value]="variant.priceAdjustment"
+                placeholder="0.00"
+                (ionInput)="emitVariantPriceAdjustmentChange(variant.id, $event.detail.value)"
+              />
+
+              <span slot="end">CHF</span>
+            </ion-item>
+
+            <div class="format-toggle-card">
+              <div>
+                <strong>{{ 'adminProductWizard.formats.default' | translate }}</strong>
+                <small>{{ 'adminProductWizard.formatsPremium.defaultHelp' | translate }}</small>
+              </div>
+
+              <ion-button
+                fill="outline"
+                size="small"
+                type="button"
+                [disabled]="variant.isDefault"
+                (click)="setDefaultVariant.emit(variant.id)"
+              >
+                @if (variant.isDefault) {
+                  {{ 'adminProductWizard.formatsPremium.alreadyDefault' | translate }}
+                } @else {
+                  {{ 'adminProductWizard.formatsPremium.setDefault' | translate }}
+                }
+              </ion-button>
+            </div>
+
+            <div class="format-toggle-card">
+              <div>
+                <strong>{{ 'adminProductWizard.formats.available' | translate }}</strong>
+                <small>{{ 'adminProductWizard.formatsPremium.availableHelp' | translate }}</small>
+              </div>
+
+              <ion-toggle
+                [checked]="variant.isAvailable"
+                (ionChange)="variantAvailableChange.emit({
+                  variantId: variant.id,
+                  value: $event.detail.checked
+                })"
+              />
+            </div>
+          </div>
+
+          <div class="format-actions">
+            <ion-button
+              fill="outline"
+              size="small"
+              type="button"
+              (click)="configureVariantChoices.emit(variant.id)"
+            >
+              <ion-icon slot="start" name="settings-outline"></ion-icon>
+              {{ 'adminProductWizard.formats.configureChoices' | translate }}
+            </ion-button>
+
+            <ion-button
+              fill="clear"
+              color="danger"
+              size="small"
+              type="button"
+              [disabled]="!canRemoveVariant()"
+              (click)="removeVariant.emit(variant.id)"
+            >
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              {{ 'common.delete' | translate }}
+            </ion-button>
+          </div>
+        </section>
+      </article>
+    }
+  </div>
+
+  <div class="info-box">{{ 'adminProductWizard.formats.tip' | translate }}</div>
+</section>

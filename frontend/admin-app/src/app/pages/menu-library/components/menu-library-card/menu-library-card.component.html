@@ -1,0 +1,58 @@
+<article class="menu-library-card" [class.menu-library-card--disabled]="card().disabled">
+  <div class="card-top">
+    <ion-badge>
+      {{ card().badgeKey | translate }}
+    </ion-badge>
+
+    @if (card().disabled) {
+      <ion-badge color="medium">
+        {{ 'adminMenuLibrary.badges.inactive' | translate }}
+      </ion-badge>
+    }
+  </div>
+
+  <h3>{{ card().title }}</h3>
+
+  <p>
+    {{
+      card().description ||
+        ('adminMenuLibrary.empty.noDescription' | translate)
+    }}
+  </p>
+
+  <div class="card-metadata">
+    @for (metadata of card().metadata; track metadata.labelKey) {
+      <span>
+        <small>{{ metadata.labelKey | translate }}</small>
+
+        <strong>
+          @if (isTranslationKey(metadata.value)) {
+            {{ metadata.value | translate }}
+          } @else {
+            {{ metadata.value }}
+          }
+        </strong>
+      </span>
+    }
+  </div>
+
+  @if (card().tags.length > 0) {
+    <div class="card-tags">
+      @for (tag of card().tags; track tag) {
+        <span>{{ tag }}</span>
+      }
+    </div>
+  }
+
+  <div class="card-actions">
+    <ion-button fill="clear" size="small" type="button" (click)="duplicate.emit(card())">
+      <ion-icon slot="start" name="copy-outline"></ion-icon>
+      {{ 'adminMenuLibrary.actions.duplicate' | translate }}
+    </ion-button>
+
+    <ion-button fill="outline" size="small" type="button" (click)="edit.emit(card())">
+      <ion-icon slot="start" name="create-outline"></ion-icon>
+      {{ 'adminMenuLibrary.actions.edit' | translate }}
+    </ion-button>
+  </div>
+</article>

@@ -5,6 +5,9 @@ export const environment = {
     url: 'https://auth.portalcoffee.ch',
     realm: 'res-realm',
     clientId: 'client-app',
-    pkce: false,
+    pkce: true,
   },
+  apiUrl: 'https://api-dev.portalcoffee.ch',
+  wsUrl: 'wss://api-dev.portalcoffee.ch',
+  googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk'
 };

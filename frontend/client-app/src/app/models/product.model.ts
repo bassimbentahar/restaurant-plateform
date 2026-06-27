@@ -34,13 +34,21 @@ export interface ProductTag {
 export interface ProductVariant {
   id: string;
   code?: string;
+  sku?: string | null;
+
   name: string;
   description?: string;
+
   basePrice: number;
   compareAtPrice?: number | null;
+
   isDefault?: boolean;
   isAvailable?: boolean;
+
   sortOrder?: number;
+  displayOrder?: number;
+
+  optionGroups?: ProductOptionGroup[];
 }
 
 export type OptionGroupDisplayType = 'radio' | 'checkbox' | 'select' | 'buttons';
@@ -93,7 +101,6 @@ export interface Product {
   isFeatured?: boolean;
   isArchived?: boolean;
 
-  category?: ProductCategoryRef;
   categories?: ProductCategoryRef[];
 
   thumb?: string | null;
@@ -102,6 +109,11 @@ export interface Product {
   basePrice?: number | null;
 
   variants?: ProductVariant[];
+
+  /**
+   * Fallback legacy.
+   * La source principale doit être selectedVariant.optionGroups.
+   */
   optionGroups?: ProductOptionGroup[];
 
   reviews?: ProductReview[];
@@ -109,12 +121,10 @@ export interface Product {
 
   preparationTimeMinutes?: number | null;
 
-  // Nutrition à plat, alignée avec l'API
   calories?: number | null;
   ingredientsText?: string | null;
   allergensText?: string | null;
 
-  // Disponibilité à plat, alignée avec l'API
   availableFrom?: string;
   availableTo?: string;
 

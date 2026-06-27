@@ -1,0 +1,539 @@
+<section class="step-content business-rules-step">
+    <div class="admin-section-title">
+        <h2>{{ 'adminProductWizard.conditions.businessTitle' | translate }}</h2>
+        <p class="section-help">{{ 'adminProductWizard.conditions.businessHelp' | translate }}</p>
+    </div>
+
+    <div class="rule-action-hub">
+        <button
+                type="button"
+                class="rule-action-card rule-action-card--primary"
+                (click)="createRule.emit('AVAILABILITY')"
+        >
+            <span class="rule-action-icon">➕</span>
+            <span class="rule-action-copy">
+        <strong>{{ 'adminProductWizard.conditions.ruleHub.createForProduct' | translate }}</strong>
+        <small>{{ 'adminProductWizard.conditions.ruleHub.createForProductHelp' | translate }}</small>
+      </span>
+        </button>
+
+        <button
+                type="button"
+                class="rule-action-card"
+                (click)="openLibrary.emit()"
+        >
+            <span class="rule-action-icon">📚</span>
+            <span class="rule-action-copy">
+        <strong>{{ 'adminProductWizard.conditions.ruleHub.addFromLibrary' | translate }}</strong>
+        <small>{{ 'adminProductWizard.conditions.ruleHub.addFromLibraryHelp' | translate }}</small>
+      </span>
+        </button>
+    </div>
+
+    <div class="business-rules-guidance rule-quick-guidance">
+        <div>
+            <strong>{{ 'adminProductWizard.conditions.ruleHub.quickSuggestionsTitle' | translate }}</strong>
+            <p>{{ 'adminProductWizard.conditions.ruleHub.quickSuggestionsHelp' | translate }}</p>
+        </div>
+    </div>
+
+    <div class="business-template-grid business-template-grid-primary">
+        @for (template of primaryTemplates(); track template.type) {
+            <button
+                    type="button"
+                    class="business-template-card business-template-card-primary"
+                    (click)="createRule.emit(template.type)"
+            >
+                <span class="business-template-icon">+</span>
+                <strong>{{ template.titleKey | translate }}</strong>
+                <p>{{ template.helpKey | translate }}</p>
+                <small>{{ template.exampleKey | translate }}</small>
+            </button>
+        }
+    </div>
+
+    <details class="business-advanced-panel business-advanced-panel--builder">
+        <summary>
+            <span>{{ 'adminProductWizard.conditions.advancedOpen' | translate }}</span>
+            <small>{{ 'adminProductWizard.conditions.advancedHelp' | translate }}</small>
+        </summary>
+
+        <div class="business-advanced-warning">
+            {{ 'adminProductWizard.conditions.advancedWarning' | translate }}
+        </div>
+
+        <div class="business-advanced-builder business-advanced-builder-simple">
+            <div class="business-advanced-builder-copy">
+                <strong>{{ 'adminProductWizard.conditions.advancedBuilderTitle' | translate }}</strong>
+                <p>{{ 'adminProductWizard.conditions.advancedBuilderText' | translate }}</p>
+            </div>
+
+            <ion-button type="button" (click)="createAdvancedRule.emit()">
+                <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+                {{ 'adminProductWizard.conditions.advancedCreateButton' | translate }}
+            </ion-button>
+        </div>
+    </details>
+
+    @if (rules().length === 0) {
+        <div class="empty-state business-empty-state">
+            <h3>{{ 'adminProductWizard.conditions.emptyTitle' | translate }}</h3>
+            <p>{{ 'adminProductWizard.conditions.emptyText' | translate }}</p>
+        </div>
+    } @else {
+        <div class="business-rule-list">
+            @for (rule of rules(); track trackById($index, rule)) {
+                <article
+                        class="business-rule-card"
+                        [class.business-rule-card-disabled]="!rule.enabled"
+                >
+                    <header class="business-rule-header">
+                        <div class="business-rule-title-block">
+                            <div class="rule-identity-panel">
+                                <div class="rule-identity-header">
+                                    <ion-badge color="success">
+                                        {{ conditionKindLabelKey(rule.type) | translate }}
+                                    </ion-badge>
+
+                                    @if (rule.reusable) {
+                                        <ion-badge color="primary">
+                                            {{ 'adminProductWizard.conditions.organization.libraryBadge' | translate }}
+                                        </ion-badge>
+                                    } @else {
+                                        <ion-badge color="medium">
+                                            {{ 'adminProductWizard.conditions.organization.localBadge' | translate }}
+                                        </ion-badge>
+                                    }
+
+                                    @if (rule.favorite) {
+                                        <ion-badge color="warning">
+                                            {{ 'adminProductWizard.conditions.organization.favoriteBadge' | translate }}
+                                        </ion-badge>
+                                    }
+                                </div>
+
+                                <ion-item class="rule-identity-field">
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.identity.internalName' | translate }}
+                                    </ion-label>
+
+                                    <ion-input
+                                            [value]="rule.label"
+                                            [placeholder]="'adminProductWizard.conditions.identity.internalNamePlaceholder' | translate"
+                                            (ionInput)="emitRuleLabelChange(rule.id, $event.detail.value)"
+                                    />
+                                </ion-item>
+
+                                <ion-item class="rule-identity-field">
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.identity.internalDescription' | translate }}
+                                    </ion-label>
+
+                                    <ion-textarea
+                                            [value]="rule.description"
+                                            autoGrow="true"
+                                            [placeholder]="'adminProductWizard.conditions.identity.internalDescriptionPlaceholder' | translate"
+                                            (ionInput)="emitRuleDescriptionChange(rule.id, $event.detail.value)"
+                                    />
+                                </ion-item>
+
+                                <p class="rule-identity-help">
+                                    {{ conditionKindHelpKey(rule.type) | translate }}
+                                </p>
+                            </div>
+
+                            <div class="business-rule-main-action">
+                                <ion-label>{{ 'adminProductWizard.conditions.fields.mainAction' | translate }}</ion-label>
+                                <ion-select
+                                        interface="popover"
+                                        [value]="rule.type"
+                                        (ionChange)="ruleTypeChange.emit({ ruleId: rule.id, value: $any($event.detail.value) })"
+                                >
+                                    @for (template of businessRuleTemplates(); track template.type) {
+                                        <ion-select-option [value]="template.type">
+                                            {{ template.titleKey | translate }}
+                                        </ion-select-option>
+                                    }
+                                </ion-select>
+                            </div>
+                        </div>
+
+                        <div class="business-rule-actions">
+                            <div class="business-rule-status">
+                <span>
+                  {{
+                        (
+                            rule.enabled
+                                ? 'adminProductWizard.conditions.status.active'
+                                : 'adminProductWizard.conditions.status.inactive'
+                        ) | translate
+                    }}
+                </span>
+                                <ion-toggle
+                                        [checked]="rule.enabled"
+                                        (ionChange)="ruleEnabledChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                />
+                            </div>
+
+                            <ion-button
+                                    fill="clear"
+                                    color="danger"
+                                    type="button"
+                                    (click)="ruleRemove.emit(rule.id)"
+                            >
+                                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                            </ion-button>
+                        </div>
+                    </header>
+
+                    <div class="business-rule-summary">
+                        <strong>{{ 'adminProductWizard.conditions.summaryTitle' | translate }}</strong>
+                        <p>{{ conditionBusinessSummary(rule) }}</p>
+                    </div>
+
+                    <div class="business-form-grid">
+                        <section class="business-form-section">
+                            <h4>{{ 'adminProductWizard.conditions.sections.concerned' | translate }}</h4>
+
+                            <p class="business-form-help">
+                                @switch (rule.type) {
+                                    @case ('AVAILABILITY') {
+                                        {{ 'adminProductWizard.conditions.sectionHelp.availabilityConcerned' | translate }}
+                                    }
+                                    @case ('VISIBILITY') {
+                                        {{ 'adminProductWizard.conditions.sectionHelp.visibilityConcerned' | translate }}
+                                    }
+                                    @case ('SELECTION_RULE') {
+                                        {{ 'adminProductWizard.conditions.sectionHelp.selectionConcerned' | translate }}
+                                    }
+                                    @case ('INCLUDED_OPTION') {
+                                        {{ 'adminProductWizard.conditions.sectionHelp.includedConcerned' | translate }}
+                                    }
+                                    @case ('PRICE_RULE') {
+                                        {{ 'adminProductWizard.conditions.sectionHelp.priceConcerned' | translate }}
+                                    }
+                                }
+                            </p>
+
+                            <ion-segment
+                                    [value]="rule.targetType"
+                                    (ionChange)="targetTypeChange.emit({ ruleId: rule.id, value: $any($event.detail.value) })"
+                            >
+                                @if (shouldShowProductOrVariantTargets(rule)) {
+                                    <ion-segment-button value="PRODUCT">
+                                        {{ 'adminProductWizard.conditions.targets.product' | translate }}
+                                    </ion-segment-button>
+                                    <ion-segment-button value="VARIANT">
+                                        {{ 'adminProductWizard.conditions.targets.variant' | translate }}
+                                    </ion-segment-button>
+                                }
+
+                                @if (shouldShowOptionGroupTargets(rule)) {
+                                    <ion-segment-button value="OPTION_GROUP">
+                                        {{ 'adminProductWizard.conditions.targets.optionGroup' | translate }}
+                                    </ion-segment-button>
+                                }
+                            </ion-segment>
+
+                            @if (rule.targetType === 'VARIANT') {
+                                <ion-item>
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.fields.variant' | translate }}
+                                    </ion-label>
+                                    <ion-select
+                                            interface="popover"
+                                            [value]="rule.targetId"
+                                            (ionChange)="emitVariantTargetChange(rule.id, $event.detail.value)"
+                                    >
+                                        @for (variant of variants(); track trackById($index, variant)) {
+                                            <ion-select-option [value]="variant.id">{{ variant.name }}
+                                            </ion-select-option>
+                                        }
+                                    </ion-select>
+                                </ion-item>
+                            }
+
+                            @if (rule.targetType === 'OPTION_GROUP') {
+                                <ion-item>
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.fields.optionGroup' | translate }}
+                                    </ion-label>
+                                    <ion-select
+                                            interface="popover"
+                                            [value]="rule.targetId"
+                                            (ionChange)="emitOptionGroupTargetChange(rule.id, $event.detail.value)"
+                                    >
+                                        @for (choice of selectedFormatChoices(); track choice.optionGroupId) {
+                                            <ion-select-option [value]="choice.optionGroupId">{{ choice.name }}
+                                            </ion-select-option>
+                                        }
+                                    </ion-select>
+                                </ion-item>
+                            }
+                        </section>
+
+                        <section class="business-form-section">
+                            <h4>{{ 'adminProductWizard.conditions.sections.when' | translate }}</h4>
+                            <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.when' | translate }}</p>
+
+                            <ion-item>
+                                <ion-label position="stacked">
+                                    {{ 'adminProductWizard.conditions.fields.orderType' | translate }}
+                                </ion-label>
+                                <ion-select
+                                        interface="popover"
+                                        [value]="rule.condition.orderType"
+                                        (ionChange)="emitOrderTypeChange(rule.id, $event.detail.value)"
+                                >
+                                    <ion-select-option [value]="undefined">
+                                        {{ 'adminProductWizard.conditions.orderTypes.all' | translate }}
+                                    </ion-select-option>
+                                    @for (option of orderTypeOptions(); track option.value) {
+                                        <ion-select-option [value]="option.value">
+                                            {{ option.labelKey | translate }}
+                                        </ion-select-option>
+                                    }
+                                </ion-select>
+                            </ion-item>
+
+                            <div class="day-picker">
+                                @for (day of conditionDayOptions(); track day.value) {
+                                    <ion-checkbox
+                                            labelPlacement="end"
+                                            [checked]="isConditionDaySelected(rule, day.value)"
+                                            (ionChange)="emitDaySelectionChange(rule.id, day.value, $event.detail.checked)"
+                                    >
+                                        {{ day.labelKey | translate }}
+                                    </ion-checkbox>
+                                }
+                            </div>
+
+                            <div class="time-range-grid">
+                                <ion-item>
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.fields.timeFrom' | translate }}
+                                    </ion-label>
+                                    <ion-input
+                                            type="time"
+                                            [value]="rule.condition.timeFrom"
+                                            (ionInput)="emitTimeFromChange(rule.id, $event.detail.value)"
+                                    />
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label position="stacked">
+                                        {{ 'adminProductWizard.conditions.fields.timeTo' | translate }}
+                                    </ion-label>
+                                    <ion-input
+                                            type="time"
+                                            [value]="rule.condition.timeTo"
+                                            (ionInput)="emitTimeToChange(rule.id, $event.detail.value)"
+                                    />
+                                </ion-item>
+                            </div>
+                        </section>
+
+                        <section class="business-form-section">
+                            <h4>{{ 'adminProductWizard.conditions.sections.result' | translate }}</h4>
+
+                            @switch (rule.type) {
+                                @case ('AVAILABILITY') {
+                                    <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.availabilityResult' | translate }}</p>
+                                    <ion-item>
+                                        <ion-label>{{ 'adminProductWizard.conditions.fields.available' | translate }}</ion-label>
+                                        <ion-toggle
+                                                slot="end"
+                                                [checked]="rule.action.available !== false"
+                                                (ionChange)="availableChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                        />
+                                    </ion-item>
+                                }
+                                @case ('VISIBILITY') {
+                                    <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.visibilityResult' | translate }}</p>
+                                    <ion-item>
+                                        <ion-label>{{ 'adminProductWizard.conditions.fields.visible' | translate }}</ion-label>
+                                        <ion-toggle
+                                                slot="end"
+                                                [checked]="rule.action.visible !== false"
+                                                (ionChange)="visibleChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                        />
+                                    </ion-item>
+                                }
+                                @case ('SELECTION_RULE') {
+                                    <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.selectionResult' | translate }}</p>
+                                    <ion-item>
+                                        <ion-label>{{ 'adminProductWizard.conditions.fields.required' | translate }}</ion-label>
+                                        <ion-toggle
+                                                slot="end"
+                                                [checked]="rule.action.required !== false"
+                                                (ionChange)="requiredChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                        />
+                                    </ion-item>
+
+                                    <div class="time-range-grid">
+                                        <ion-item>
+                                            <ion-label
+                                                    position="stacked">{{ 'adminProductWizard.conditions.fields.minSelections' | translate }}
+                                            </ion-label>
+                                            <ion-input
+                                                    type="number"
+                                                    inputmode="numeric"
+                                                    [value]="rule.action.minSelections"
+                                                    (ionInput)="minSelectionsChange.emit({ ruleId: rule.id, value: $event.detail.value })"
+                                            />
+                                        </ion-item>
+                                        <ion-item>
+                                            <ion-label
+                                                    position="stacked">{{ 'adminProductWizard.conditions.fields.maxSelections' | translate }}
+                                            </ion-label>
+                                            <ion-input
+                                                    type="number"
+                                                    inputmode="numeric"
+                                                    [value]="rule.action.maxSelections"
+                                                    (ionInput)="maxSelectionsChange.emit({ ruleId: rule.id, value: $event.detail.value })"
+                                            />
+                                        </ion-item>
+                                    </div>
+                                }
+                                @case ('INCLUDED_OPTION') {
+                                    <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.includedResult' | translate }}</p>
+                                    <ion-item>
+                                        <ion-label
+                                                position="stacked">{{ 'adminProductWizard.conditions.fields.includedSelections' | translate }}
+                                        </ion-label>
+                                        <ion-input
+                                                type="number"
+                                                inputmode="numeric"
+                                                [value]="rule.action.includedSelections"
+                                                (ionInput)="includedSelectionsChange.emit({ ruleId: rule.id, value: $event.detail.value })"
+                                        />
+                                    </ion-item>
+                                }
+                                @case ('PRICE_RULE') {
+                                    <p class="business-form-help">{{ 'adminProductWizard.conditions.sectionHelp.priceResult' | translate }}</p>
+                                    <ion-item>
+                                        <ion-label
+                                                position="stacked">{{ 'adminProductWizard.conditions.fields.priceDelta' | translate }}
+                                        </ion-label>
+                                        <ion-input
+                                                type="number"
+                                                inputmode="decimal"
+                                                [value]="rule.action.priceDeltaOverride"
+                                                (ionInput)="priceDeltaChange.emit({ ruleId: rule.id, value: $event.detail.value })"
+                                        />
+                                    </ion-item>
+                                }
+                            }
+                        </section>
+
+                        <section class="business-form-section rule-organization-section">
+                            <div class="rule-section-header">
+                                <div>
+                                    <h4>{{ 'adminProductWizard.conditions.sections.organization' | translate }}</h4>
+                                    <p class="business-form-help">
+                                        {{ 'adminProductWizard.conditions.sectionHelp.organization' | translate }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="rule-library-choice">
+                                <button
+                                        type="button"
+                                        class="rule-scope-card"
+                                        [class.selected]="!(rule.reusable ?? false)"
+                                        (click)="reusableChange.emit({ ruleId: rule.id, value: false })"
+                                >
+                                    <span class="rule-scope-icon">📌</span>
+                                    <strong>{{ 'adminProductWizard.conditions.organization.localOnly' | translate }}</strong>
+                                    <small>{{ 'adminProductWizard.conditions.organization.localOnlyHelp' | translate }}</small>
+                                </button>
+
+                                <button
+                                        type="button"
+                                        class="rule-scope-card"
+                                        [class.selected]="rule.reusable ?? false"
+                                        (click)="reusableChange.emit({ ruleId: rule.id, value: true })"
+                                >
+                                    <span class="rule-scope-icon">📚</span>
+                                    <strong>{{ 'adminProductWizard.conditions.organization.saveToLibrary' | translate }}</strong>
+                                    <small>{{ 'adminProductWizard.conditions.organization.saveToLibraryHelp' | translate }}</small>
+                                </button>
+                            </div>
+
+                            @if (rule.reusable) {
+                                <div class="rule-library-options">
+                                    <ion-item>
+                                        <ion-label>
+                                            {{ 'adminProductWizard.conditions.organization.favorite' | translate }}
+                                            <p>{{ 'adminProductWizard.conditions.organization.favoriteHelp' | translate }}</p>
+                                        </ion-label>
+
+                                        <ion-toggle
+                                                slot="end"
+                                                [checked]="rule.favorite ?? false"
+                                                (ionChange)="favoriteChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                        />
+                                    </ion-item>
+
+                                    <ion-item>
+                                        <ion-label position="stacked">
+                                            {{ 'adminProductWizard.conditions.organization.tags' | translate }}
+                                        </ion-label>
+
+                                        <ion-input
+                                                [value]="(rule.tags ?? []).join(', ')"
+                                                [placeholder]="'adminProductWizard.conditions.organization.tagsPlaceholder' | translate"
+                                                (ionInput)="tagsChange.emit({ ruleId: rule.id, value: $event.detail.value })"
+                                        />
+                                    </ion-item>
+                                </div>
+                            }
+
+                            <div class="rule-customer-visibility">
+                                <ion-item>
+                                    <ion-label>
+                                        {{ 'adminProductWizard.conditions.organization.customerVisible' | translate }}
+                                        <p>{{ 'adminProductWizard.conditions.organization.customerVisibleHelp' | translate }}</p>
+                                    </ion-label>
+
+                                    <ion-toggle
+                                            slot="end"
+                                            [checked]="rule.customerVisible ?? false"
+                                            (ionChange)="customerVisibleChange.emit({ ruleId: rule.id, value: $event.detail.checked })"
+                                    />
+                                </ion-item>
+
+                                @if (rule.customerVisible) {
+                                    <ion-item>
+                                        <ion-label position="stacked">
+                                            {{ 'adminProductWizard.conditions.organization.customerTitle' | translate }}
+                                        </ion-label>
+
+                                        <ion-input
+                                                [value]="rule.customerTitle"
+                                                [placeholder]="'adminProductWizard.conditions.organization.customerTitlePlaceholder' | translate"
+                                                (ionInput)="emitCustomerTitleChange(rule.id, $event.detail.value)">
+
+                                        </ion-input>
+                                    </ion-item>
+
+                                    <ion-item>
+                                        <ion-label position="stacked">
+                                            {{ 'adminProductWizard.conditions.organization.customerDescription' | translate }}
+                                        </ion-label>
+
+                                        <ion-textarea
+                                                [value]="rule.customerDescription"
+                                                autoGrow="true"
+                                                [placeholder]="'adminProductWizard.conditions.organization.customerDescriptionPlaceholder' | translate"
+                                                (ionInput)="emitCustomerDescriptionChange(rule.id, $event.detail.value)"/>
+                                    </ion-item>
+                                }
+                            </div>
+                        </section>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

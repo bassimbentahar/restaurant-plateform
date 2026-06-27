@@ -1,0 +1,137 @@
+.rule-library-picker {
+  --background: #f6f3ee;
+  --padding-top: 24px;
+  --padding-bottom: 32px;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 28px 12px;
+
+  h2 {
+    margin: 4px 0 8px;
+    color: #17120f;
+    font-size: 28px;
+    font-weight: 850;
+  }
+
+  p {
+    max-width: 760px;
+    margin: 0;
+    color: #71675d;
+    line-height: 1.45;
+  }
+}
+
+.picker-eyebrow {
+  color: #a86e19;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.picker-search {
+  margin: 12px 28px;
+  border: 1px solid #eadfce;
+  border-radius: 18px;
+  --background: #ffffff;
+}
+
+.picker-filters {
+  margin: 12px 28px 18px;
+}
+
+.rule-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 16px;
+  padding: 0 28px 28px;
+}
+
+.library-rule-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #eadfce;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ffffff, #fffaf2);
+  box-shadow: 0 12px 28px rgba(38, 30, 20, 0.07);
+
+  h3 {
+    margin: 10px 0 6px;
+    color: #201812;
+    font-size: 19px;
+    font-weight: 850;
+  }
+
+  p {
+    margin: 0;
+    color: #71675d;
+    line-height: 1.4;
+  }
+}
+
+.library-rule-badges,
+.library-rule-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.library-rule-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #f4eadb;
+  color: #6d4a16;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.library-rule-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+
+  small {
+    color: #86796a;
+    line-height: 1.35;
+  }
+}
+
+.picker-empty {
+  margin: 22px 28px;
+  padding: 28px;
+  border: 1px dashed #d8cfc2;
+  border-radius: 24px;
+  background: #ffffff;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 8px;
+  }
+
+  p {
+    margin: 0;
+    color: #71675d;
+  }
+}
+.library-rule-card--disabled {
+  opacity: 0.68;
+  border-style: dashed;
+  background: #f7f4ef;
+
+  h3,
+  p,
+  small {
+    color: #8a8176;
+  }
+}

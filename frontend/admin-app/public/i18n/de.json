@@ -1,0 +1,759 @@
+{
+  "language": {
+    "fr": "French",
+    "en": "English",
+    "de": "German",
+    "switchToFrench": "FR",
+    "switchToEnglish": "EN",
+    "switchToGerman": "DE"
+  },
+  "app": {
+    "title": "Portal Coffee",
+    "menu": "Menu"
+  },
+  "auth": {
+    "guest": "Guest",
+    "login": "Login",
+    "logout": "Logout",
+    "welcomeTitle": "Welcome to Portal Coffee",
+    "welcomeDescription": "Log in to order faster, track your orders and access your history.",
+    "register": "Create an account",
+    "continueGuest": "Continue as guest"
+  },
+  "pages": {
+    "home": "Home",
+    "profile": "Profile",
+    "products": "Products",
+    "productDetails": "Product details",
+    "cart": "My cart",
+    "checkout": "Checkout",
+    "category": "Category",
+    "aboutUs": "About us",
+    "contact": "Contact",
+    "news": "News",
+    "orders": "My orders"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "total": "Total",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "order": {
+    "tracking": {
+      "title": "Order tracking",
+      "order": "Order",
+      "total": "Total",
+      "progression": "Progress",
+      "viewOrders": "View my orders",
+      "backToMenu": "Back to menu",
+      "cancelledMessage": "The order will not be prepared. Contact the restaurant if necessary."
+    },
+    "status": {
+      "pending": "Order sent",
+      "confirmed": "Order confirmed",
+      "preparing": "Preparing",
+      "ready": {
+        "pickup": "Ready for pickup",
+        "delivery": "Order ready"
+      },
+      "outForDelivery": "Out for delivery",
+      "delivered": {
+        "pickup": "Order picked up",
+        "delivery": "Order delivered"
+      },
+      "cancelled": "Order cancelled",
+      "rejected": "Order rejected",
+      "default": "Order tracking"
+    },
+    "steps": {
+      "pending": {
+        "title": "Order sent",
+        "description": "We have received your order."
+      },
+      "confirmed": {
+        "title": "Order confirmed",
+        "description": "The restaurant has accepted your order."
+      },
+      "preparing": {
+        "title": "Preparing",
+        "description": "Your order is being prepared."
+      },
+      "ready": {
+        "pickup": {
+          "title": "Ready for pickup",
+          "description": "Your order is ready to be picked up."
+        },
+        "delivery": {
+          "title": "Ready",
+          "description": "Your order is ready."
+        }
+      },
+      "outForDelivery": {
+        "title": "Out for delivery",
+        "description": "Your order is on the way."
+      },
+      "delivered": {
+        "pickup": {
+          "title": "Picked up",
+          "description": "Enjoy your meal!"
+        },
+        "delivery": {
+          "title": "Delivered",
+          "description": "Enjoy your meal!"
+        }
+      }
+    }
+  },
+  "basket": {
+    "title": "Basket",
+    "empty": "Your basket is empty",
+    "subtotal": "Subtotal",
+    "serviceFee": "Service fee {{percent}}%",
+    "total": "Total",
+    "checkout": "Checkout ({{total}} CHF)"
+  },
+  "cart": {
+    "title": "My cart",
+    "empty": "Your cart is empty",
+    "browseProducts": "View products",
+    "size": "Size",
+    "unitPrice": "Unit price",
+    "total": "Total",
+    "cartTotal": "Cart total",
+    "clearCart": "Clear cart",
+    "checkout": "Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderDetails": "Order details",
+    "continueShopping": "Continue shopping",
+    "customer": {
+      "defaultName": "Your name",
+      "phoneRequired": "Phone number required",
+      "phoneRequiredDescription": "Add a phone number so the restaurant or courier can contact you."
+    },
+    "orderType": {
+      "delivery": {
+        "title": "Delivery",
+        "description": "Receive the order at your address"
+      },
+      "pickup": {
+        "title": "Pickup",
+        "description": "Pick up at the restaurant"
+      }
+    },
+    "delivery": {
+      "deliverable": "Deliverable address",
+      "unavailable": "Delivery unavailable for this address",
+      "outOfZone": "This address is outside the delivery zone.",
+      "addressRequired": "Address required",
+      "addressRequiredDescription": "Add an address to view delivery options",
+      "addAddress": "Add delivery address"
+    },
+    "deliveryTime": {
+      "desiredTime": "Desired time"
+    },
+    "note": {
+      "label": "Note",
+      "add": "Add a note",
+      "edit": "Edit note",
+      "placeholder": "Note for the restaurant"
+    },
+    "payment": {
+      "title": "Payment",
+      "twintDescription": "Fast and secure payment",
+      "cash": "Cash",
+      "cashDescription": "Payment on delivery or pickup"
+    },
+    "summary": {
+      "title": "Order summary",
+      "subtotal": "Subtotal",
+      "serviceFee": "Service fee",
+      "delivery": "Delivery",
+      "total": "Total"
+    },
+    "submit": {
+      "loading": "Placing order...",
+      "pay": "Order and pay"
+    }
+  },
+  "checkoutAddress": {
+    "title": "Delivery address",
+    "emptyTitle": "No saved address",
+    "emptyDescription": "Add an address to continue your order.",
+    "default": "Default",
+    "add": "Add address",
+    "useSelected": "Use this address"
+  },
+  "customerDetails": {
+    "title": "Your information",
+    "firstname": "First name",
+    "lastname": "Last name",
+    "phone": "Phone number",
+    "errors": {
+      "invalidSwissPhone": "Invalid Swiss phone number. Example: +41 79 123 45 67",
+      "phoneRequired": "Phone number is required."
+    }
+  },
+  "deliveryTime": {
+    "title": "Delivery time",
+    "asap": "As soon as possible",
+    "schedule": "Schedule later",
+    "scheduledFor": "Scheduled for"
+  },
+  "orderNote": {
+    "title": "Note for the restaurant",
+    "label": "Special instructions",
+    "placeholder": "E.g. no onions, sauce on the side, call upon arrival...",
+    "characters": "characters",
+    "clear": "Remove note",
+    "errors": {
+      "maxLength": "The note must not exceed 500 characters."
+    }
+  },
+  "product": {
+    "sizes": "Sizes",
+    "min": "min",
+    "max": "max",
+    "addToCart": "Add to cart",
+    "keepShopping": "Continue shopping"
+  },
+  "productList": {
+    "searchPlaceholder": "Search in Miam's",
+    "all": "All",
+    "from": "From",
+    "item": "item",
+    "items": "items",
+    "article": "item",
+    "articles": "items"
+  },
+  "profile": {
+    "title": "My profile",
+    "subtitle": "Manage your Portal Coffee account",
+    "tabs": {
+      "profile": "Profile",
+      "addresses": "Addresses",
+      "security": "Security",
+      "preferences": "Preferences",
+      "orders": "Orders"
+    },
+    "personalInfo": {
+      "title": "Personal information",
+      "description": "This information is used for your orders and deliveries.",
+      "email": "Email",
+      "emailInfo": "Your email is managed by Keycloak and cannot be changed from the app.",
+      "dateOfBirth": "Date of birth",
+      "saving": "Saving...",
+      "saveChanges": "Save changes"
+    },
+    "addresses": {
+      "title": "Delivery addresses",
+      "description": "Add your addresses to order faster.",
+      "emptyDescription": "Add an address to speed up your next orders.",
+      "addFirst": "Add my first address",
+      "setDefault": "Set as default"
+    },
+    "security": {
+      "title": "Account",
+      "description": "Manage your account security settings.",
+      "passwordTitle": "Password",
+      "passwordDescription": "To protect your account, password changes are handled in a secure area."
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customize your notifications and customer preferences.",
+      "promotionsTitle": "Messages and promotions",
+      "promotionsDescription": "Receive news, offers and discounts."
+    },
+    "orders": {
+      "title": "Orders",
+      "description": "Find your recent orders.",
+      "emptyTitle": "No orders shown",
+      "emptyDescription": "Your order history can be displayed here."
+    }
+  },
+  "orders": {
+    "title": "My orders",
+    "subtitle": "Find your recent orders and track their progress.",
+    "emptyTitle": "No orders",
+    "emptyDescription": "You have not placed any orders yet.",
+    "orderNow": "Order now",
+    "errorTitle": "Unable to load orders",
+    "errorDescription": "Please try again in a few moments.",
+    "retry": "Try again",
+    "type": "Type",
+    "delivery": "Delivery",
+    "pickup": "Pickup",
+    "total": "Total",
+    "trackOrder": "Track order",
+    "createdAt": "Ordered on",
+    "deliveryTime": "Desired time",
+    "active": "Active orders",
+    "history": "Order history",
+    "badges": {
+      "active": "Active",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "owner": "Owner",
+    "restaurantActive": "Active restaurant",
+    "menuSection": "Menu",
+    "businessSection": "Business",
+    "settingsSection": "Configuration",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "createProduct": "New product",
+    "productCreate": "Product creation",
+    "productEdit": "Edit product",
+    "categories": "Categories",
+    "library": "Library",
+    "automations": "Automations",
+    "orders": "Orders",
+    "customers": "Customers",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "adminProductWizard": {
+    "defaultRule": {
+      "AVAILABILITY": {
+        "label": "Neue Verfügbarkeitsregel",
+        "description": "Definiert, wann diese Regel ein Produkt, Format oder eine Auswahl verfügbar macht.",
+        "tags": "Verfügbarkeit"
+      },
+      "VISIBILITY": {
+        "label": "Neue Sichtbarkeitsregel",
+        "description": "Definiert, wann eine Auswahl sichtbar oder ausgeblendet sein soll.",
+        "tags": "Sichtbarkeit"
+      },
+      "SELECTION_RULE": {
+        "label": "Neue Auswahlregel",
+        "description": "Definiert, ob eine Auswahl obligatorisch oder optional wird.",
+        "tags": "Konfiguration"
+      },
+      "INCLUDED_OPTION": {
+        "label": "Neue enthaltene Option",
+        "description": "Definiert, wie viele Optionen in einem Menü oder Format enthalten sind.",
+        "tags": "Menüs"
+      },
+      "PRICE_RULE": {
+        "label": "Neue Preisregel",
+        "description": "Definiert eine Preisänderung, Aktion oder einen Zuschlag.",
+        "tags": "Aktionen"
+      }
+    },
+    "identity": {
+      "internalName": "Interner Regelname",
+      "internalNamePlaceholder": "Beispiel: Studierendenangebot Mittag",
+      "internalDescription": "Interne Beschreibung",
+      "internalDescriptionPlaceholder": "Erklären Sie, wann und warum diese Regel verwendet wird."
+    },
+    "organization": {
+      "localBadge": "Lokal",
+      "libraryBadge": "Bibliothek",
+      "favoriteBadge": "Favorit",
+      "localOnly": "Lokale Regel",
+      "localOnlyHelp": "Nur für dieses Produkt verwendet.",
+      "saveToLibrary": "In Bibliothek speichern",
+      "saveToLibraryHelp": "Später für andere Produkte wiederverwendbar.",
+      "favorite": "Zu Favoriten hinzufügen",
+      "favoriteHelp": "Die Regel erscheint in den Favoriten für schnellen Zugriff.",
+      "tags": "Tags",
+      "tagsPlaceholder": "Aktionen, Menüs, Studierende",
+      "customerVisible": "Für Kunden sichtbar",
+      "customerVisibleHelp": "Zeigt bei Bedarf einen Titel oder eine Erklärung für Kunden an.",
+      "customerTitle": "Kundentitel",
+      "customerTitlePlaceholder": "Beispiel: Studierendenangebot",
+      "customerDescription": "Kundenbeschreibung",
+      "customerDescriptionPlaceholder": "Beispiel: Angebot gültig mit Studierendenausweis."
+    },
+    "assistant": "Product assistant",
+    "title": "Create a product easily",
+    "subtitle": "Configure the product the way a restaurant owner thinks: formats, customer choices, paid options, format rules, included options and final preview.",
+    "actions": {
+      "saveDraft": "Save draft",
+      "saving": "Saving...",
+      "publish": "Publish product",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "choiceConfiguration": {
+      "title": "Configure {{name}}",
+      "intro": {
+        "title": "Add “{{name}}” to the product",
+        "description": "This choice comes from the library. Here, you only configure how it applies to this product.",
+        "usedInProducts": "Used in {{count}} product(s)."
+      },
+      "fields": {
+        "required": "Required",
+        "minSelections": "Minimum to choose",
+        "maxSelections": "Maximum to choose",
+        "displayOrder": "Display order"
+      },
+      "validation": {
+        "requiredMin": "This choice is required: the minimum cannot be lower than 1.",
+        "requiredMax": "This choice is required: the maximum cannot be lower than 1.",
+        "minGreaterThanMax": "The minimum cannot be greater than the maximum.",
+        "maxGreaterThanAvailableOptions": "The maximum cannot exceed the number of available options.",
+        "requiredChoiceWithoutVisibleOptions": "This choice is required but has no visible option."
+      },
+      "preview": {
+        "title": "Available options",
+        "emptyOptions": "No option is available in this choice."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "addToProduct": "Add to product"
+      }
+    },
+    "steps": {
+      "general": "Info",
+      "pricing": "Pricing",
+      "formats": "Formats",
+      "choices": "Choices",
+      "formatRules": "Format rules",
+      "included": "Included",
+      "conditions": "Availability & offers",
+      "preview": "Preview",
+      "commonChoices": "Common choices",
+      "formatConfiguration": "Format configuration"
+    },
+    "general": {
+      "title": "General information",
+      "help": "Start with the information visible on the customer menu.",
+      "productName": "Product name",
+      "productNamePlaceholder": "E.g. Tacos",
+      "shortDescription": "Short description",
+      "shortDescriptionPlaceholder": "E.g. Custom tacos with meat, sauces and extras.",
+      "description": "Long description",
+      "descriptionPlaceholder": "Describe the product as it will be shown to the customer.",
+      "tip": "Tip: use simple words. The customer should quickly understand what they are ordering."
+    },
+    "pricing": {
+      "title": "Price and promotion",
+      "help": "The final price will be calculated based on the selected format and options.",
+      "basePrice": "Base price",
+      "basePricePlaceholder": "E.g. 12.00",
+      "compareAtPrice": "Optional crossed-out price",
+      "compareAtPricePlaceholder": "E.g. 15.00",
+      "tip": "The crossed-out price is only used to display a promotion. It does not change the final price calculation."
+    },
+    "formats": {
+      "title": "Formats / sizes",
+      "help": "Example: Regular, Maxi, Menu, Small, Medium, Large.",
+      "add": "Add a format",
+      "format": "Format",
+      "supplement": "Extra charge",
+      "finalPrice": "Final price",
+      "default": "Default",
+      "available": "Available",
+      "placeholder": "E.g. Maxi",
+      "tip": "If the product has only one format, simply keep the Standard format with an extra charge of CHF 0.",
+      "choices": "Choices",
+      "configureChoices": "Configure"
+    },
+    "category": {
+      "label": "Categories",
+      "noneSelected": "No category selected",
+      "noneSelectedHelp": "Choose or create one or more categories for this product.",
+      "chooseOrCreate": "Choose / create",
+      "selected": "Selected categories"
+    },
+    "categoryPicker": {
+      "title": "Product categories",
+      "heading": "Choose categories",
+      "description": "Select one or more existing categories or create a new one.",
+      "currentCategory": "Current categories",
+      "selectedBadge": "Selected",
+      "searchPlaceholder": "Search for a category",
+      "existingCategories": "Existing categories",
+      "resultsCount": "{{count}} result(s)",
+      "emptyTitle": "No category found",
+      "emptyText": "You can create a new category using the form below.",
+      "newCategory": "New category",
+      "newCategoryHelp": "It will be created and added to the selection.",
+      "categoryName": "Category name",
+      "categoryNamePlaceholder": "Example: Tacos, Burgers, Menus",
+      "alreadyExists": "This category already exists.",
+      "createAndSelect": "Create and add",
+      "selectedCategories": "Selected categories",
+      "selectedCount": "{{count}} selected",
+      "confirmSelection": "Confirm categories"
+    },
+    "choices": {
+      "title": "Choices offered to the customer",
+      "help": "Examples: sauces, drinks, extras, cooking level, sides.",
+      "add": "Add a choice",
+      "emptyTitle": "No choice configured",
+      "emptyText": "Add for example Sauces, Extras or Drinks.",
+      "addSauces": "Add Sauces",
+      "addSupplements": "Add Extras",
+      "addDrinks": "Add Drinks",
+      "choiceName": "Choice name",
+      "choiceNamePlaceholder": "E.g. Sauces",
+      "required": "Required",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "requiredChoice": "Required choice",
+      "optionalChoice": "Optional choice",
+      "optionsCount": "option(s)",
+      "optionNamePlaceholder": "Option name",
+      "pricePlaceholder": "Price",
+      "addOption": "Add an option",
+      "configure": "Configure",
+      "configurationForProduct": "Configuration for this product",
+      "availableOptions": "Available options",
+      "editableOptions": "Editable options",
+      "includedPrice": "Included",
+      "optionUnavailable": "Unavailable",
+      "actions": {
+        "adaptByFormat": "Adapt by format",
+        "duplicateForProduct": "Duplicate for this product"
+      },
+      "library": {
+        "addFromLibrary": "Add from library",
+        "modalTitle": "Choice library",
+        "title": "Reusable choices",
+        "description": "Select an existing choice such as Sauces, Drinks or Extras, then configure how it applies to this product.",
+        "searchPlaceholder": "Search for a choice or an option",
+        "add": "Add",
+        "optionsCount": "option(s)",
+        "emptyTitle": "No choice found",
+        "emptyText": "No choice matches your search.",
+        "notFoundTitle": "Can’t find the right choice?",
+        "notFoundText": "Create a custom choice for this product.",
+        "createCustom": "Create a new choice",
+        "sourceLibrary": "Library",
+        "sourceCustom": "Custom",
+        "libraryChoiceInfo": "This choice comes from the library. The rules above apply only to this product. To edit the options without impacting other products, duplicate this choice."
+      },
+      "showForProduct": "Show for this product",
+      "hiddenForProduct": "Hidden for this product",
+      "visibleForProduct": "Visible for this product",
+      "commonTitle": "Common product choices",
+      "commonHelp": "Add here the choices available in every format, for example sauces, extras or cooking options."
+    },
+    "formatRules": {
+      "title": "Rules by format",
+      "help": "Adapt choices based on the format: Regular, Maxi, Menu, etc.",
+      "emptyTitle": "No choice to adapt",
+      "emptyText": "First add a customer choice in the previous step.",
+      "choice": "Customer choice",
+      "custom": "Custom",
+      "default": "Default",
+      "tip": "Click a cell to customize a choice rule for a specific format. Example: Maxi allows 4 sauces instead of 2."
+    },
+    "included": {
+      "title": "Included options / menus",
+      "help": "Configure the choices included for free in certain formats.",
+      "emptyTitle": "No choice available",
+      "emptyText": "First add customer choices to define included options.",
+      "includedCount": "included count"
+    },
+    "conditions": {
+      "title": "Special conditions",
+      "help": "Add simple automations without mentioning the Rule Engine.",
+      "add": "Add a condition",
+      "emptyTitle": "No availability or special offer",
+      "emptyText": "Add for example a lunch menu, an included drink or an automatic surcharge.",
+      "businessTitle": "Availability & offers",
+      "businessHelp": "Fügen Sie Menü-Ausnahmen hinzu: Zeiten, besondere Tage, kostenlose Optionen, Anzeige nach Format, Aktion oder automatischer Zuschlag.",
+      "introTitle": "Nur Ausnahmen konfigurieren",
+      "introText": "Produkt, Formate und feste Optionen wurden bereits in den vorherigen Schritten konfiguriert. Nutzen Sie diese Seite nur für Sonderfälle.",
+      "ruleNamePlaceholder": "E.g. Lunch menu, Included drink, Evening surcharge",
+      "summaryTitle": "Customer summary",
+      "days": {
+        "MONDAY": "Mon",
+        "TUESDAY": "Tue",
+        "WEDNESDAY": "Wed",
+        "THURSDAY": "Thu",
+        "FRIDAY": "Fri",
+        "SATURDAY": "Sat",
+        "SUNDAY": "Sun"
+      },
+      "status": {
+        "active": "Rule active",
+        "inactive": "Disabled"
+      },
+      "businessTemplates": {
+        "availability": {
+          "title": "Zu bestimmten Zeiten verfügbar machen",
+          "help": "Produkt, Format oder Auswahl auf bestimmte Tage oder Zeiten begrenzen.",
+          "example": "Z. B. Mittagsmenü von 11 bis 14 Uhr verfügbar"
+        },
+        "included": {
+          "title": "Option kostenlos einschließen",
+          "help": "Eine oder mehrere Optionen kostenlos in einem Menü oder Format einschließen.",
+          "example": "Z. B. 1 Getränk im Menü inklusive"
+        },
+        "visibility": {
+          "title": "Auswahl je nach Format ausblenden",
+          "help": "Eine Auswahl je nach gewähltem Format anzeigen oder ausblenden.",
+          "example": "Z. B. Getränke nur im Menü sichtbar"
+        },
+        "price": {
+          "title": "Aktion oder Zuschlag hinzufügen",
+          "help": "Rabatt oder Zuschlag automatisch nach Uhrzeit, Tag, Format oder Bestellart anwenden.",
+          "example": "Z. B. -2 CHF Happy Hour oder +1 CHF nach 22 Uhr"
+        },
+        "selection": {
+          "title": "Auswahl verpflichtend machen",
+          "help": "Eine Auswahl verpflichtend machen oder Minimum/Maximum ändern.",
+          "example": "Z. B. abends 2 Saucen verpflichtend"
+        }
+      },
+      "sections": {
+        "concerned": "1. What is concerned",
+        "timing": "2. When to apply it",
+        "result": "3. What happens",
+        "organization": "Organisation"
+      },
+      "sectionHelp": {
+        "organization": "Wählen Sie, ob diese Regel nur für dieses Produkt gilt oder in der Bibliothek wiederverwendet werden kann.",
+        "availabilityConcerned": "Choose what should become available or unavailable.",
+        "visibilityConcerned": "Choose the customer choice to show or hide, then the format if needed.",
+        "includedConcerned": "Choose the format or menu, then the choice to include for free.",
+        "priceConcerned": "Choose where to apply the surcharge or price adjustment.",
+        "selectionConcerned": "Choose the concerned customer choice and, if needed, the format.",
+        "timing": "Leave empty if this rule applies all the time.",
+        "availabilityResult": "Decide whether the item will be available or unavailable in this context.",
+        "visibilityResult": "Decide whether the choice should be shown or hidden.",
+        "selectionResult": "Decide whether the choice becomes required and how many options the customer can choose.",
+        "includedResult": "Set how many options are included for free.",
+        "priceResult": "Legen Sie einen Rabatt oder Zuschlag fest. Beispiel: -2 für Happy Hour, +1 für Abendzuschlag."
+      },
+      "organization": {
+        "saveToLibrary": "In Bibliothek speichern",
+        "saveToLibraryHelp": "Die Regel kann später für andere Produkte wiederverwendet werden.",
+        "favorite": "Zu Favoriten hinzufügen",
+        "favoriteHelp": "Die Regel erscheint in den Favoriten für einen schnellen Zugriff.",
+        "tags": "Tags",
+        "tagsPlaceholder": "Aktionen, Menüs, Studierende",
+        "customerVisible": "Für Kunden sichtbar",
+        "customerVisibleHelp": "Zeigt bei Bedarf einen Titel oder eine Erklärung für Kunden an.",
+        "customerTitle": "Kundentitel",
+        "customerTitlePlaceholder": "Beispiel: Studierendenangebot",
+        "customerDescription": "Kundenbeschreibung",
+        "customerDescriptionPlaceholder": "Beispiel: Angebot gültig mit Studierendenausweis."
+      },
+      "targets": {
+        "product": "Whole product",
+        "variant": "A format",
+        "optionGroup": "A choice"
+      },
+      "fields": {
+        "variant": "Concerned format",
+        "formatContext": "For which format?",
+        "allFormats": "All formats",
+        "optionGroup": "Concerned choice",
+        "orderType": "Delivery / pickup",
+        "days": "Concerned days",
+        "timeFrom": "From",
+        "timeTo": "To",
+        "mainAction": "Hauptaktion"
+      },
+      "orderTypes": {
+        "any": "All orders",
+        "delivery": "Delivery only",
+        "pickup": "Pickup only"
+      },
+      "actions": {
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "visible": "Show",
+        "hidden": "Hide",
+        "required": "Required",
+        "optional": "Optional",
+        "minSelections": "Minimum to choose",
+        "maxSelections": "Maximum to choose",
+        "includedSelections": "Number included for free",
+        "priceDeltaOverride": "Rabatt / Zuschlag"
+      },
+      "simpleCasesTitle": "Was möchten Sie hinzufügen?",
+      "simpleCasesHelp": "Wählen Sie einen einfachen Fall. Danach zeigt das System nur die nützlichen Felder.",
+      "advancedOpen": "Benutzerdefinierte Regel erstellen",
+      "advancedHelp": "Für einen besonderen Fall, der nicht zu den 4 Schnellaktionen passt.",
+      "advancedWarning": "Nur verwenden, wenn die Schnellaktionen nicht ausreichen. Für feste Formatregeln nutzen Sie die Formatkonfiguration.",
+      "advancedTypeLabel": "Was möchten Sie erstellen?",
+      "advancedCreateButton": "Benutzerdefinierte Regel erstellen",
+      "defaultLabels": {
+        "availability": "Verkaufszeiten",
+        "visibility": "Sichtbarkeit nach Format",
+        "selection": "Pflichtauswahl",
+        "included": "Inklusive Option",
+        "price": "Automatischer Zuschlag"
+      },
+      "resultHelp": {
+        "available": "Kunden können dieses Element im ausgewählten Zeitraum bestellen.",
+        "unavailable": "Kunden können dieses Element im ausgewählten Zeitraum nicht bestellen.",
+        "visible": "Diese Auswahl wird Kunden in diesem Kontext angezeigt.",
+        "hidden": "Diese Auswahl wird Kunden in diesem Kontext ausgeblendet."
+      },
+      "always": "Immer",
+      "summary": {
+        "targetProduct": "Das Produkt",
+        "targetVariant": "Das Format {{name}}",
+        "targetSelectedVariant": "Das ausgewählte Format",
+        "targetChoice": "Die Auswahl {{name}}",
+        "targetSelectedChoice": "Die ausgewählte Auswahl",
+        "availabilityAvailable": "{{target}} ist {{timing}} verfügbar.",
+        "availabilityUnavailable": "{{target}} ist {{timing}} nicht verfügbar.",
+        "visibilityVisible": "{{target}} ist {{timing}} sichtbar.",
+        "visibilityHidden": "{{target}} ist {{timing}} ausgeblendet.",
+        "selectionRequired": "{{target}} wird {{timing}} verpflichtend.",
+        "selectionOptional": "{{target}} wird {{timing}} optional.",
+        "includedOption": "{{count}} Option(en) von {{target}} sind {{timing}} kostenlos enthalten.",
+        "priceAdjustment": "{{target}} erhält {{timing}} einen Rabatt oder Zuschlag von {{amount}} CHF."
+      },
+      "timing": {
+        "allTime": "immer",
+        "selectedDays": "an den ausgewählten Tagen",
+        "timeRange": "zwischen {{from}} und {{to}}",
+        "delivery": "bei Lieferung",
+        "pickup": "bei Abholung",
+        "forFormat": "für das Format {{name}}"
+      },
+      "advancedBuilderTitle": "Brauchen Sie einen speziellen Fall?",
+      "advancedBuilderText": "Erstellen Sie eine benutzerdefinierte Regel und wählen Sie danach die Hauptaktion in der geöffneten Karte."
+    },
+    "preview": {
+      "title": "Preview and publication",
+      "help": "Check the product as the customer will see it before publishing.",
+      "clientPreview": "Customer preview",
+      "defaultProductName": "Product name",
+      "defaultDescription": "Short product description.",
+      "emptyChoices": "Customer choices will appear here.",
+      "noOption": "No option added.",
+      "unavailable": "Unavailable",
+      "correctionsNeeded": "Corrections needed",
+      "canPublish": "The product can be published.",
+      "formats": "format(s)",
+      "choices": "customer choices",
+      "conditions": "condition(s)",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "formatConfiguration": {
+      "title": "Format configuration",
+      "help": "Define the available, required and included choices for each format.",
+      "noFormatTitle": "No format available",
+      "noFormatText": "Add at least one format first.",
+      "finalPrice": "Final price:",
+      "addChoiceToFormat": "Add a choice to this format",
+      "emptyChoicesTitle": "No choice configured",
+      "emptyChoicesText": "Add a common choice or a choice specific to this format.",
+      "commonChoice": "Common",
+      "formatChoice": "Format-specific",
+      "required": "Required",
+      "minSelections": "Minimum",
+      "maxSelections": "Maximum",
+      "includedSelections": "Included for free",
+      "includedShort": "included",
+      "tip": "Example: for a Menu, add Drinks and Sides with 1 choice included for free."
+    }
+  }
+}

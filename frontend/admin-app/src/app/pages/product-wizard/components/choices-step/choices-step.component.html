@@ -1,0 +1,351 @@
+<section class="step-content choices-step">
+  <div class="choices-hero">
+    <div class="admin-section-title">
+      <span class="choices-eyebrow">
+        {{ 'adminProductWizard.choicesPremium.eyebrow' | translate }}
+      </span>
+
+      <h2>{{ 'adminProductWizard.choices.commonTitle' | translate }}</h2>
+      <p>{{ 'adminProductWizard.choices.commonHelp' | translate }}</p>
+    </div>
+
+    <div class="choices-actions">
+      <button
+        type="button"
+        class="choices-action-card choices-action-card--primary"
+        (click)="openLibrary.emit()"
+      >
+        <span class="choices-action-icon">📚</span>
+        <span>
+          <strong>{{ 'adminProductWizard.choices.library.addFromLibrary' | translate }}</strong>
+          <small>{{ 'adminProductWizard.choicesPremium.addFromLibraryHelp' | translate }}</small>
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="choices-action-card"
+        (click)="createCustomChoice.emit()"
+      >
+        <span class="choices-action-icon">➕</span>
+        <span>
+          <strong>{{ 'adminProductWizard.choices.library.createCustom' | translate }}</strong>
+          <small>{{ 'adminProductWizard.choicesPremium.createCustomHelp' | translate }}</small>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="choices-metrics">
+    <div>
+      <strong>{{ choices().length }}</strong>
+      <span>{{ 'adminProductWizard.choicesPremium.metrics.choices' | translate }}</span>
+    </div>
+
+    <div>
+      <strong>{{ libraryChoicesCount() }}</strong>
+      <span>{{ 'adminProductWizard.choicesPremium.metrics.fromLibrary' | translate }}</span>
+    </div>
+
+    <div>
+      <strong>{{ customChoicesCount() }}</strong>
+      <span>{{ 'adminProductWizard.choicesPremium.metrics.custom' | translate }}</span>
+    </div>
+
+    <div>
+      <strong>{{ totalOptionsCount() }}</strong>
+      <span>{{ 'adminProductWizard.choicesPremium.metrics.options' | translate }}</span>
+    </div>
+  </div>
+
+  @if (choices().length === 0) {
+    <div class="empty-state choices-empty-state">
+      <h3>{{ 'adminProductWizard.choices.emptyTitle' | translate }}</h3>
+      <p>{{ 'adminProductWizard.choices.emptyText' | translate }}</p>
+
+      <div class="choices-empty-actions">
+        <ion-button type="button" (click)="openLibrary.emit()">
+          <ion-icon slot="start" name="library-outline"></ion-icon>
+          {{ 'adminProductWizard.choices.library.addFromLibrary' | translate }}
+        </ion-button>
+
+        <ion-button type="button" fill="outline" (click)="createCustomChoice.emit()">
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          {{ 'adminProductWizard.choices.library.createCustom' | translate }}
+        </ion-button>
+      </div>
+    </div>
+  } @else {
+    <div class="choice-grid">
+      @for (choice of choices(); track trackById($index, choice)) {
+        <article class="choice-card" [class.choice-card--library]="choice.source === 'library'">
+          <header class="choice-card-header">
+            <div class="choice-title-area">
+              <div class="choice-badges">
+                <ion-badge [color]="choice.source === 'library' ? 'primary' : 'medium'">
+                  {{ getChoiceSourceLabelKey(choice) | translate }}
+                </ion-badge>
+
+                @if (choice.required) {
+                  <ion-badge color="warning">
+                    {{ 'adminProductWizard.preview.required' | translate }}
+                  </ion-badge>
+                } @else {
+                  <ion-badge color="success">
+                    {{ 'adminProductWizard.preview.optional' | translate }}
+                  </ion-badge>
+                }
+              </div>
+
+              @if (choice.source === 'custom') {
+                <ion-item class="choice-title-input">
+                  <ion-label position="stacked">
+                    {{ 'adminProductWizard.choices.choiceName' | translate }}
+                  </ion-label>
+
+                  <ion-input
+                    [value]="choice.name"
+                    [placeholder]="'adminProductWizard.choices.choiceNamePlaceholder' | translate"
+                    (ionInput)="emitChoiceNameChange(choice.id, $event.detail.value)"
+                  />
+                </ion-item>
+              } @else {
+                <h3>{{ choice.name }}</h3>
+                @if (choice.description) {
+                  <p>{{ choice.description }}</p>
+                }
+              }
+
+              <small>{{ getChoiceSourceHelpKey(choice) | translate }}</small>
+            </div>
+
+            <div class="choice-card-actions">
+              <ion-button fill="outline" size="small" type="button" (click)="configureChoice.emit(choice)">
+                {{ 'adminProductWizard.choices.configure' | translate }}
+              </ion-button>
+
+              <ion-button fill="clear" size="small" type="button" (click)="adaptChoiceByFormat.emit(choice.id)">
+                {{ 'adminProductWizard.choices.actions.adaptByFormat' | translate }}
+              </ion-button>
+
+              @if (choice.source === 'library') {
+                <ion-button fill="clear" size="small" type="button" (click)="duplicateLibraryChoiceAsCustom.emit(choice.id)">
+                  {{ 'adminProductWizard.choices.actions.duplicateForProduct' | translate }}
+                </ion-button>
+              }
+
+              <ion-button fill="clear" color="danger" size="small" type="button" (click)="removeChoice.emit(choice.id)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </header>
+
+          <section class="choice-config-panel">
+            <div class="choice-config-main">
+              <h4>{{ 'adminProductWizard.choices.configurationForProduct' | translate }}</h4>
+
+              <div class="configuration-metrics">
+                <span>
+                  {{ 'adminProductWizard.choices.required' | translate }} :
+                  <strong>
+                    {{
+                      (
+                        choice.required
+                          ? 'adminProductWizard.preview.required'
+                          : 'adminProductWizard.preview.optional'
+                      ) | translate
+                    }}
+                  </strong>
+                </span>
+
+                <span>
+                  {{ 'adminProductWizard.choices.minimum' | translate }} :
+                  <strong>{{ choice.minSelections }}</strong>
+                </span>
+
+                <span>
+                  {{ 'adminProductWizard.choices.maximum' | translate }} :
+                  <strong>{{ choice.maxSelections }}</strong>
+                </span>
+
+                <span>
+                  <strong>{{ getVisibleChoiceItemCount(choice) }}</strong>
+                  {{ 'adminProductWizard.choices.optionsCount' | translate }}
+                </span>
+              </div>
+            </div>
+
+            <div class="choice-config-controls">
+              <ion-item>
+                <ion-label>
+                  {{ 'adminProductWizard.choices.required' | translate }}
+                </ion-label>
+                <ion-toggle
+                  slot="end"
+                  [checked]="choice.required"
+                  (ionChange)="choiceRequiredChange.emit({ choiceId: choice.id, value: $event.detail.checked })"
+                />
+              </ion-item>
+
+              <div class="choice-number-grid">
+                <ion-item>
+                  <ion-label position="stacked">
+                    {{ 'adminProductWizard.choices.minimum' | translate }}
+                  </ion-label>
+                  <ion-input
+                    type="number"
+                    inputmode="numeric"
+                    [value]="choice.minSelections"
+                    (ionInput)="emitChoiceMinSelectionsChange(choice.id, $event.detail.value)"
+                  />
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">
+                    {{ 'adminProductWizard.choices.maximum' | translate }}
+                  </ion-label>
+                  <ion-input
+                    type="number"
+                    inputmode="numeric"
+                    [value]="choice.maxSelections"
+                    (ionInput)="emitChoiceMaxSelectionsChange(choice.id, $event.detail.value)"
+                  />
+                </ion-item>
+              </div>
+            </div>
+          </section>
+
+          @if (isChoiceMinGreaterThanMax(choice)) {
+            <div class="admin-error-message">
+              <ion-icon name="warning-outline"></ion-icon>
+              <span>{{ 'adminProductWizard.choiceConfiguration.validation.minGreaterThanMax' | translate }}</span>
+            </div>
+          }
+
+          @if (isChoiceMaxGreaterThanVisibleOptions(choice)) {
+            <div class="admin-error-message">
+              <ion-icon name="warning-outline"></ion-icon>
+              <span>{{ 'adminProductWizard.choiceConfiguration.validation.maxGreaterThanAvailableOptions' | translate }}</span>
+            </div>
+          }
+
+          <section class="choice-options-panel">
+            <div class="choice-subsection-title">
+              {{
+                (
+                  choice.source === 'library'
+                    ? 'adminProductWizard.choices.availableOptions'
+                    : 'adminProductWizard.choices.editableOptions'
+                ) | translate
+              }}
+            </div>
+
+            @if (choice.items.length === 0) {
+              <div class="choice-options-empty">
+                {{ 'adminProductWizard.choicesPremium.emptyOptions' | translate }}
+              </div>
+            }
+
+            <div class="option-list">
+              @for (item of choice.items; track trackById($index, item)) {
+                @if (choice.source === 'library') {
+                  <div
+                    class="option-row option-row-readonly"
+                    [class.option-row-hidden]="!isChoiceItemVisible(choice, item)"
+                  >
+                    <div class="option-main">
+                      <strong>{{ item.name }}</strong>
+
+                      @if (!item.isAvailable) {
+                        <span class="option-status option-status-unavailable">
+                          {{ 'adminProductWizard.choices.optionUnavailable' | translate }}
+                        </span>
+                      }
+
+                      @if (!isChoiceItemVisible(choice, item)) {
+                        <span class="option-status option-status-hidden">
+                          {{ 'adminProductWizard.choices.hiddenForProduct' | translate }}
+                        </span>
+                      }
+                    </div>
+
+                    <div class="option-price">
+                      @if (item.priceDelta > 0) {
+                        +{{ item.priceDelta | number: '1.2-2' }} CHF
+                      } @else {
+                        {{ 'adminProductWizard.choices.includedPrice' | translate }}
+                      }
+                    </div>
+
+                    <div class="option-visibility">
+                      <span>
+                        {{
+                          (
+                            isChoiceItemVisible(choice, item)
+                              ? 'adminProductWizard.choices.visibleForProduct'
+                              : 'adminProductWizard.choices.hiddenForProduct'
+                          ) | translate
+                        }}
+                      </span>
+
+                      <ion-toggle
+                        [checked]="isChoiceItemVisible(choice, item)"
+                        (ionChange)="itemVisibilityChange.emit({
+                          choiceId: choice.id,
+                          itemId: item.id,
+                          visible: $event.detail.checked
+                        })"
+                      />
+                    </div>
+                  </div>
+                } @else {
+                  <div class="option-row option-row-editable">
+                    <ion-input
+                      [value]="item.name"
+                      [placeholder]="'adminProductWizard.choices.optionNamePlaceholder' | translate"
+                      (ionInput)="emitItemNameChange(choice.id, item.id, $event.detail.value)"
+                    />
+
+                    <ion-input
+                      type="number"
+                      inputmode="decimal"
+                      [value]="item.priceDelta"
+                      placeholder="0.00"
+                      (ionInput)="emitItemPriceDeltaChange(choice.id, item.id, $event.detail.value)"
+                    />
+
+                    <ion-toggle
+                      [checked]="item.isAvailable"
+                      (ionChange)="itemAvailableChange.emit({
+                        choiceId: choice.id,
+                        itemId: item.id,
+                        value: $event.detail.checked
+                      })"
+                    />
+
+                    <ion-button
+                      fill="clear"
+                      color="danger"
+                      type="button"
+                      size="small"
+                      (click)="removeChoiceItem.emit({ choiceId: choice.id, itemId: item.id })"
+                    >
+                      <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                }
+              }
+            </div>
+
+            @if (choice.source === 'custom') {
+              <ion-button fill="outline" size="small" type="button" (click)="addChoiceItem.emit(choice.id)">
+                <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+                {{ 'adminProductWizard.choices.addOption' | translate }}
+              </ion-button>
+            }
+          </section>
+        </article>
+      }
+    </div>
+  }
+</section>

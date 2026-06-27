@@ -79,8 +79,6 @@ export class ProductDetails implements OnInit {
   });
   protected imageErrors = new Set<string>();
 
-  readonly selectedVariant = signal<ProductVariant | null>(null);
-
   // clé = groupId, valeur = options choisies
   readonly selectedOptionsByGroup = signal<Record<string, ProductOption[]>>({});
 
@@ -100,6 +98,18 @@ export class ProductDetails implements OnInit {
       .reduce((sum, option) => sum + option.priceDelta, 0);
 
     return (basePrice + optionsTotal) * this.quantity();
+  });
+
+  readonly selectedVariant = signal<ProductVariant | null>(null);
+
+  readonly currentOptionGroups = computed(() => {
+    const variantGroups = this.selectedVariant()?.optionGroups;
+
+    if (variantGroups?.length) {
+      return variantGroups;
+    }
+
+    return this.product()?.optionGroups ?? [];
   });
 
   constructor() {
@@ -169,7 +179,7 @@ export class ProductDetails implements OnInit {
           null;
 
         this.selectedVariant.set(defaultVariant);
-        this.initializeDefaultOptions(product);
+        this.initializeDefaultOptions();
         this.loading.set(false);
       },
       error: async (error) => {
@@ -181,10 +191,10 @@ export class ProductDetails implements OnInit {
     });
   }
 
-  private initializeDefaultOptions(product: Product): void {
+  private initializeDefaultOptions(): void {
     const initialSelections: Record<string, ProductOption[]> = {};
 
-    for (const group of product.optionGroups ?? []) {
+    for (const group of this.currentOptionGroups()) {
       const defaults = (group.options ?? []).filter(
         (option) =>
           option.isDefault &&
@@ -192,11 +202,11 @@ export class ProductDetails implements OnInit {
           this.isOptionAllowedForCurrentVariant(option)
       );
 
-      if (defaults.length > 0) {
-        initialSelections[group.id] = group.multiple ? defaults : [defaults[0]];
-      } else {
-        initialSelections[group.id] = [];
-      }
+      initialSelections[group.id] = defaults.length > 0
+        ? group.multiple
+          ? defaults
+          : [defaults[0]]
+        : [];
     }
 
     this.selectedOptionsByGroup.set(initialSelections);
@@ -229,25 +239,29 @@ export class ProductDetails implements OnInit {
 
   onVariantChange(variantId: string): void {
     const currentProduct = this.product();
+
     if (!currentProduct?.variants?.length) {
       return;
     }
 
-    const found = currentProduct.variants.find((variant) => variant.id === variantId);
+    const found = currentProduct.variants.find(
+      (variant) => variant.id === variantId
+    );
+
     if (!found) {
       return;
     }
 
     this.selectedVariant.set(found);
 
-    // Nettoyage des options incompatibles avec la variante choisie
     const currentSelections = this.selectedOptionsByGroup();
     const cleanedSelections: Record<string, ProductOption[]> = {};
 
-    for (const group of currentProduct.optionGroups ?? []) {
+    for (const group of this.currentOptionGroups()) {
       const selected = currentSelections[group.id] ?? [];
+
       cleanedSelections[group.id] = selected.filter((option) =>
-        this.isOptionAllowedForCurrentVariant(option)
+        group.options.some((availableOption) => availableOption.id === option.id)
       );
     }
 
@@ -335,6 +349,7 @@ export class ProductDetails implements OnInit {
 
   private validateSelections(): string[] {
     const currentProduct = this.product();
+
     if (!currentProduct) {
       return ['Product not found'];
     }
@@ -345,7 +360,7 @@ export class ProductDetails implements OnInit {
       errors.push('Please select a size.');
     }
 
-    for (const group of currentProduct.optionGroups ?? []) {
+    for (const group of this.currentOptionGroups()) {
       const selected = this.selectedOptionsByGroup()[group.id] ?? [];
       const count = selected.length;
 
@@ -389,7 +404,7 @@ export class ProductDetails implements OnInit {
     const selectedOptions: SelectedOption[] = Object.entries(
       this.selectedOptionsByGroup()
     ).flatMap(([groupId, options]) => {
-      const group = currentProduct.optionGroups?.find((item) => item.id === groupId);
+      const group = this.currentOptionGroups().find((item) => item.id === groupId);
 
       return options.map((option) => ({
         optionGroupId: groupId,

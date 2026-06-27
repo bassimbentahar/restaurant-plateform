@@ -1,0 +1,361 @@
+:host {
+  display: block;
+}
+
+ion-toolbar {
+  --background: #ffffff;
+  --border-color: #e7e2d8;
+}
+
+.choice-editor-modal {
+  --background:
+    radial-gradient(circle at top left, rgba(154, 91, 34, 0.10), transparent 30rem),
+    #f6f3ee;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  --padding-top: 24px;
+  --padding-bottom: 28px;
+}
+
+.admin-section-title,
+.editor-intro {
+  padding: 26px;
+  border: 1px solid #e7e2d8;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(21, 18, 15, 0.06);
+
+  h2 {
+    margin: 0 0 12px;
+    color: #15120f;
+    font-size: 30px;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+  }
+
+  p {
+    margin: 0;
+    color: #6f665c;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+}
+
+.editor-form,
+.options-section {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid #e7e2d8;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 40px rgba(21, 18, 15, 0.065);
+}
+
+.field-block {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+ion-item {
+  --background: #ffffff;
+  --border-color: rgba(120, 92, 40, 0.16);
+  --border-radius: 18px;
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --min-height: 76px;
+
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(120, 92, 40, 0.16);
+  border-radius: 18px;
+}
+
+ion-label {
+  color: #3f362d !important;
+  font-weight: 850;
+}
+
+ion-input,
+ion-textarea {
+  --highlight-color-focused: #9a5b22;
+  color: #15120f;
+  font-size: 16px;
+}
+
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid #fecdca;
+  border-radius: 14px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.admin-error-message--inline {
+  margin: 0;
+}
+
+.options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+
+  h3 {
+    margin: 0 0 6px;
+    color: #15120f;
+    font-size: 22px;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    color: #6f665c;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  ion-button {
+    flex: 0 0 auto;
+    font-weight: 850;
+    --border-radius: 14px;
+  }
+}
+
+.options-list {
+  display: grid;
+  gap: 12px;
+}
+
+.option-row {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e7e2d8;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfaf8 100%);
+}
+
+.option-row--disabled {
+  opacity: 0.68;
+}
+
+.option-row-top {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 44px;
+  gap: 10px;
+  align-items: center;
+}
+
+.option-index {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #713f12;
+  font-weight: 950;
+}
+
+.option-available-compact {
+  display: inline-flex;
+  justify-self: end;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(120, 92, 40, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #3f362d;
+  font-size: 13px;
+  font-weight: 900;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ion-toggle {
+    flex: 0 0 auto;
+    transform: scale(0.82);
+    transform-origin: right center;
+  }
+}
+
+.option-delete-button {
+  width: 44px;
+  height: 44px;
+  --border-radius: 14px;
+}
+
+.option-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 150px);
+  gap: 12px;
+  min-width: 0;
+}
+
+.option-name-field {
+  min-width: 0;
+}
+
+.option-price-field {
+  --padding-start: 12px;
+  --inner-padding-end: 10px;
+}
+
+.option-price-field ion-label {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.15;
+}
+
+.option-price-field ion-input {
+  min-width: 0;
+}
+
+.currency-suffix {
+  margin-left: 6px;
+  color: #15120f;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+/* Footer outside ion-content: much more stable than sticky inside the scroll. */
+.choice-editor-footer {
+  background: #ffffff;
+  box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.choice-editor-footer ion-toolbar {
+  --background: rgba(255, 255, 255, 0.97);
+  --border-color: #e7dfd1;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --min-height: 88px;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  min-height: 88px;
+  padding: 18px 32px 20px;
+}
+
+.footer-actions ion-button {
+  margin: 0;
+  min-width: 160px;
+  height: 50px;
+
+  --border-radius: 16px;
+  --padding-start: 22px;
+  --padding-end: 22px;
+
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.footer-actions ion-button::part(native) {
+  height: 50px;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+.footer-actions ion-button[fill='outline'] {
+  --background: #ffffff;
+  --color: #155eef;
+  --border-color: #155eef;
+  --border-width: 2px;
+}
+
+.footer-actions ion-button:not([fill='outline']) {
+  --background: #155eef;
+  --color: #ffffff;
+  --box-shadow: 0 10px 22px rgba(21, 94, 239, 0.22);
+}
+
+.footer-actions ion-button[disabled] {
+  opacity: 0.56;
+}
+
+@media (max-width: 700px) {
+  .choice-editor-modal {
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --padding-top: 14px;
+    --padding-bottom: 22px;
+  }
+
+  .admin-section-title,
+  .editor-intro,
+  .editor-form,
+  .options-section {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .selection-grid,
+  .option-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .option-row-top {
+    grid-template-columns: 36px minmax(0, 1fr) 40px;
+  }
+
+  .option-available-compact {
+    justify-self: stretch;
+  }
+
+  .options-header {
+    flex-direction: column;
+
+    ion-button {
+      width: 100%;
+    }
+  }
+
+  .choice-editor-footer ion-toolbar {
+    --min-height: 82px;
+  }
+
+  .footer-actions {
+    gap: 12px;
+    min-height: 82px;
+    padding: 14px;
+  }
+
+  .footer-actions ion-button {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    font-size: 13px;
+  }
+
+  .footer-actions ion-button::part(native) {
+    height: 48px;
+  }
+}
