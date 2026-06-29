@@ -4,6 +4,8 @@ import com.restaurant.restaurantbackend.product.category.productCategoryLink.Pro
 import com.restaurant.restaurantbackend.product.category.productCategoryLink.ProductCategoryLink;
 import com.restaurant.restaurantbackend.product.dto.request.ProductCreateRequest;
 import com.restaurant.restaurantbackend.product.dto.response.admin.ProductCreatedResponse;
+import com.restaurant.restaurantbackend.product.exception.ProductNotFoundException;
+import com.restaurant.restaurantbackend.product.image.ProductImage;
 import com.restaurant.restaurantbackend.product.mapper.ProductMapper;
 import com.restaurant.restaurantbackend.product.option.ProductOptionAssignmentResult;
 import com.restaurant.restaurantbackend.product.option.ProductOptionGroupAssignmentService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,48 +28,29 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Application service responsible for product creation.
+ * Application service responsible for product writes.
  *
  * <p>This service represents the write side of the product catalog.
- * Its responsibility is to assemble and persist a complete {@link Product}
- * aggregate from a creation request.
+ * Its responsibility is to assemble, update and persist a complete
+ * {@link Product} aggregate from an admin request.
  *
  * <p>Main responsibilities:
  * <ul>
  *   <li>Resolve the current restaurant context.</li>
- *   <li>Map the incoming request to a {@link Product} entity.</li>
+ *   <li>Create a complete product aggregate.</li>
+ *   <li>Update an existing product aggregate.</li>
  *   <li>Attach product categories.</li>
  *   <li>Attach product-level option groups.</li>
  *   <li>Attach variant-level option groups.</li>
- *   <li>Build temporary clientId references used by rule creation.</li>
+ *   <li>Build temporary clientId references used by rule creation/update.</li>
  *   <li>Validate product and variant consistency rules.</li>
- *   <li>Persist the product aggregate.</li>
- *   <li>Delegate restaurant rule creation to {@link RestaurantRuleApplicationService}.</li>
+ *   <li>Delegate restaurant rule creation/update to {@link RestaurantRuleApplicationService}.</li>
  * </ul>
  *
  * <p>This service intentionally does not resolve catalog output for clients.
  * Reading, option resolution and dynamic rule execution are handled by the
- * query side, especially {@code ProductCatalogQueryService} and
- * {@code OptionGroupResolutionService}.
- *
- * <p>Creation flow:
- * <pre>
- * ProductService
- *   -> ProductMapper
- *   -> ProductCategoryAssignmentService
- *   -> ProductOptionGroupAssignmentService
- *   -> ProductRepository
- *   -> RestaurantRuleApplicationService
- * </pre>
- *
- * <p>Important distinction:
- * <ul>
- *   <li>{@code variantsByClientId} maps frontend temporary variant IDs to real variants.</li>
- *   <li>{@code optionGroupsByClientId} maps frontend temporary option group IDs to real option groups.</li>
- * </ul>
- *
- * <p>These maps are technical creation-time references only. They are not part
- * of the public API response.
+ * query side, especially {@code ProductCatalogQueryService},
+ * {@code ProductAdminQueryService} and {@code OptionGroupResolutionService}.
  */
 @Service
 @RequiredArgsConstructor
@@ -84,6 +68,7 @@ public class ProductService {
   private final RestaurantRuleApplicationService restaurantRuleApplicationService;
   private final ProductSlugService slugService;
   private final RestaurantRuleDuplicatePolicyService ruleDuplicatePolicyService;
+
   /**
    * Creates a product and all creation-time relationships.
    *
@@ -156,18 +141,314 @@ public class ProductService {
   }
 
   /**
+   * Updates an existing product and rebuilds its editable relationships.
+   *
+   * <p>This method follows the same structure as {@link #createProduct(ProductCreateRequest)}
+   * but works on an already persisted product:
+   * <ul>
+   *   <li>The existing product is loaded and validated against the current restaurant.</li>
+   *   <li>Main product fields are updated in place.</li>
+   *   <li>Images and variants are rebuilt from the request.</li>
+   *   <li>Categories are rebuilt from categoryIds.</li>
+   *   <li>Product-level and variant-level option groups are reassigned.</li>
+   *   <li>Rules are replaced through {@link RestaurantRuleApplicationService}.</li>
+   * </ul>
+   *
+   * <p>Important: this method does not create a new {@link Product}. It mutates
+   * the existing aggregate so that the original id, audit fields and ownership
+   * remain stable.
+   *
+   * @param productId the existing product id
+   * @param request the update request
+   * @return the id of the updated product
+   */
+  @Transactional
+  public ProductCreatedResponse updateProduct(
+    UUID productId,
+    ProductCreateRequest request
+  ) {
+    Objects.requireNonNull(productId, "Product id must not be null");
+    Objects.requireNonNull(request, "Product update request must not be null");
+
+    Restaurant restaurant = getCurrentRestaurant();
+
+    ruleDuplicatePolicyService.validateProductRules(request.rules());
+
+    Product product = findProductForCurrentRestaurant(productId, restaurant);
+
+    Product mappedProduct = productMapper.toEntity(request);
+
+    updateMainProductFields(product, mappedProduct, request, restaurant);
+
+    replaceImages(product, mappedProduct.getImages());
+    replaceVariants(product, mappedProduct.getVariants());
+
+    replaceCategories(product, restaurant, request);
+
+    ProductOptionAssignmentResult optionAssignmentResult =
+      productOptionGroupAssignmentService.assignOptionGroups(
+        product,
+        request,
+        restaurant
+      );
+
+    Map<String, ProductVariant> variantsByClientId =
+      buildVariantMap(product, request);
+
+    validateAndNormalizeDefaultVariant(product);
+    validateVariantCompareAtPrices(product);
+
+    productRepository.flush();
+
+    /*
+     * Clean architecture:
+     * The product service owns product writes, but rule persistence details
+     * remain inside RestaurantRuleApplicationService.
+     *
+     * If this method does not exist yet in RestaurantRuleApplicationService,
+     * add it there rather than deleting/recreating rules here.
+     */
+    restaurantRuleApplicationService.replaceRulesForProduct(
+      product,
+      restaurant,
+      request.rules(),
+      variantsByClientId,
+      optionAssignmentResult.optionGroupsByClientId()
+    );
+
+    return new ProductCreatedResponse(product.getId());
+  }
+
+  private Product findProductForCurrentRestaurant(
+    UUID productId,
+    Restaurant restaurant
+  ) {
+    Product product = productRepository.findById(productId)
+      .orElseThrow(() -> new ProductNotFoundException(
+        "Product not found with ID: " + productId
+      ));
+
+    if (
+      product.getRestaurant() == null
+        || product.getRestaurant().getId() == null
+        || !product.getRestaurant().getId().equals(restaurant.getId())
+    ) {
+      throw new ProductNotFoundException(
+        "Product not found with ID: " + productId
+      );
+    }
+
+    return product;
+  }
+
+  private void updateMainProductFields(
+    Product product,
+    Product mappedProduct,
+    ProductCreateRequest request,
+    Restaurant restaurant
+  ) {
+    product.setRestaurant(restaurant);
+
+    product.setSku(mappedProduct.getSku());
+    product.setTitle(mappedProduct.getTitle());
+    product.setShortDescription(mappedProduct.getShortDescription());
+    product.setDescription(mappedProduct.getDescription());
+    product.setThumb(mappedProduct.getThumb());
+
+    product.setSlug(
+      resolveSlugForUpdate(
+        product,
+        restaurant,
+        request.slug()
+      )
+    );
+
+    product.setBasePrice(mappedProduct.getBasePrice());
+
+    product.setAvailable(mappedProduct.isAvailable());
+    product.setFeatured(mappedProduct.isFeatured());
+    product.setArchived(mappedProduct.isArchived());
+
+    product.setPreparationTimeMinutes(
+      mappedProduct.getPreparationTimeMinutes()
+    );
+
+    product.setAvailableFrom(mappedProduct.getAvailableFrom());
+    product.setAvailableTo(mappedProduct.getAvailableTo());
+
+    product.setCalories(mappedProduct.getCalories());
+    product.setIngredientsText(mappedProduct.getIngredientsText());
+    product.setAllergensText(mappedProduct.getAllergensText());
+  }
+
+  private String resolveSlugForUpdate(
+    Product product,
+    Restaurant restaurant,
+    String requestedSlug
+  ) {
+    String cleanedRequestedSlug = trimToNull(requestedSlug);
+
+    if (cleanedRequestedSlug == null) {
+      return product.getSlug();
+    }
+
+    if (cleanedRequestedSlug.equals(product.getSlug())) {
+      return product.getSlug();
+    }
+
+    return slugService.generateUniqueSlug(
+      restaurant.getId(),
+      cleanedRequestedSlug,
+      product.getTitle()
+    );
+  }
+
+  private void replaceImages(
+    Product product,
+    List<ProductImage> newImages
+  ) {
+    validatePrimaryImageCount(newImages);
+
+    if (product.getImages() == null) {
+      product.setImages(new ArrayList<>());
+    }
+
+    boolean hadExistingImages = !product.getImages().isEmpty();
+
+    product.getImages().clear();
+
+    /*
+     * Important :
+     * On force Hibernate à supprimer les anciennes images avant d’insérer
+     * les nouvelles. Sinon PostgreSQL peut voir deux images principales
+     * pour le même produit pendant le même flush.
+     */
+    if (hadExistingImages) {
+      productRepository.flush();
+    }
+
+    if (newImages == null || newImages.isEmpty()) {
+      return;
+    }
+
+    for (ProductImage image : new ArrayList<>(newImages)) {
+      image.setProduct(product);
+      product.getImages().add(image);
+    }
+  }
+
+  private void validatePrimaryImageCount(
+    List<ProductImage> images
+  ) {
+    if (images == null || images.isEmpty()) {
+      return;
+    }
+
+    long primaryImageCount = images.stream()
+      .filter(ProductImage::isPrimary)
+      .count();
+
+    if (primaryImageCount > 1) {
+      throw new IllegalArgumentException(
+        "Only one primary image is allowed per product"
+      );
+    }
+  }
+
+  private void replaceVariants(
+    Product product,
+    List<ProductVariant> newVariants
+  ) {
+    validateVariantSkus(newVariants);
+
+    if (product.getVariants() == null) {
+      product.setVariants(new ArrayList<>());
+    }
+
+    boolean hadExistingVariants = !product.getVariants().isEmpty();
+
+    product.getVariants().clear();
+
+    /*
+     * Important :
+     * On force Hibernate à supprimer les anciennes variantes avant
+     * d’insérer les nouvelles.
+     *
+     * Sinon, si une nouvelle variante garde le même SKU qu’une ancienne,
+     * PostgreSQL voit temporairement deux lignes avec le même SKU.
+     */
+    if (hadExistingVariants) {
+      productRepository.flush();
+    }
+
+    if (newVariants == null || newVariants.isEmpty()) {
+      return;
+    }
+
+    for (ProductVariant variant : new ArrayList<>(newVariants)) {
+      variant.setProduct(product);
+
+      if (variant.getOptionGroups() == null) {
+        variant.setOptionGroups(new ArrayList<>());
+      } else {
+        variant.setOptionGroups(new ArrayList<>(variant.getOptionGroups()));
+      }
+
+      product.getVariants().add(variant);
+    }
+  }
+
+  private void replaceCategories(
+    Product product,
+    Restaurant restaurant,
+    ProductCreateRequest request
+  ) {
+    validateCategoryIds(request.categoryIds());
+
+    if (product.getCategories() == null) {
+      product.setCategories(new ArrayList<>());
+    }
+
+    boolean hadExistingCategories = !product.getCategories().isEmpty();
+
+    product.getCategories().clear();
+
+    /*
+     * Important :
+     * On force Hibernate à supprimer les anciens liens product/category
+     * avant d’insérer les nouveaux.
+     *
+     * Sinon PostgreSQL peut voir temporairement deux fois le même couple :
+     * product_id + category_id.
+     */
+    if (hadExistingCategories) {
+      productRepository.flush();
+    }
+
+    List<ProductCategoryLink> categoryLinks =
+      productCategoryAssignmentService.createCategoryLinks(
+        product,
+        restaurant.getId(),
+        request.categoryIds()
+      );
+
+    if (categoryLinks.isEmpty()) {
+      return;
+    }
+
+    product.getCategories().addAll(categoryLinks);
+  }
+
+  /**
    * Builds a temporary map between frontend variant clientIds and backend
    * {@link ProductVariant} instances.
    *
-   * <p>This map is only needed during product creation. It allows
+   * <p>This map is needed during product creation and update. It allows
    * {@link RestaurantRuleApplicationService} to resolve rules targeting a
    * variant using the temporary clientId sent by the frontend.
    *
-   * <p>This method does not create, update or persist variants. It only creates
-   * a lookup map from already mapped variants.
-   *
-   * @param product the product aggregate created from the request
-   * @param request the original creation request containing frontend clientIds
+   * @param product the product aggregate created or updated from the request
+   * @param request the original request containing frontend clientIds
    * @return map of clientId to product variant
    */
   private Map<String, ProductVariant> buildVariantMap(
@@ -291,5 +572,61 @@ public class ProductService {
       .orElseThrow(() -> new IllegalStateException(
         "Default restaurant not found: " + DEFAULT_RESTAURANT_ID
       ));
+  }
+
+  private String trimToNull(String value) {
+    if (value == null) {
+      return null;
+    }
+
+    String trimmedValue = value.trim();
+
+    return trimmedValue.isEmpty() ? null : trimmedValue;
+  }
+
+  private void validateVariantSkus(
+    List<ProductVariant> variants
+  ) {
+    if (variants == null || variants.isEmpty()) {
+      return;
+    }
+
+    List<String> skus = variants.stream()
+      .map(ProductVariant::getSku)
+      .filter(sku -> sku != null && !sku.isBlank())
+      .map(String::strip)
+      .toList();
+
+    long distinctSkuCount = skus.stream()
+      .distinct()
+      .count();
+
+    if (distinctSkuCount != skus.size()) {
+      throw new IllegalArgumentException(
+        "Duplicate variant sku in product request"
+      );
+    }
+  }
+
+  private void validateCategoryIds(
+    List<UUID> categoryIds
+  ) {
+    if (categoryIds == null || categoryIds.isEmpty()) {
+      return;
+    }
+
+    List<UUID> cleanCategoryIds = categoryIds.stream()
+      .filter(Objects::nonNull)
+      .toList();
+
+    long distinctCount = cleanCategoryIds.stream()
+      .distinct()
+      .count();
+
+    if (distinctCount != cleanCategoryIds.size()) {
+      throw new IllegalArgumentException(
+        "Duplicate category id in product request"
+      );
+    }
   }
 }

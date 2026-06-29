@@ -18,6 +18,7 @@ import com.restaurant.restaurantbackend.product.option.item.OptionItem;
 import com.restaurant.restaurantbackend.product.rule.RuleCondition;
 import com.restaurant.restaurantbackend.product.rule.RuleTag;
 import com.restaurant.restaurantbackend.product.rule.restaurant.RestaurantRule;
+import com.restaurant.restaurantbackend.product.rule.restaurant.RestaurantRuleAssignment;
 import com.restaurant.restaurantbackend.product.variant.ProductVariant;
 import com.restaurant.restaurantbackend.product.variant.VariantOptionGroup;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class ProductEditMapper {
 
   public ProductEditResponse toEditResponse(
     Product product,
-    List<RestaurantRule> rules
+    List<RestaurantRuleAssignment> ruleAssignments
   ) {
     return new ProductEditResponse(
       product.getId(),
@@ -70,7 +71,7 @@ public class ProductEditMapper {
 
       mapProductOptionGroups(product),
       mapVariants(product),
-      mapRules(rules),
+      mapRules(ruleAssignments),
 
       product.getCreatedDate(),
       product.getLastModifiedDate()
@@ -265,14 +266,64 @@ public class ProductEditMapper {
     );
   }
 
-  private List<ProductEditRuleResponse> mapRules(List<RestaurantRule> rules) {
-    if (rules == null || rules.isEmpty()) {
+  private List<ProductEditRuleResponse> mapRules(
+    List<RestaurantRuleAssignment> assignments
+  ) {
+    if (assignments == null || assignments.isEmpty()) {
       return List.of();
     }
 
-    return rules.stream()
-      .map(this::mapRule)
+    return assignments.stream()
+      .filter(assignment -> assignment.getRule() != null)
+      .map(this::mapRuleAssignment)
       .toList();
+  }
+
+  private ProductEditRuleResponse mapRuleAssignment(
+    RestaurantRuleAssignment assignment
+  ) {
+    var rule = assignment.getRule();
+    var condition = rule.getCondition();
+
+    return new ProductEditRuleResponse(
+      assignment.getId(),
+      rule.getId(),
+
+      rule.getName(),
+      rule.getDescription(),
+
+      assignment.isActive(),
+      rule.isFavorite(),
+      rule.isReusable(),
+
+      rule.isCustomerVisible(),
+      rule.getCustomerTitle(),
+      rule.getCustomerDescription(),
+
+      mapRuleTags(rule),
+
+      rule.getRuleType(),
+      assignment.getTargetType() == null
+        ? null
+        : assignment.getTargetType().name(),
+
+      assignment.getVariant() == null
+        ? null
+        : assignment.getVariant().getId().toString(),
+
+      assignment.getOptionGroup() == null
+        ? null
+        : assignment.getOptionGroup().getId().toString(),
+
+      condition == null
+        ? null
+        : condition.optionItemId(),
+
+      condition,
+      rule.getAction(),
+
+      assignment.getPriority()
+    );
   }
 
   private ProductEditRuleResponse mapRule(RestaurantRule rule) {

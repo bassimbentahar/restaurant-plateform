@@ -310,4 +310,78 @@ public class RestaurantRuleApplicationService {
   private String normalizeBlankToNull(String value) {
     return hasText(value) ? value.strip() : null;
   }
+
+  public void replaceRulesForProduct(
+    Product product,
+    Restaurant restaurant,
+    List<ProductRuleRequest> requestRules,
+    Map<String, ProductVariant> variantsByClientId,
+    Map<String, OptionGroup> optionGroupsByClientId
+  ) {
+    Objects.requireNonNull(product, "Product must not be null");
+    Objects.requireNonNull(restaurant, "Restaurant must not be null");
+
+    deleteExistingRulesForProduct(product);
+
+    createRulesForProduct(
+      product,
+      restaurant,
+      requestRules,
+      variantsByClientId,
+      optionGroupsByClientId
+    );
+  }
+
+  private void deleteExistingRulesForProduct(Product product) {
+    if (product.getId() == null) {
+      return;
+    }
+
+    List<RestaurantRuleAssignment> existingAssignments =
+      assignmentRepository.findByProductId(product.getId());
+
+    if (existingAssignments.isEmpty()) {
+      return;
+    }
+
+    List<RestaurantRule> rulesToDelete =
+      existingAssignments
+        .stream()
+        .map(RestaurantRuleAssignment::getRule)
+        .filter(Objects::nonNull)
+        .distinct()
+        .toList();
+
+    assignmentRepository.deleteAll(existingAssignments);
+    assignmentRepository.flush();
+
+    rulesToDelete
+      .stream()
+      .filter(this::shouldDeleteRuleAfterProductReplacement)
+      .forEach(ruleRepository::delete);
+
+    ruleRepository.flush();
+  }
+
+  private boolean shouldDeleteRuleAfterProductReplacement(
+    RestaurantRule rule
+  ) {
+    if (rule.getId() == null) {
+      return false;
+    }
+
+    boolean ruleStillAssignedSomewhere =
+      assignmentRepository.existsByRuleId(rule.getId());
+
+    if (ruleStillAssignedSomewhere) {
+      return false;
+    }
+
+    /*
+     * Si la règle est réutilisable, on la garde dans la bibliothèque.
+     * Si elle n'est pas réutilisable et n'a plus d'assignation,
+     * on peut la supprimer.
+     */
+    return !rule.isReusable();
+  }
 }

@@ -37,4 +37,25 @@ public interface RestaurantRuleAssignmentRepository
     Collection<UUID> categoryIds,
     LocalDateTime now
   );
+
+  @Query("""
+  select distinct assignment
+  from RestaurantRuleAssignment assignment
+  join fetch assignment.rule rule
+  left join fetch rule.tags tags
+  left join fetch assignment.variant variant
+  left join fetch assignment.optionGroup optionGroup
+  left join fetch assignment.category category
+  where assignment.restaurant.id = :restaurantId
+    and assignment.product.id = :productId
+  order by assignment.priority asc
+""")
+  List<RestaurantRuleAssignment> findAssignmentsForProductEdit(
+    UUID restaurantId,
+    UUID productId
+  );
+
+  List<RestaurantRuleAssignment> findByProductId(UUID productId);
+
+  boolean existsByRuleId(UUID ruleId);
 }

@@ -12,6 +12,7 @@ import com.restaurant.restaurantbackend.product.variant.VariantOptionGroup;
 import com.restaurant.restaurantbackend.product.variant.dto.ProductVariantRequest;
 import com.restaurant.restaurantbackend.product.variant.dto.VariantOptionGroupAssignmentRequest;
 import com.restaurant.restaurantbackend.restaurant.Restaurant;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 /**
  * Service responsible for attaching option groups to a product aggregate.
  *
- * <p>This service belongs to the product write side. It is called during
- * product creation, before the product aggregate is persisted.
+ * <p>This service belongs to the product write side. It can be used during
+ * product creation and product update.
  *
  * <p>Main responsibilities:
  * <ul>
@@ -36,27 +37,13 @@ import java.util.stream.Collectors;
  *   <li>Resolve existing library option groups by id.</li>
  *   <li>Validate option group ownership by restaurant.</li>
  *   <li>Validate selection constraints.</li>
- *   <li>Collect frontend temporary optionGroup clientIds for rule creation.</li>
+ *   <li>Collect frontend temporary optionGroup clientIds for rule creation/update.</li>
  * </ul>
  *
- * <p>Important distinction:
+ * <p>Important JPA rule:
  * <ul>
- *   <li>Product-level option groups may be existing library groups or newly created custom groups.</li>
- *   <li>Variant-level option groups currently reference existing option groups only.</li>
- * </ul>
- *
- * <p>The returned {@link ProductOptionAssignmentResult} is not a public API
- * response. It is a technical creation-time lookup used later by
- * RestaurantRuleApplicationService to resolve rule targets.
- *
- * <pre>
- * optionGroupClientId -> OptionGroup
- * </pre>
- *
- * <p>The same registry collects:
- * <ul>
- *   <li>Option groups attached directly to the product.</li>
- *   <li>Option groups attached to variants.</li>
+ *   <li>For managed entities, never replace orphanRemoval collections with a new List.</li>
+ *   <li>Always mutate the existing collection in place using clear() and add().</li>
  * </ul>
  */
 @Service
@@ -64,24 +51,8 @@ import java.util.stream.Collectors;
 public class ProductOptionGroupAssignmentService {
 
   private final OptionGroupRepository optionGroupRepository;
+  private final EntityManager entityManager;
 
-  /**
-   * Attaches all option groups declared in the product creation request.
-   *
-   * <p>This method orchestrates both:
-   * <ul>
-   *   <li>Product-level option group assignment.</li>
-   *   <li>Variant-level option group assignment.</li>
-   * </ul>
-   *
-   * <p>It also returns all option groups referenced by frontend clientIds,
-   * regardless of whether they belong to the product level or variant level.
-   *
-   * @param product the product aggregate being created
-   * @param request the product creation request
-   * @param restaurant the current restaurant
-   * @return creation-time option group references
-   */
   public ProductOptionAssignmentResult assignOptionGroups(
     Product product,
     ProductCreateRequest request,
@@ -107,18 +78,6 @@ public class ProductOptionGroupAssignmentService {
     return registry.toResult();
   }
 
-  /**
-   * Attaches product-level option groups.
-   *
-   * <p>A product-level option group can either:
-   * <ul>
-   *   <li>Reference an existing library option group using optionGroupId.</li>
-   *   <li>Create a new custom option group when optionGroupId is absent.</li>
-   * </ul>
-   *
-   * <p>Each resolved option group is registered by clientId so rules can target
-   * it later during the same product creation workflow.
-   */
   private void attachProductOptionGroups(
     Product product,
     ProductCreateRequest request,
@@ -126,7 +85,7 @@ public class ProductOptionGroupAssignmentService {
     ProductOptionAssignmentRegistry registry
   ) {
     if (request.optionGroups() == null || request.optionGroups().isEmpty()) {
-      product.setOptionGroups(List.of());
+      replaceProductOptionGroupsInPlace(product, List.of());
       return;
     }
 
@@ -158,20 +117,40 @@ public class ProductOptionGroupAssignmentService {
       );
     }
 
-    product.setOptionGroups(links);
+    replaceProductOptionGroupsInPlace(product, links);
   }
 
-  /**
-   * Attaches option groups to product variants.
-   *
-   * <p>Variant-level option groups currently reference existing option groups.
-   * They do not create custom option groups because
-   * {@link VariantOptionGroupAssignmentRequest} does not contain custom group
-   * fields such as name, description or items.
-   *
-   * <p>Each resolved option group is also registered by clientId, allowing a
-   * rule to target a variant-specific option group.
-   */
+  private void replaceProductOptionGroupsInPlace(
+    Product product,
+    List<ProductOptionGroupLink> links
+  ) {
+    if (product.getOptionGroups() == null) {
+      product.setOptionGroups(new ArrayList<>());
+    }
+
+    boolean hadExistingLinks = !product.getOptionGroups().isEmpty();
+
+    product.getOptionGroups().clear();
+
+    /*
+     * Très important :
+     * On force la suppression des anciens liens product/optionGroup
+     * avant d’ajouter les nouveaux.
+     */
+    if (hadExistingLinks) {
+      entityManager.flush();
+    }
+
+    if (links == null || links.isEmpty()) {
+      return;
+    }
+
+    for (ProductOptionGroupLink link : links) {
+      link.setProduct(product);
+      product.getOptionGroups().add(link);
+    }
+  }
+
   private void attachOptionGroupsToVariants(
     Product product,
     ProductCreateRequest request,
@@ -192,7 +171,7 @@ public class ProductOptionGroupAssignmentService {
       ProductVariantRequest variantRequest = request.variants().get(index);
 
       if (variantRequest.optionGroups() == null || variantRequest.optionGroups().isEmpty()) {
-        variant.setOptionGroups(List.of());
+        replaceVariantOptionGroupsInPlace(variant, List.of());
         continue;
       }
 
@@ -220,16 +199,36 @@ public class ProductOptionGroupAssignmentService {
         links.add(link);
       }
 
-      variant.setOptionGroups(links);
+      replaceVariantOptionGroupsInPlace(variant, links);
     }
   }
 
-  /**
-   * Resolves an existing option group for a variant.
-   *
-   * <p>Variant option groups must reference an existing option group because
-   * the variant request only contains overrides and an optionGroupId.
-   */
+  private void replaceVariantOptionGroupsInPlace(
+    ProductVariant variant,
+    List<VariantOptionGroup> links
+  ) {
+    if (variant.getOptionGroups() == null) {
+      variant.setOptionGroups(new ArrayList<>());
+    }
+
+    boolean hadExistingLinks = !variant.getOptionGroups().isEmpty();
+
+    variant.getOptionGroups().clear();
+
+    if (hadExistingLinks) {
+      entityManager.flush();
+    }
+
+    if (links == null || links.isEmpty()) {
+      return;
+    }
+
+    for (VariantOptionGroup link : links) {
+      link.setVariant(variant);
+      variant.getOptionGroups().add(link);
+    }
+  }
+
   private OptionGroup resolveVariantOptionGroup(
     VariantOptionGroupAssignmentRequest request,
     Restaurant restaurant,
@@ -311,15 +310,6 @@ public class ProductOptionGroupAssignmentService {
     return first.getId().equals(second.getId());
   }
 
-  /**
-   * Resolves or creates a product-level option group.
-   *
-   * <p>If optionGroupId is present, the method resolves an existing library
-   * option group.
-   *
-   * <p>If optionGroupId is absent, the method creates a custom option group
-   * from the request payload.
-   */
   private OptionGroup resolveOrCreateProductOptionGroup(
     ProductOptionGroupAssignmentRequest request,
     Restaurant restaurant
@@ -343,13 +333,6 @@ public class ProductOptionGroupAssignmentService {
     return optionGroupRepository.save(customOptionGroup);
   }
 
-  /**
-   * Creates a custom option group from a product-level request.
-   *
-   * <p>This is only allowed for product-level option groups because the product
-   * option group request contains the full data required to create a group:
-   * name, description and items.
-   */
   private OptionGroup createCustomOptionGroup(
     ProductOptionGroupAssignmentRequest request,
     Restaurant restaurant
@@ -408,13 +391,6 @@ public class ProductOptionGroupAssignmentService {
     return optionGroup;
   }
 
-  /**
-   * Applies item-level visibility overrides for existing library option groups.
-   *
-   * <p>Overrides are only allowed when the option group already exists in the
-   * library. For newly created custom option groups, the item state should be
-   * defined directly inside the custom items payload.
-   */
   private void attachOptionItemOverrides(
     ProductOptionGroupLink link,
     ProductOptionGroupAssignmentRequest request
@@ -459,12 +435,6 @@ public class ProductOptionGroupAssignmentService {
     }
   }
 
-  /**
-   * Ensures that an option group belongs to the current restaurant.
-   *
-   * <p>This prevents a product from attaching option groups owned by another
-   * restaurant.
-   */
   private void validateOptionGroupBelongsToRestaurant(
     OptionGroup optionGroup,
     Restaurant restaurant
@@ -481,15 +451,6 @@ public class ProductOptionGroupAssignmentService {
     }
   }
 
-  /**
-   * Validates product-level option group constraints.
-   *
-   * <p>The final min/max/required values are computed from:
-   * <ul>
-   *   <li>The product-level override when present.</li>
-   *   <li>The option group default otherwise.</li>
-   * </ul>
-   */
   private void validateProductOptionGroupLink(ProductOptionGroupLink link) {
     OptionGroup optionGroup = link.getOptionGroup();
 
@@ -516,9 +477,6 @@ public class ProductOptionGroupAssignmentService {
     );
   }
 
-  /**
-   * Validates variant-level option group constraints.
-   */
   private void validateVariantOptionGroupLink(VariantOptionGroup link) {
     OptionGroup optionGroup = link.getOptionGroup();
 
@@ -561,9 +519,6 @@ public class ProductOptionGroupAssignmentService {
     }
   }
 
-  /**
-   * Shared validation for option group selection rules.
-   */
   private void validateSelectionConstraints(
     boolean required,
     int min,
@@ -608,9 +563,6 @@ public class ProductOptionGroupAssignmentService {
     }
   }
 
-  /**
-   * Counts visible items after product-level item visibility overrides.
-   */
   private int countVisibleItemsForProduct(ProductOptionGroupLink link) {
     if (link.getOptionGroup() == null || link.getOptionGroup().getItems() == null) {
       return 0;
