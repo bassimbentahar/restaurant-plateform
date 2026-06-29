@@ -121,6 +121,7 @@
 
           return [
             this.removeUndefined({
+              optionGroupId: choice.optionGroupId,
               optionGroupClientId: choice.id,
               requiredOverride: override.required,
               minSelectOverride: override.minSelections,
@@ -134,7 +135,7 @@
       const variantSpecificChoices: VariantOptionGroupAssignmentRequest[] =
         variant.optionGroups.map((choice) =>
           this.removeUndefined({
-            optionGroupId: choice.libraryOptionGroupId,
+            optionGroupId: choice.optionGroupId,
             optionGroupClientId: choice.optionGroupId,
             requiredOverride: choice.required,
             minSelectOverride: choice.minSelections,

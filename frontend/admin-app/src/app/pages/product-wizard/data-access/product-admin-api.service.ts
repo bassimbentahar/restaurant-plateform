@@ -7,7 +7,7 @@ import {
   ProductCreatedResponse,
   ProductResponse,
   ProductCategoryResponse,
-  ProductCategoryCreateRequest, ProductSummaryResponse,
+  ProductCategoryCreateRequest, ProductSummaryResponse, ProductEditResponse,
 } from './product-admin.dto';
 import { environment } from '../../../../environments/environment';
 import { OptionGroupLibraryItem } from '../state/product-editor.model';
@@ -49,8 +49,21 @@ export class ProductAdminApiService {
     return this.http.post<ProductCreatedResponse>(this.baseUrl, request);
   }
 
-  getProduct(productId: string): Observable<ProductResponse> {
-    return this.http.get<ProductResponse>(
+  updateProduct(
+    productId: string,
+    request: ProductCreateRequest
+  ): Observable<ProductEditResponse> {
+    console.log("------->")
+    return this.http.put<ProductEditResponse>(
+      `${environment.apiUrl}/api/v1/admin/products/${productId}`,
+      request
+    );
+  }
+
+  getProduct(productId: string): Observable<ProductEditResponse> {
+
+    console.log("@@@@@@@");
+    return this.http.get<ProductEditResponse>(
       `${environment.apiUrl}/api/v1/admin/products/${productId}/edit`
     );
   }

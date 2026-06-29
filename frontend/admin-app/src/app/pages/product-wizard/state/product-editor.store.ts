@@ -1,7 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import {Injectable, computed, signal} from '@angular/core';
 
 import {
-  ProductCategoryResponse, ProductResponse, ProductRuleActionRequest, ProductRuleConditionRequest,
+  ProductCategoryResponse,
+  ProductEditResponse,
+  ProductEditVariantResponse,
 } from '../data-access/product-admin.dto';
 
 import {
@@ -90,21 +92,23 @@ const DEFAULT_DRAFT: ProductDraft = {
 };
 
 const DEFAULT_LIBRARY_CHOICES: OptionGroupLibraryItem[] = [];
+type VariantOptionGroupDraftItem =
+  ProductVariantDraft['optionGroups'][number];
 
 @Injectable()
 export class ProductEditorStore {
   readonly steps: ProductWizardStep[] = [
-    { id: 'general', label: 'adminProductWizard.steps.general', index: 1 },
-    { id: 'pricing', label: 'adminProductWizard.steps.pricing', index: 2 },
-    { id: 'formats', label: 'adminProductWizard.steps.formats', index: 3 },
-    { id: 'choices', label: 'adminProductWizard.steps.commonChoices', index: 4 },
+    {id: 'general', label: 'adminProductWizard.steps.general', index: 1},
+    {id: 'pricing', label: 'adminProductWizard.steps.pricing', index: 2},
+    {id: 'formats', label: 'adminProductWizard.steps.formats', index: 3},
+    {id: 'choices', label: 'adminProductWizard.steps.commonChoices', index: 4},
     {
       id: 'format-configuration',
       label: 'adminProductWizard.steps.formatConfiguration',
       index: 5,
     },
-    { id: 'rules', label: 'adminProductWizard.steps.conditions', index: 6 },
-    { id: 'preview', label: 'adminProductWizard.steps.preview', index: 7 },
+    {id: 'rules', label: 'adminProductWizard.steps.conditions', index: 6},
+    {id: 'preview', label: 'adminProductWizard.steps.preview', index: 7},
   ];
 
   private readonly draftSignal = signal<ProductDraft>(
@@ -301,7 +305,7 @@ export class ProductEditorStore {
   ): void {
     this.patchDraft({
       variants: this.draftSignal().variants.map((variant) =>
-        variant.id === variantId ? { ...variant, ...value } : variant
+        variant.id === variantId ? {...variant, ...value} : variant
       ),
     });
   }
@@ -329,7 +333,7 @@ export class ProductEditorStore {
     );
 
     const choices = draft.choices.map((choice) => {
-      const { [variantId]: _removed, ...rulesByVariant } =
+      const {[variantId]: _removed, ...rulesByVariant} =
         choice.rulesByVariant;
 
       return {
@@ -458,7 +462,7 @@ export class ProductEditorStore {
   ): void {
     this.patchDraft({
       choices: this.draftSignal().choices.map((choice) =>
-        choice.id === choiceId ? { ...choice, ...value } : choice
+        choice.id === choiceId ? {...choice, ...value} : choice
       ),
     });
   }
@@ -507,7 +511,7 @@ export class ProductEditorStore {
         return {
           ...choice,
           items: choice.items.map((item) =>
-            item.id === itemId ? { ...item, ...value } : item
+            item.id === itemId ? {...item, ...value} : item
           ),
         };
       }),
@@ -678,7 +682,7 @@ export class ProductEditorStore {
           ...variant,
           optionGroups: variant.optionGroups.map((choice) =>
             choice.optionGroupId === optionGroupId
-              ? { ...choice, ...patch }
+              ? {...choice, ...patch}
               : choice
           ),
         };
@@ -737,7 +741,7 @@ export class ProductEditorStore {
           rulesByVariant: Object.fromEntries(
             Object.entries(choice.rulesByVariant).map(([variantId, rule]) => [
               variantId,
-              { ...rule },
+              {...rule},
             ])
           ),
         };
@@ -800,12 +804,12 @@ export class ProductEditorStore {
   }
 
 
-
-  loadProductForEdit(product: ProductResponse): void {
+  loadProductForEdit(product: ProductEditResponse): void {
     const defaultDraft = structuredClone(DEFAULT_DRAFT);
 
     const variants = this.mapProductResponseVariants(product);
     const choices = this.mapProductResponseChoices(product);
+    const rules = this.mapProductResponseRules(product);
 
     this.draftSignal.set({
       ...defaultDraft,
@@ -822,7 +826,7 @@ export class ProductEditorStore {
         DEFAULT_IMAGE_URL,
       variants: variants.length > 0 ? variants : defaultDraft.variants,
       choices,
-      rules: [],
+      rules,
     });
 
     this.selectedVariantIdSignal.set(
@@ -835,7 +839,106 @@ export class ProductEditorStore {
     this.currentStepSignal.set('general');
   }
 
-  private mapProductResponseCategoryIds(product: ProductResponse): string[] {
+  private mapProductResponseRules(
+    product: ProductEditResponse
+  ): ProductRuleDraft[] {
+    return (product.rules ?? []).map((rule, index): ProductRuleDraft => {
+      const condition = rule.condition ?? {};
+      const action = rule.action ?? {};
+
+      return {
+        id: rule.id,
+        sourceRuleId: rule.sourceRuleId ?? undefined,
+
+        label: rule.name ?? `Règle ${index + 1}`,
+        description: rule.description ?? undefined,
+
+        enabled: rule.enabled ?? true,
+        type: this.toProductRuleType(rule.type),
+        targetType: this.toProductRuleTargetType(rule.targetType),
+
+        targetId:
+          rule.variantClientId ??
+          rule.optionGroupClientId ??
+          rule.optionItemId ??
+          undefined,
+
+        condition: {
+          variantId:
+            rule.variantClientId ??
+            condition.variantId ??
+            undefined,
+
+          optionGroupId:
+            rule.optionGroupClientId ??
+            condition.optionGroupId ??
+            undefined,
+
+          optionItemId:
+            rule.optionItemId ??
+            condition.optionItemId ??
+            undefined,
+
+          orderType: this.toProductRuleOrderType(condition.orderType),
+          daysOfWeek: this.toProductRuleDays(condition.daysOfWeek ?? []),
+          timeFrom: condition.timeFrom ?? undefined,
+          timeTo: condition.timeTo ?? undefined,
+          selectedOptionItemIds: condition.selectedOptionItemIds ?? [],
+        },
+
+        action: {
+          visible: action.visible ?? undefined,
+          available: action.available ?? undefined,
+          required: action.required ?? undefined,
+          minSelections: action.minSelections ?? undefined,
+          maxSelections: action.maxSelections ?? undefined,
+          includedSelections: action.includedSelections ?? undefined,
+          priceDeltaOverride: action.priceDeltaOverride ?? undefined,
+        },
+
+        priority: rule.priority ?? index,
+
+        reusable: rule.reusable ?? false,
+        favorite: rule.favorite ?? false,
+        customerVisible: rule.customerVisible ?? false,
+        customerTitle: rule.customerTitle ?? undefined,
+        customerDescription: rule.customerDescription ?? undefined,
+        tags: rule.tags ?? [],
+      };
+    });
+  }
+
+
+  private toProductRuleType(
+    value: string | null | undefined
+  ): ProductRuleType {
+    switch (value) {
+      case 'AVAILABILITY':
+      case 'VISIBILITY':
+      case 'SELECTION_RULE':
+      case 'PRICE_RULE':
+      case 'INCLUDED_OPTION':
+        return value;
+      default:
+        return 'AVAILABILITY';
+    }
+  }
+
+
+  private toProductRuleTargetType(targetType: string | null | undefined) {
+    switch (targetType){
+      case  'RESTAURANT':
+      case  'PRODUCT':
+      case  'VARIANT':
+      case  'OPTION_GROUP':
+      case  'OPTION_ITEM':
+        return targetType;
+      default:
+        return 'PRODUCT';
+    }
+  }
+
+  private mapProductResponseCategoryIds(product: ProductEditResponse): string[] {
     const categories = this.readUnknown(product, 'categories');
 
     if (!Array.isArray(categories)) {
@@ -847,7 +950,7 @@ export class ProductEditorStore {
       .filter(Boolean);
   }
 
-  private mapProductResponseVariants(product: ProductResponse): ProductVariantDraft[] {
+  private mapProductResponseVariants(product: ProductEditResponse): ProductVariantDraft[] {
     const variants = this.readUnknown(product, 'variants');
 
     if (!Array.isArray(variants)) {
@@ -871,11 +974,80 @@ export class ProductEditorStore {
         this.readUnknown(variant, 'displayOrder'),
         index
       ),
-      optionGroups: [],
+      optionGroups: this.mapProductResponseVariantOptionGroups(variant),
     }));
   }
 
-  private mapProductResponseChoices(product: ProductResponse): ProductChoiceDraft[] {
+  private mapProductResponseVariantOptionGroups(
+    variant: ProductEditVariantResponse
+  ): VariantOptionGroupDraftItem[] {
+    return (variant.optionGroups ?? [])
+      .map((optionGroup, index): VariantOptionGroupDraftItem | null => {
+        const optionGroupId =
+          optionGroup.optionGroupId ||
+          optionGroup.optionGroupClientId;
+
+        if (!optionGroupId) {
+          return null;
+        }
+
+        const libraryOptionGroup = this.libraryChoicesSignal().find(
+          (item) => item.id === optionGroupId
+        );
+
+        if (!libraryOptionGroup) {
+          console.warn(
+            'Option group de variante introuvable dans la bibliothèque',
+            optionGroupId
+          );
+
+          return null;
+        }
+
+        return {
+          id: optionGroup.id ?? optionGroupId,
+          optionGroupId,
+
+          name: libraryOptionGroup.name,
+
+          required:
+            optionGroup.requiredOverride ??
+            libraryOptionGroup.required,
+
+          minSelections:
+            optionGroup.minSelectOverride ??
+            libraryOptionGroup.minSelections,
+
+          maxSelections:
+            optionGroup.maxSelectOverride ??
+            libraryOptionGroup.maxSelections,
+
+          includedSelections:
+            optionGroup.includedSelectionsOverride ?? 0,
+
+          displayOrder:
+            optionGroup.displayOrder ?? index,
+
+          items: libraryOptionGroup.items.map((item, itemIndex) => ({
+            id: item.id,
+            optionItemId: item.id,
+            name: item.name,
+            description: item.description,
+            priceDelta: item.priceDelta,
+            isAvailable: item.isAvailable,
+            displayOrder: item.displayOrder ?? itemIndex,
+          })),
+
+          itemOverrides: {},
+        };
+      })
+      .filter(
+        (optionGroup): optionGroup is VariantOptionGroupDraftItem =>
+          optionGroup !== null
+      );
+  }
+
+  private mapProductResponseChoices(product: ProductEditResponse): ProductChoiceDraft[] {
     const optionGroups = this.readUnknown(product, 'optionGroups');
 
     if (!Array.isArray(optionGroups)) {
@@ -1073,7 +1245,7 @@ export class ProductEditorStore {
 
     const itemOverrides = {
       ...choice.itemOverrides,
-      [overrideKey]: { visible },
+      [overrideKey]: {visible},
     };
 
     const visibleItemCount = choice.items.filter((item) => {
@@ -1299,7 +1471,7 @@ export class ProductEditorStore {
 
 
   updateRuleCustomerTitle(ruleId: string, customerTitle: string): void {
-    this.updateRule(ruleId, { customerTitle });
+    this.updateRule(ruleId, {customerTitle});
   }
 
   private createDefaultTargetType(type: ProductRuleType) {
@@ -1331,17 +1503,18 @@ export class ProductEditorStore {
   private createDefaultRuleAction(type: ProductRuleType): ProductRuleActionDraft {
     switch (type) {
       case 'AVAILABILITY':
-        return { available: true };
+        return {available: true};
       case 'VISIBILITY':
-        return { visible: true };
+        return {visible: true};
       case 'SELECTION_RULE':
-        return { required: true, minSelections: 1, maxSelections: 1 };
+        return {required: true, minSelections: 1, maxSelections: 1};
       case 'INCLUDED_OPTION':
-        return { includedSelections: 1 };
+        return {includedSelections: 1};
       case 'PRICE_RULE':
-        return { priceDeltaOverride: 0 };
+        return {priceDeltaOverride: 0};
     }
   }
+
   addRule(input: ProductRuleCreateDraftInput): void {
     const draft = this.draftSignal();
 
@@ -1589,7 +1762,7 @@ export class ProductEditorStore {
   }
 
   updateRuleDescription(ruleId: string, description: string): void {
-    this.updateRule(ruleId, { description });
+    this.updateRule(ruleId, {description});
   }
 
   updateRuleReusable(ruleId: string, reusable: boolean): void {
@@ -1602,15 +1775,15 @@ export class ProductEditorStore {
   }
 
   updateRuleFavorite(ruleId: string, favorite: boolean): void {
-    this.updateRule(ruleId, { favorite });
+    this.updateRule(ruleId, {favorite});
   }
 
   updateRuleCustomerVisible(ruleId: string, customerVisible: boolean): void {
-    this.updateRule(ruleId, { customerVisible });
+    this.updateRule(ruleId, {customerVisible});
   }
 
   updateRuleCustomerDescription(ruleId: string, customerDescription: string): void {
-    this.updateRule(ruleId, { customerDescription });
+    this.updateRule(ruleId, {customerDescription});
   }
 
   updateRuleTags(ruleId: string, value: string | number | null | undefined): void {
@@ -1619,7 +1792,7 @@ export class ProductEditorStore {
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-    this.updateRule(ruleId, { tags });
+    this.updateRule(ruleId, {tags});
   }
 
 
@@ -1655,7 +1828,7 @@ export class ProductEditorStore {
 
         const overrideKey = this.getChoiceItemOverrideKey(itemToRemove);
 
-        const { [overrideKey]: _removedOverride, ...itemOverrides } =
+        const {[overrideKey]: _removedOverride, ...itemOverrides} =
           choice.itemOverrides;
 
         const items = choice.items

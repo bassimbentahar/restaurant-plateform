@@ -77,6 +77,18 @@ export class ProductWizardFacade {
     }
   }
 
+  async updateProduct(productId: string): Promise<void> {
+    if (!this.store.canPublish()) {
+      return;
+    }
+
+    const request = this.productDraftMapper.toCreateRequest(this.store.draft());
+
+    await firstValueFrom(
+      this.productAdminApi.updateProduct(productId, request)
+    );
+  }
+
   async loadOptionGroups(): Promise<void> {
     try {
       const choices = await firstValueFrom(

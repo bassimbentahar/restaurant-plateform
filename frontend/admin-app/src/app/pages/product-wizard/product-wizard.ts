@@ -279,8 +279,10 @@ export class ProductWizard implements OnInit {
             const product = await firstValueFrom(
                 this.productAdminApi.getProduct(productId)
             );
+            console.log(product)
 
             this.store.loadProductForEdit(product);
+
         } catch (error) {
             console.error('Impossible de charger le produit à modifier', error);
             this.editLoadErrorKey.set('adminProductWizard.errors.loadProductFailed');
@@ -357,14 +359,13 @@ export class ProductWizard implements OnInit {
     }
 
     async publishProduct(): Promise<void> {
-        /*
-          Aujourd'hui ton facade publie déjà un produit en création.
-          Pour faire une vraie mise à jour, il faudra ajouter plus tard :
-          ProductAdminApiService.updateProduct(productId, request)
-          puis ProductWizardFacade.update(productId).
+        const productId = this.editingProductId();
 
-          Ici on garde le comportement existant pour ne pas casser ton flow.
-        */
+        if (productId) {
+            await this.facade.updateProduct(productId);
+            return;
+        }
+
         await this.facade.publish();
     }
 
