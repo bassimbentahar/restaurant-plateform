@@ -1,12 +1,13 @@
 package com.restaurant.restaurantbackend.product.mapper;
 
 import com.restaurant.restaurantbackend.product.Product;
+import com.restaurant.restaurantbackend.product.ProductStatus;
 import com.restaurant.restaurantbackend.product.category.CategoryMapper;
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
 import com.restaurant.restaurantbackend.product.category.productCategoryLink.ProductCategoryLink;
 import com.restaurant.restaurantbackend.product.dto.ResolvedProduct;
 import com.restaurant.restaurantbackend.product.dto.request.ProductCreateRequest;
-import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
+import com.restaurant.restaurantbackend.product.image.dto.ProductImageResponse;
 import com.restaurant.restaurantbackend.product.dto.response.ProductResponse;
 import com.restaurant.restaurantbackend.product.dto.response.ProductSummaryResponse;
 import com.restaurant.restaurantbackend.product.dto.response.ProductVariantResponse;
@@ -124,12 +125,19 @@ public class ProductMapper {
     product.setShortDescription(trimToNull(request.shortDescription()));
     product.setDescription(trimToNull(request.description()));
     product.setThumb(trimToNull(request.thumb()));
+    ProductStatus status = request.status() == null
+      ? ProductStatus.DRAFT
+      : request.status();
+
+    product.setStatus(status);
 
     product.setBasePrice(request.basePrice());
 
     product.setAvailable(defaultTrue(request.isAvailable()));
     product.setFeatured(defaultFalse(request.isFeatured()));
-    product.setArchived(defaultFalse(request.isArchived()));
+    product.setArchived(
+      status == ProductStatus.ARCHIVED || defaultFalse(request.isArchived())
+    );
 
     product.setPreparationTimeMinutes(
       resolvePreparationTimeMinutes(request.preparationTimeMinutes())
@@ -212,6 +220,10 @@ public class ProductMapper {
 
   private boolean defaultFalse(Boolean value) {
     return Boolean.TRUE.equals(value);
+  }
+
+  private ProductStatus resolveStatus(ProductStatus status) {
+    return status == null ? ProductStatus.DRAFT : status;
   }
 
   private String trimToNull(String value) {

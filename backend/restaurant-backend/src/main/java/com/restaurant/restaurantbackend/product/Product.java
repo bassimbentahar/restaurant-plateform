@@ -52,6 +52,10 @@ public class Product extends BaseEntity {
 
   private String thumb;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 30)
+  private ProductStatus status = ProductStatus.DRAFT;
+
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal basePrice;
 

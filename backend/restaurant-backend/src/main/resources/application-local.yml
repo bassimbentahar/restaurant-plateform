@@ -32,3 +32,9 @@ app:
     allowed-origins:
       - http://localhost:4200
       - http://localhost:4201
+  images:
+    storage: local
+    public-base-url: http://localhost:8080/media
+    product-prefix: products
+    local:
+      root-path: .data/images

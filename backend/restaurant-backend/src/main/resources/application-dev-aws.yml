@@ -35,3 +35,11 @@ app:
   cors:
     allowed-origins:
       - https://dev.portalcoffee.ch
+
+  images:
+    storage: s3
+    public-base-url: https://images-dev.portalcoffee.ch
+    product-prefix: products
+    s3:
+      bucket: restaurant-images-dev
+      region: eu-central-1

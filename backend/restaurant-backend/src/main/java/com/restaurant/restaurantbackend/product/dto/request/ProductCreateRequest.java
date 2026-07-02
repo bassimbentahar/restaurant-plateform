@@ -1,5 +1,6 @@
 package com.restaurant.restaurantbackend.product.dto.request;
 
+import com.restaurant.restaurantbackend.product.ProductStatus;
 import com.restaurant.restaurantbackend.product.rule.dto.ProductRuleRequest;
 import com.restaurant.restaurantbackend.product.variant.dto.ProductVariantRequest;
 
@@ -15,6 +16,7 @@ public record ProductCreateRequest(
   String shortDescription,
   String description,
   String thumb,
+  ProductStatus status,
   BigDecimal basePrice,
   Boolean isAvailable,
   Boolean isFeatured,

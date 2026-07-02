@@ -2,7 +2,7 @@ package com.restaurant.restaurantbackend.product.mapper;
 
 import com.restaurant.restaurantbackend.product.Product;
 import com.restaurant.restaurantbackend.product.dto.request.ProductImageRequest;
-import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
+import com.restaurant.restaurantbackend.product.image.dto.ProductImageResponse;
 import com.restaurant.restaurantbackend.product.image.ProductImage;
 import org.springframework.stereotype.Component;
 

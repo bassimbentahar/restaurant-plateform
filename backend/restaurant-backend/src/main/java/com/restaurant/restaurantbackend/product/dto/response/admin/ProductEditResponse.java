@@ -1,7 +1,8 @@
 package com.restaurant.restaurantbackend.product.dto.response.admin;
 
+import com.restaurant.restaurantbackend.product.ProductStatus;
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
-import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
+import com.restaurant.restaurantbackend.product.image.dto.ProductImageResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public record ProductEditResponse(
   String shortDescription,
   String description,
   String thumb,
+  ProductStatus status,
 
   BigDecimal basePrice,
   Boolean isAvailable,

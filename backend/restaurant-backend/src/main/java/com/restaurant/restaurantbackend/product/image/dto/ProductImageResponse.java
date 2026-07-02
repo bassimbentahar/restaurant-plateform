@@ -1,4 +1,4 @@
-package com.restaurant.restaurantbackend.product.dto.response;
+package com.restaurant.restaurantbackend.product.image.dto;
 
 import java.util.UUID;
 
@@ -9,3 +9,4 @@ public record ProductImageResponse(
   Boolean isPrimary,
   Integer sortOrder
 ) {}
+

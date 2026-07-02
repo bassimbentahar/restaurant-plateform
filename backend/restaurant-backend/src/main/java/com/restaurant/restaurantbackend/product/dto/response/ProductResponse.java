@@ -1,6 +1,7 @@
 package com.restaurant.restaurantbackend.product.dto.response;
 
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
+import com.restaurant.restaurantbackend.product.image.dto.ProductImageResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

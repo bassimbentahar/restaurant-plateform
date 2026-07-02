@@ -95,6 +95,8 @@ public class ProductService {
     ruleDuplicatePolicyService.validateProductRules(request.rules());
 
     Product product = productMapper.toEntity(request);
+    applyStatusForCreate(product, request);
+
     product.setRestaurant(restaurant);
 
     product.setSlug(
@@ -179,6 +181,7 @@ public class ProductService {
     Product mappedProduct = productMapper.toEntity(request);
 
     updateMainProductFields(product, mappedProduct, request, restaurant);
+    applyStatusForUpdate(product, request);
 
     replaceImages(product, mappedProduct.getImages());
     replaceVariants(product, mappedProduct.getVariants());
@@ -217,6 +220,40 @@ public class ProductService {
     );
 
     return new ProductCreatedResponse(product.getId());
+  }
+
+  private void applyStatusForCreate(
+    Product product,
+    ProductCreateRequest request
+  ) {
+    ProductStatus nextStatus = request.status() == null
+      ? ProductStatus.DRAFT
+      : request.status();
+
+    product.setStatus(nextStatus);
+    product.setArchived(
+      nextStatus == ProductStatus.ARCHIVED
+        || Boolean.TRUE.equals(request.isArchived())
+    );
+  }
+
+  private void applyStatusForUpdate(
+    Product product,
+    ProductCreateRequest request
+  ) {
+    ProductStatus nextStatus = request.status() == null
+      ? product.getStatus()
+      : request.status();
+
+    if (nextStatus == null) {
+      nextStatus = ProductStatus.DRAFT;
+    }
+
+    product.setStatus(nextStatus);
+    product.setArchived(
+      nextStatus == ProductStatus.ARCHIVED
+        || Boolean.TRUE.equals(request.isArchived())
+    );
   }
 
   private Product findProductForCurrentRestaurant(
@@ -267,7 +304,6 @@ public class ProductService {
 
     product.setAvailable(mappedProduct.isAvailable());
     product.setFeatured(mappedProduct.isFeatured());
-    product.setArchived(mappedProduct.isArchived());
 
     product.setPreparationTimeMinutes(
       mappedProduct.getPreparationTimeMinutes()

@@ -4,7 +4,7 @@ import com.restaurant.restaurantbackend.product.Product;
 import com.restaurant.restaurantbackend.product.category.CategoryMapper;
 import com.restaurant.restaurantbackend.product.category.dto.ProductCategoryResponse;
 import com.restaurant.restaurantbackend.product.category.productCategoryLink.ProductCategoryLink;
-import com.restaurant.restaurantbackend.product.dto.response.ProductImageResponse;
+import com.restaurant.restaurantbackend.product.image.dto.ProductImageResponse;
 import com.restaurant.restaurantbackend.product.dto.response.admin.ProductEditOptionGroupResponse;
 import com.restaurant.restaurantbackend.product.dto.response.admin.ProductEditOptionItemOverrideResponse;
 import com.restaurant.restaurantbackend.product.dto.response.admin.ProductEditOptionItemResponse;
@@ -52,6 +52,7 @@ public class ProductEditMapper {
       product.getShortDescription(),
       product.getDescription(),
       product.getThumb(),
+      product.getStatus(),
 
       product.getBasePrice(),
       product.isAvailable(),

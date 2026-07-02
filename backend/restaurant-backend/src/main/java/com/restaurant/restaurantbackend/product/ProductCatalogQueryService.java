@@ -25,18 +25,27 @@ public class ProductCatalogQueryService {
   private final ProductRepository productRepository;
   private final OptionGroupResolutionService resolutionService;
   private final ProductMapper productMapper;
-
+  private static final UUID DEFAULT_RESTAURANT_ID =
+    UUID.fromString("01000000-0000-0000-0000-000000000001");
 
   public List<ProductResponse> getProducts() {
-    return productRepository.findAll().stream()
+    return productRepository.findPublishedProductsForClient(
+        DEFAULT_RESTAURANT_ID
+      )
+      .stream()
       .map(this::resolveProduct)
       .map(productMapper::toProductResponse)
       .toList();
   }
 
   public ProductResponse getProduct(UUID productId) {
-    Product product = productRepository.findById(productId)
-      .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+    Product product = productRepository.findPublishedProductForClient(
+        productId,
+        DEFAULT_RESTAURANT_ID
+      )
+      .orElseThrow(() -> new ProductNotFoundException(
+        "Product not found with ID: " + productId
+      ));
 
     return productMapper.toProductResponse(resolveProduct(product));
   }
