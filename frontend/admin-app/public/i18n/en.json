@@ -319,58 +319,6 @@
     "settings": "Settings"
   },
   "adminProductWizard": {
-    "defaultRule": {
-      "AVAILABILITY": {
-        "label": "New availability rule",
-        "description": "Defines when this rule makes a product, format or choice available.",
-        "tags": "Availability"
-      },
-      "VISIBILITY": {
-        "label": "New visibility rule",
-        "description": "Defines when a choice should be visible or hidden.",
-        "tags": "Visibility"
-      },
-      "SELECTION_RULE": {
-        "label": "New selection rule",
-        "description": "Defines whether a choice becomes required or optional.",
-        "tags": "Configuration"
-      },
-      "INCLUDED_OPTION": {
-        "label": "New included option",
-        "description": "Defines how many options are included in a menu or format.",
-        "tags": "Menus"
-      },
-      "PRICE_RULE": {
-        "label": "New price rule",
-        "description": "Defines a price change, promotion or surcharge.",
-        "tags": "Promotions"
-      }
-    },
-    "identity": {
-      "internalName": "Internal rule name",
-      "internalNamePlaceholder": "Example: Student lunch offer",
-      "internalDescription": "Internal description",
-      "internalDescriptionPlaceholder": "Explain when and why this rule is used."
-    },
-    "organization": {
-      "localBadge": "Local",
-      "libraryBadge": "Library",
-      "favoriteBadge": "Favorite",
-      "localOnly": "Local rule",
-      "localOnlyHelp": "Used only for this product.",
-      "saveToLibrary": "Save to library",
-      "saveToLibraryHelp": "Reusable later on other products.",
-      "favorite": "Add to favorites",
-      "favoriteHelp": "The rule will appear in favorites for quick access.",
-      "tags": "Tags",
-      "tagsPlaceholder": "Promotions, Menus, Students",
-      "customerVisible": "Visible to customer",
-      "customerVisibleHelp": "Show a title or explanation to customers when needed.",
-      "customerTitle": "Customer title",
-      "customerTitlePlaceholder": "Example: Student offer",
-      "customerDescription": "Customer description",
-      "customerDescriptionPlaceholder": "Example: Offer valid with a student card."
-    },
     "assistant": "Product assistant",
     "title": "Create a product easily",
     "subtitle": "Configure the product the way a restaurant owner thinks: formats, customer choices, paid options, format rules, included options and final preview.",
@@ -561,9 +509,9 @@
       "emptyTitle": "No availability or special offer",
       "emptyText": "Add for example a lunch menu, an included drink or an automatic surcharge.",
       "businessTitle": "Availability & offers",
-      "businessHelp": "Add menu exceptions: time slots, special days, free options, display by format, promotion, or automatic surcharge.",
-      "introTitle": "Configure exceptions only",
-      "introText": "The product, formats, and fixed options are already configured in the previous steps. Use this page only for special cases.",
+      "businessHelp": "Create restaurant-friendly rules: lunch menu, included option, choice visible by format, or time-based surcharge.",
+      "introTitle": "Here, you do not program rules: you configure business cases.",
+      "introText": "Choose a scenario, fill in a few fields, and the system will generate the technical rule for the backend.",
       "ruleNamePlaceholder": "E.g. Lunch menu, Included drink, Evening surcharge",
       "summaryTitle": "Customer summary",
       "days": {
@@ -581,27 +529,27 @@
       },
       "businessTemplates": {
         "availability": {
-          "title": "Make available at certain times",
-          "help": "Limit a product, format, or choice to certain days or time slots.",
-          "example": "E.g. lunch menu available from 11am to 2pm"
+          "title": "Lunch menu / hours",
+          "help": "Make a product, format or choice available only at specific times.",
+          "example": "E.g. menu available from 11am to 2pm"
         },
         "included": {
-          "title": "Include an option for free",
+          "title": "Included option",
           "help": "Include one or more options for free in a menu or format.",
           "example": "E.g. 1 drink included in Menu"
         },
         "visibility": {
-          "title": "Hide a choice by format",
+          "title": "Choice visible by format",
           "help": "Show or hide a choice depending on the selected format.",
-          "example": "E.g. drinks visible only in Menu"
+          "example": "E.g. drinks visible only with Menu"
         },
         "price": {
-          "title": "Add a promotion or surcharge",
-          "help": "Automatically apply a discount or surcharge based on time, day, format, or order type.",
-          "example": "E.g. -CHF 2 happy hour or +CHF 1 after 10pm"
+          "title": "Automatic surcharge",
+          "help": "Add a surcharge based on time, day, format or order type.",
+          "example": "E.g. +CHF 1 after 10pm"
         },
         "selection": {
-          "title": "Make a choice required",
+          "title": "Required selection",
           "help": "Make a choice required or change min/max selections.",
           "example": "E.g. 2 sauces required in the evening"
         }
@@ -609,11 +557,9 @@
       "sections": {
         "concerned": "1. What is concerned",
         "timing": "2. When to apply it",
-        "result": "3. What happens",
-        "organization": "Organization"
+        "result": "3. What happens"
       },
       "sectionHelp": {
-        "organization": "Choose whether this rule stays local to the product or can be reused from the library.",
         "availabilityConcerned": "Choose what should become available or unavailable.",
         "visibilityConcerned": "Choose the customer choice to show or hide, then the format if needed.",
         "includedConcerned": "Choose the format or menu, then the choice to include for free.",
@@ -624,21 +570,7 @@
         "visibilityResult": "Decide whether the choice should be shown or hidden.",
         "selectionResult": "Decide whether the choice becomes required and how many options the customer can choose.",
         "includedResult": "Set how many options are included for free.",
-        "priceResult": "Set a discount or surcharge applied automatically. Example: -2 for happy hour, +1 for an evening surcharge."
-      },
-      "organization": {
-        "saveToLibrary": "Save to library",
-        "saveToLibraryHelp": "The rule can be reused later on other products.",
-        "favorite": "Add to favorites",
-        "favoriteHelp": "The rule will appear in favorites for quick access.",
-        "tags": "Tags",
-        "tagsPlaceholder": "Promotions, Menus, Students",
-        "customerVisible": "Visible to customer",
-        "customerVisibleHelp": "Show a title or explanation to customers when needed.",
-        "customerTitle": "Customer title",
-        "customerTitlePlaceholder": "Example: Student offer",
-        "customerDescription": "Customer description",
-        "customerDescriptionPlaceholder": "Example: Offer valid with a student card."
+        "priceResult": "Set the surcharge or discount applied automatically. Use a negative value for a discount."
       },
       "targets": {
         "product": "Whole product",
@@ -653,8 +585,7 @@
         "orderType": "Delivery / pickup",
         "days": "Concerned days",
         "timeFrom": "From",
-        "timeTo": "To",
-        "mainAction": "Main action"
+        "timeTo": "To"
       },
       "orderTypes": {
         "any": "All orders",
@@ -671,54 +602,8 @@
         "minSelections": "Minimum to choose",
         "maxSelections": "Maximum to choose",
         "includedSelections": "Number included for free",
-        "priceDeltaOverride": "Discount / surcharge"
-      },
-      "simpleCasesTitle": "What would you like to add?",
-      "simpleCasesHelp": "Choose a simple case. The system will then show only the useful fields.",
-      "advancedOpen": "Create a custom rule",
-      "advancedHelp": "For a specific case that does not match the 4 shortcuts.",
-      "advancedWarning": "Use only if the shortcuts are not enough. For fixed format rules, use the Format configuration step instead.",
-      "advancedTypeLabel": "What do you want to create?",
-      "advancedCreateButton": "Create custom rule",
-      "defaultLabels": {
-        "availability": "Sales hours",
-        "visibility": "Visibility by format",
-        "selection": "Required selection",
-        "included": "Included option",
-        "price": "Automatic surcharge"
-      },
-      "resultHelp": {
-        "available": "The customer will be able to order this item during the selected period.",
-        "unavailable": "The customer will not be able to order this item during the selected period.",
-        "visible": "This choice will be shown to the customer in this context.",
-        "hidden": "This choice will be hidden from the customer in this context."
-      },
-      "always": "Always",
-      "summary": {
-        "targetProduct": "The product",
-        "targetVariant": "The {{name}} format",
-        "targetSelectedVariant": "The selected format",
-        "targetChoice": "The {{name}} choice",
-        "targetSelectedChoice": "The selected choice",
-        "availabilityAvailable": "{{target}} will be available {{timing}}.",
-        "availabilityUnavailable": "{{target}} will be unavailable {{timing}}.",
-        "visibilityVisible": "{{target}} will be visible {{timing}}.",
-        "visibilityHidden": "{{target}} will be hidden {{timing}}.",
-        "selectionRequired": "{{target}} will be required {{timing}}.",
-        "selectionOptional": "{{target}} will be optional {{timing}}.",
-        "includedOption": "{{count}} option(s) from {{target}} will be included for free {{timing}}.",
-        "priceAdjustment": "{{target}} will have a {{amount}} CHF discount or surcharge {{timing}}."
-      },
-      "timing": {
-        "allTime": "all the time",
-        "selectedDays": "on selected days",
-        "timeRange": "between {{from}} and {{to}}",
-        "delivery": "for delivery",
-        "pickup": "for pickup",
-        "forFormat": "for the {{name}} format"
-      },
-      "advancedBuilderTitle": "Need a more specific case?",
-      "advancedBuilderText": "Create a custom rule, then choose its main action in the card that opens."
+        "priceDeltaOverride": "Surcharge / discount"
+      }
     },
     "preview": {
       "title": "Preview and publication",
@@ -735,7 +620,8 @@
       "choices": "customer choices",
       "conditions": "condition(s)",
       "required": "Required",
-      "optional": "Optional"
+      "optional": "Optional",
+      "productImageAlt": "Product image preview"
     },
     "formatConfiguration": {
       "title": "Format configuration",
@@ -754,6 +640,28 @@
       "includedSelections": "Included for free",
       "includedShort": "included",
       "tip": "Example: for a Menu, add Drinks and Sides with 1 choice included for free."
+    },
+    "image": {
+      "title": "Product image",
+      "help": "Add a clear product image. You can crop it before upload to choose exactly which area appears in the menu.",
+      "alt": "Product image",
+      "change": "Change image",
+      "remove": "Remove image",
+      "uploading": "Uploading image…",
+      "uploadError": "Unable to upload the image.",
+      "deleteError": "Unable to delete the image.",
+      "invalidType": "Unsupported image format. Use JPG, PNG or WebP.",
+      "tooLarge": "The cropped image is too large. Maximum size: 5 MB.",
+      "originalTooLarge": "The selected image is too large. Choose an image under 15 MB.",
+      "emptyTitle": "Add image",
+      "emptyHelp": "Choose a photo, then crop it for the menu.",
+      "cropTitle": "Crop image",
+      "cropHelp": "Move and zoom the image to choose the area displayed in the menu.",
+      "zoom": "Zoom",
+      "resetCrop": "Reset",
+      "cancelCrop": "Cancel",
+      "confirmCrop": "Confirm crop",
+      "cropButton": "Crop"
     }
   }
 }

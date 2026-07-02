@@ -1,13 +1,18 @@
 export const environment = {
   production: false,
-  appBaseUrl: 'https://dev.portalcoffee.ch',
+  appBaseUrl: 'https://admin-dev.portalcoffee.ch',
+
   keycloak: {
     url: 'https://auth.portalcoffee.ch',
     realm: 'res-realm',
-    clientId: 'client-app',
+    clientId: 'admin-app',
     pkce: true,
   },
+
   apiUrl: 'https://api-dev.portalcoffee.ch',
   wsUrl: 'wss://api-dev.portalcoffee.ch',
-  googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk'
+
+  imageBaseUrl: 'https://api-dev.portalcoffee.ch',
+
+  googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk',
 };

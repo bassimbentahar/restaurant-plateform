@@ -60,29 +60,25 @@
                   <ion-col size="12" size-md="6" size-lg="6">
                     <ion-card class="product-card" button (click)="openProduct(item.id)">
                       <div class="product-card-content">
-                        @if (!hasImageError(item)) {
+                        @if (item.thumb && !hasImageError(item)) {
                           <div class="product-image-wrapper">
                             <img
                               class="product-image"
                               [src]="imageService.getImageUrl(item.thumb)"
+                              [alt]="item.title"
+                              loading="lazy"
                               (error)="onImageError(item)"
                             />
+
                             <button
                               class="add-btn add-btn--overlay"
+                              type="button"
                               (click)="$event.stopPropagation()"
                             >
                               +
                             </button>
                           </div>
-                        } @else {
-                          <button
-                            class="add-btn add-btn--overlay"
-                            (click)="$event.stopPropagation()"
-                          >
-                            +
-                          </button>
                         }
-
                         <div class="product-info">
                           <ion-card-header>
                             <ion-card-title>{{ item.title }}</ion-card-title>

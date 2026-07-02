@@ -1,13 +1,13 @@
   import { Injectable } from '@angular/core';
 
   import {
-    ProductCreateRequest,
-    ProductOptionGroupAssignmentRequest,
-    ProductRuleActionRequest,
-    ProductRuleConditionRequest,
-    ProductRuleRequest,
-    VariantOptionGroupAssignmentRequest,
-  } from './product-admin.dto';
+  ProductCreateRequest,
+  ProductOptionGroupAssignmentRequest,
+  ProductRuleActionRequest,
+  ProductRuleConditionRequest,
+  ProductRuleRequest, ProductStatus,
+  VariantOptionGroupAssignmentRequest,
+} from './product-admin.dto';
 
   import {
     ProductChoiceDraft,
@@ -20,7 +20,10 @@
     providedIn: 'root',
   })
   export class ProductDraftMapper {
-    toCreateRequest(draft: ProductDraft): ProductCreateRequest {
+    toCreateRequest(
+      draft: ProductDraft,
+      status: ProductStatus
+    ): ProductCreateRequest {
       const sku = this.generateSku(draft.internalName || draft.title);
       const slug = this.generateSlug(draft.title);
 
@@ -31,10 +34,11 @@
         shortDescription: this.toOptionalText(draft.shortDescription),
         description: this.toOptionalText(draft.description),
         thumb: draft.imageUrl,
+        status,
         basePrice: this.toMoney(draft.basePrice),
-        isAvailable: true,
+        isAvailable: status === 'PUBLISHED',
         isFeatured: false,
-        isArchived: false,
+        isArchived: status === 'ARCHIVED',
         categoryIds: draft.categoryIds,
         images: this.mapImages(draft),
         optionGroups: this.mapProductOptionGroups(draft),

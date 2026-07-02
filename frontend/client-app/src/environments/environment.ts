@@ -1,13 +1,18 @@
 export const environment = {
   production: false,
   appBaseUrl: 'http://localhost:4200',
+
   keycloak: {
     url: 'http://localhost:9090',
     realm: 'res-realm',
     clientId: 'client-app',
     pkce: true,
   },
+
   apiUrl: 'http://localhost:8080',
   wsUrl: 'ws://localhost:8080',
-  googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk'
+
+  imageBaseUrl: 'http://localhost:8080/media',
+
+  googleMapsApiKey: 'AIzaSyBVrVkRJhzo5QQOJuM8lxetZWYmV1oUIOk',
 };

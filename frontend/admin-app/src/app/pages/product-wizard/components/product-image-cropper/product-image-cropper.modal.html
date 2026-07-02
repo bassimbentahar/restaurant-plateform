@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ 'adminProductWizard.image.cropTitle' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cropper-content" [scrollY]="false">
+  <div class="cropper-shell">
+    <div class="cropper-intro">
+      <ion-text color="medium">
+        <p>
+          {{ 'adminProductWizard.image.cropHelp' | translate }}
+        </p>
+      </ion-text>
+    </div>
+
+    <div class="crop-frame-wrapper">
+      <div
+        #cropFrame
+        class="crop-frame"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointercancel)="onPointerUp($event)"
+        (pointerleave)="onPointerUp($event)"
+      >
+        @if (loading()) {
+          <div class="crop-loading">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+        } @else {
+          <img
+            class="crop-image"
+            [src]="imageUrl()"
+            [style]="imageStyle()"
+            draggable="false"
+            alt=""
+          />
+
+          <div class="crop-grid"></div>
+        }
+      </div>
+    </div>
+
+    <div class="crop-controls">
+      <div class="crop-control-header">
+        <strong>{{ 'adminProductWizard.image.zoom' | translate }}</strong>
+
+        <button
+          type="button"
+          class="reset-button"
+          (click)="resetCrop()"
+        >
+          {{ 'adminProductWizard.image.resetCrop' | translate }}
+        </button>
+      </div>
+
+      <ion-range
+        min="1"
+        max="3"
+        step="0.01"
+        [value]="zoom()"
+        (ionInput)="onZoomChange($event.detail.value)"
+      ></ion-range>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="cropper-footer">
+  <div class="crop-actions">
+    <ion-button
+      fill="outline"
+      type="button"
+      (click)="cancel()"
+    >
+      {{ 'adminProductWizard.image.cancelCrop' | translate }}
+    </ion-button>
+
+    <ion-button
+      type="button"
+      (click)="confirm()"
+    >
+      {{ 'adminProductWizard.image.confirmCrop' | translate }}
+    </ion-button>
+  </div>
+</ion-footer>

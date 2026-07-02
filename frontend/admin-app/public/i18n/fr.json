@@ -904,7 +904,8 @@
       "choices": "choix",
       "conditions": "règles",
       "required": "Obligatoire",
-      "optional": "Optionnel"
+      "optional": "Optionnel",
+      "productImageAlt": "Aperçu de l’image du produit"
     },
     "choiceConfiguration": {
       "title": "Configurer {{name}}",
@@ -987,6 +988,28 @@
     },
     "errors": {
       "loadProductFailed": "Impossible de charger le produit à modifier."
+    },
+    "image": {
+      "title": "Image du produit",
+      "help": "Ajoutez une image claire du produit. Vous pourrez la recadrer avant l’envoi pour choisir exactement la zone visible dans le menu.",
+      "alt": "Image du produit",
+      "change": "Changer l’image",
+      "remove": "Supprimer l’image",
+      "uploading": "Envoi de l’image…",
+      "uploadError": "Impossible d’envoyer l’image.",
+      "deleteError": "Impossible de supprimer l’image.",
+      "invalidType": "Format d’image non accepté. Utilisez JPG, PNG ou WebP.",
+      "tooLarge": "L’image recadrée est trop lourde. Taille maximale : 5 MB.",
+      "originalTooLarge": "L’image sélectionnée est trop lourde. Choisissez une image de moins de 15 MB.",
+      "emptyTitle": "Ajouter une image",
+      "emptyHelp": "Choisissez une photo puis recadrez-la pour le menu.",
+      "cropTitle": "Recadrer l’image",
+      "cropHelp": "Déplacez et zoomez l’image pour choisir la partie qui sera affichée dans le menu.",
+      "zoom": "Zoom",
+      "resetCrop": "Réinitialiser",
+      "cancelCrop": "Annuler",
+      "confirmCrop": "Valider le cadrage",
+      "cropButton": "Recadrer"
     }
   },
   "adminProducts": {

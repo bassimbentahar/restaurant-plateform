@@ -5,8 +5,8 @@
         <p class="eyebrow">{{ 'adminProductWizard.assistant' | translate }}</p>
       </ion-text>
 
-      <h1>{{ 'adminProductWizard.title' | translate }}</h1>
-      <p>{{ 'adminProductWizard.subtitle' | translate }}</p>
+      <h1>{{ pageTitleKey() | translate }}</h1>
+      <p>{{ pageSubtitleKey() | translate }}</p>
     </div>
 
     <div class="wizard-actions">
@@ -19,7 +19,7 @@
       </ion-button>
 
       <ion-button [disabled]="!facade.canSubmit()" (click)="publishProduct()">
-        {{ 'adminProductWizard.actions.publish' | translate }}
+        {{ publishActionKey() | translate }}
       </ion-button>
     </div>
   </div>
@@ -27,7 +27,7 @@
   @if (facade.error()) {
     <div class="page-error">
       <ion-icon name="warning-outline"></ion-icon>
-      <span>{{ facade.error() }}</span>
+      <span>{{ facade.error()! | translate }}</span>
     </div>
   }
 
@@ -68,6 +68,81 @@
                     />
                   </ion-item>
 
+                  <div class="product-image-editor">
+                    <input
+                      #productImageInput
+                      type="file"
+                      hidden
+                      accept="image/jpeg,image/png,image/webp"
+                      (change)="onProductImageSelected($event)"
+                    />
+
+                    <div class="product-image-preview-card">
+                      @if (draft().imageUrl && !imagePreviewFailed()) {
+                        <img
+                          class="client-product-preview-image"
+                          [src]="imageService.getImageUrl(draft().imageUrl)"
+                          [alt]="'adminProductWizard.preview.productImageAlt' | translate"
+                          (error)="onProductImagePreviewError()"
+                        />
+                      } @else {
+                        <button
+                          type="button"
+                          class="product-image-empty"
+                          (click)="productImageInput.click()"
+                        >
+                          <span class="product-image-empty-icon">+</span>
+                          <strong>{{ 'adminProductWizard.image.emptyTitle' | translate }}</strong>
+                          <small>{{ 'adminProductWizard.image.emptyHelp' | translate }}</small>
+                        </button>
+                      }
+
+                      @if (uploadingImage()) {
+                        <div class="product-image-loading">
+                          {{ 'adminProductWizard.image.uploading' | translate }}
+                        </div>
+                      }
+                    </div>
+
+                    <div class="product-image-content">
+                      <div>
+                        <h3>{{ 'adminProductWizard.image.title' | translate }}</h3>
+                        <p>{{ 'adminProductWizard.image.help' | translate }}</p>
+                      </div>
+
+                      <div class="product-image-actions">
+                        <ion-button
+                          type="button"
+                          fill="outline"
+                          size="small"
+                          [disabled]="uploadingImage()"
+                          (click)="productImageInput.click()"
+                        >
+                          {{ 'adminProductWizard.image.change' | translate }}
+                        </ion-button>
+
+                        <ion-button
+                          type="button"
+                          fill="outline"
+                          size="small"
+                          [disabled]="uploadingImage()"
+                          (click)="productImageInput.click()"
+                        >
+                          {{ 'adminProductWizard.image.cropButton' | translate }}
+                        </ion-button>
+
+                        <ion-button
+                          type="button"
+                          fill="clear"
+                          color="danger"
+                          size="small"
+                          [disabled]="uploadingImage() || !draft().imageUrl"
+                          (click)="removeProductImage()"
+                        >
+                          {{ 'adminProductWizard.image.remove' | translate }}
+                        </ion-button>
+                      </div>                    </div>
+                  </div>
                   <ion-item>
                     <ion-label position="stacked">{{ 'adminProductWizard.general.shortDescription' | translate }}</ion-label>
                     <ion-input
@@ -430,7 +505,7 @@
 
               @if (currentStep() === 'preview') {
                 <ion-button [disabled]="!facade.canSubmit()" (click)="publishProduct()">
-                  {{ 'adminProductWizard.actions.publish' | translate }}
+                  {{ publishActionKey() | translate }}
                 </ion-button>
               } @else {
                 <ion-button (click)="next()">
@@ -450,8 +525,14 @@
               {{ 'adminProductWizard.preview.clientPreview' | translate }}
             </div>
 
-            <img [src]="draft().imageUrl || 'assets/img/product-placeholder.jpg'" alt="Product preview" />
-
+            @if (draft().imageUrl && !imagePreviewFailed()) {
+              <img
+                class="client-product-preview-image"
+                [src]="imageService.getImageUrl(draft().imageUrl)"
+                [alt]="'adminProductWizard.preview.productImageAlt' | translate"
+                (error)="onProductImagePreviewError()"
+              />
+            }
             <h2>{{ draft().title || ('adminProductWizard.preview.defaultProductName' | translate) }}</h2>
             <p>{{ draft().shortDescription || ('adminProductWizard.preview.defaultDescription' | translate) }}</p>
 

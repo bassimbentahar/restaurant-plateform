@@ -1,3 +1,5 @@
+import {ProductStatus} from '../data-access/product-admin.dto';
+
 export type ProductWizardStepId =
   | 'general'
   | 'pricing'
@@ -160,6 +162,7 @@ export type ProductRuleCreateDraftInput = {
 };
 
 export type ProductDraft = {
+  status: ProductStatus;
   title: string;
   internalName: string;
   shortDescription: string;

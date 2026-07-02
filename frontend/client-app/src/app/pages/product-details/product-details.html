@@ -14,17 +14,16 @@
   } @else {
     @if (product(); as menuItem) {
       <ion-grid>
-        <ion-row class="product-image-row">
-          @if (!hasImageError(menuItem)) {
+        @if (menuItem.thumb && !hasImageError(menuItem)) {
+          <ion-row class="product-image-row">
             <img
               class="product-image"
               [src]="imageService.getImageUrl(menuItem.thumb)"
               (error)="onImageError(menuItem)"
               [alt]="menuItem.title"
             />
-          }
-        </ion-row>
-
+          </ion-row>
+        }
         <ion-row>
           <ion-col size="12" class="favourite-col">
             <ion-button fill="clear" (click)="toggleFavourite()">

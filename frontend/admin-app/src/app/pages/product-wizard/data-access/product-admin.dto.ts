@@ -30,6 +30,7 @@ export interface ProductCreateRequest {
   shortDescription?: string;
   description?: string;
   thumb?: string;
+  status: ProductStatus;
 
   basePrice: number;
   isAvailable: boolean;
@@ -117,6 +118,8 @@ export interface ProductVariantResponse {
   displayOrder: number;
 }
 
+export type ProductStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+
 export interface ProductEditResponse {
   id: string;
   sku: string;
@@ -125,6 +128,7 @@ export interface ProductEditResponse {
   shortDescription?: string | null;
   description?: string | null;
   thumb?: string | null;
+  status: ProductStatus;
 
   basePrice: number;
   isAvailable: boolean;
@@ -375,4 +379,12 @@ export interface ProductCategoryResponse {
   id: string;
   name: string;
   slug?: string;
+}
+
+export interface ProductImageUploadResponse {
+  path: string;
+  url: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
 }

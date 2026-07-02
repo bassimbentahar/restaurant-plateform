@@ -29,14 +29,8 @@ export class ImageService {
       return normalizedPath;
     }
 
-    if (normalizedPath.startsWith('media/')) {
-      return `${environment.apiUrl.replace(/\/+$/, '')}/${normalizedPath}`;
-    }
+    const imageBaseUrl = environment.imageBaseUrl.replace(/\/+$/, '');
 
-    return `${environment.imageBaseUrl.replace(/\/+$/, '')}/${normalizedPath}`;
-  }
-
-  getPlaceholderUrl(): string {
-    return this.placeholder;
+    return `${imageBaseUrl}/${normalizedPath}`;
   }
 }

@@ -3,7 +3,7 @@ import {Injectable, computed, signal} from '@angular/core';
 import {
   ProductCategoryResponse,
   ProductEditResponse,
-  ProductEditVariantResponse,
+  ProductEditVariantResponse, ProductStatus,
 } from '../data-access/product-admin.dto';
 
 import {
@@ -28,7 +28,7 @@ import {
 } from './product-editor.model';
 import {RestaurantRuleResponse} from '../../rule/dto/rule-admin.dto';
 
-const DEFAULT_IMAGE_URL = 'assets/img/product-placeholder.jpg';
+const DEFAULT_IMAGE_URL = 'assets/img/product-placeholder.png';
 const DEFAULT_PREPARATION_TIME_MINUTES = 10;
 type RuleConditionSignatureInput = {
   variantId?: string | null;
@@ -67,6 +67,7 @@ const slugify = (value: string): string =>
 
 const DEFAULT_DRAFT: ProductDraft = {
   title: '',
+  status: 'DRAFT',
   internalName: '',
   shortDescription: '',
   description: '',
@@ -246,6 +247,13 @@ export class ProductEditorStore {
 
   updateGeneralInfo(value: Partial<ProductDraft>): void {
     this.patchDraft(value);
+  }
+
+  updateStatus(status: ProductStatus): void {
+    this.draftSignal.update((draft) => ({
+      ...draft,
+      status,
+    }));
   }
 
   updatePricing(basePrice: number, compareAtPrice?: number): void {
@@ -813,6 +821,7 @@ export class ProductEditorStore {
 
     this.draftSignal.set({
       ...defaultDraft,
+      status: product.status ?? 'DRAFT',
       title: this.readString(product, 'title'),
       internalName: this.readString(product, 'title'),
       shortDescription: this.readString(product, 'shortDescription'),

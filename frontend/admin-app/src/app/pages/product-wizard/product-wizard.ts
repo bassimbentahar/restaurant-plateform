@@ -1,6 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import { ProductImageCropperModal } from './components/product-image-cropper/product-image-cropper.modal';
 import {
     IonBadge,
     IonButton,
@@ -68,6 +69,7 @@ import {RuleAdminApiService} from '../../services/rule-admin-api.service';
 import {RulesStepComponent} from './components/rules-step/rules-step.component';
 import {ChoicesStepComponent} from './components/choices-step/choices-step.component';
 import {FormatsStepComponent} from './components/formats-step/formats-step.component';
+import {ImageService} from "../../services/ImageService";
 
 const REQUIRED_MIN_VALIDATION_KEY =
     'adminProductWizard.choiceConfiguration.validation.requiredMin';
@@ -181,6 +183,7 @@ const ORDER_TYPE_OPTIONS: SelectOption<ProductRuleOrderType>[] = [
         RulesStepComponent,
         ChoicesStepComponent,
         FormatsStepComponent,
+        ProductImageCropperModal,
     ],
     providers: [ProductEditorStore, ProductWizardFacade],
     templateUrl: './product-wizard.html',
@@ -189,6 +192,7 @@ const ORDER_TYPE_OPTIONS: SelectOption<ProductRuleOrderType>[] = [
 export class ProductWizard implements OnInit {
     readonly store = inject(ProductEditorStore);
     readonly facade = inject(ProductWizardFacade);
+    private readonly router = inject(Router);
 
     private readonly modalController = inject(ModalController);
     private readonly toastController = inject(ToastController);
@@ -197,12 +201,17 @@ export class ProductWizard implements OnInit {
     private readonly productAdminApi = inject(ProductAdminApiService);
     private readonly ruleAdminApi = inject(RuleAdminApiService);
 
+    readonly imageService = inject(ImageService);
+    private readonly maxOriginalImageSizeBytes = 15 * 1024 * 1024;
+    readonly imagePreviewFailed = signal(false);
+
     readonly draft = this.store.draft;
     readonly currentStep = this.store.currentStep;
     readonly selectedVariant = this.store.selectedVariant;
     readonly previewPrice = this.store.previewPrice;
     readonly validationErrors = this.store.validationErrors;
     readonly canPublish = this.store.canPublish;
+    readonly uploadingImage = signal(false);
 
     readonly editingProductId = signal<string | null>(null);
     readonly editLoading = signal(false);
@@ -352,21 +361,6 @@ export class ProductWizard implements OnInit {
                 : Number(value);
 
         this.store.updatePricing(this.draft().basePrice, compareAtPrice);
-    }
-
-    async saveDraft(): Promise<void> {
-        await this.facade.saveDraft();
-    }
-
-    async publishProduct(): Promise<void> {
-        const productId = this.editingProductId();
-
-        if (productId) {
-            await this.facade.updateProduct(productId);
-            return;
-        }
-
-        await this.facade.publish();
     }
 
     async openLibraryPicker(): Promise<void> {
@@ -1323,5 +1317,186 @@ export class ProductWizard implements OnInit {
         const parsed = Number(value);
         if (!Number.isFinite(parsed)) return fallback;
         return Math.max(0, Math.floor(parsed));
+    }
+
+    async onProductImageSelected(event: Event): Promise<void> {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        if (!this.isAllowedImageType(file)) {
+            input.value = '';
+            await this.showImageToast('adminProductWizard.image.invalidType');
+            return;
+        }
+
+        if (file.size > this.maxOriginalImageSizeBytes) {
+            input.value = '';
+            await this.showImageToast('adminProductWizard.image.originalTooLarge');
+            return;
+        }
+
+        const cropModal = await this.modalController.create({
+            component: ProductImageCropperModal,
+            componentProps: {
+                file,
+                outputWidth: 1200,
+                outputHeight: 900,
+                outputMimeType: 'image/webp',
+                outputQuality: 0.9,
+            },
+            cssClass: 'product-image-cropper-modal',
+        });
+
+        await cropModal.present();
+
+        const result = await cropModal.onDidDismiss<File>();
+
+        input.value = '';
+
+        if (result.role !== 'confirm' || !result.data) {
+            return;
+        }
+
+        await this.uploadProductImage(result.data);
+    }
+
+    private async uploadProductImage(file: File): Promise<void> {
+        this.uploadingImage.set(true);
+
+        try {
+            const response = await firstValueFrom(
+                this.productAdminApi.uploadProductImage(file)
+            );
+
+            this.store.updateGeneralInfo({
+                imageUrl: response.path,
+            });
+
+            this.imagePreviewFailed.set(false);
+        } catch (error: any) {
+            console.error('Image upload failed', error);
+
+            await this.showImageToast(
+                error?.status === 413
+                    ? 'adminProductWizard.image.tooLarge'
+                    : 'adminProductWizard.image.uploadError'
+            );
+        } finally {
+            this.uploadingImage.set(false);
+        }
+    }
+
+    private isAllowedImageType(file: File): boolean {
+        return [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+        ].includes(file.type);
+    }
+
+    private async showImageToast(messageKey: string): Promise<void> {
+        const toast = await this.toastController.create({
+            message: this.translate.instant(messageKey),
+            duration: 2800,
+            color: 'danger',
+            position: 'bottom',
+        });
+
+        await toast.present();
+    }
+
+    removeProductImage(): void {
+        const currentImageUrl = this.draft().imageUrl;
+
+        this.store.updateGeneralInfo({
+            imageUrl: undefined,
+        });
+
+        this.imagePreviewFailed.set(false);
+
+        if (!currentImageUrl) {
+            return;
+        }
+
+        if (currentImageUrl.startsWith('assets/')) {
+            return;
+        }
+
+        this.productAdminApi.deleteProductImage(currentImageUrl).subscribe({
+            error: async (error) => {
+                console.error('Image deletion failed', error);
+
+                const toast = await this.toastController.create({
+                    message: this.translate.instant(
+                        'adminProductWizard.image.deleteError'
+                    ),
+                    duration: 2500,
+                    color: 'danger',
+                    position: 'bottom',
+                });
+
+                await toast.present();
+            },
+        });
+    }
+
+    onProductImagePreviewError(): void {
+        this.imagePreviewFailed.set(true);
+    }
+
+    async saveDraft(): Promise<void> {
+        const productId = await this.facade.saveDraft(this.editingProductId());
+
+        if (!productId) {
+            return;
+        }
+
+        await this.syncEditingProduct(productId);
+
+        await this.showSuccessToast('adminProductWizard.success.draftSaved');
+    }
+
+    async publishProduct(): Promise<void> {
+        const productId = await this.facade.publishProduct(this.editingProductId());
+
+        if (!productId) {
+            return;
+        }
+
+        await this.syncEditingProduct(productId);
+
+        await this.showSuccessToast(
+            this.editingProductId()
+                ? 'adminProductWizard.success.productUpdated'
+                : 'adminProductWizard.success.productPublished'
+        );
+    }
+
+    private async syncEditingProduct(productId: string): Promise<void> {
+        if (this.editingProductId()) {
+            return;
+        }
+
+        this.editingProductId.set(productId);
+
+        await this.router.navigate(
+            ['/admin/products', productId, 'edit'],
+            { replaceUrl: true }
+        );
+    }
+
+    private async showSuccessToast(messageKey: string): Promise<void> {
+        const toast = await this.toastController.create({
+            message: this.translate.instant(messageKey),
+            duration: 2200,
+            color: 'success',
+            position: 'bottom',
+        });
+
+        await toast.present();
     }
 }

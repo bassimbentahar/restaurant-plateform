@@ -7,7 +7,7 @@ import {
   ProductCreatedResponse,
   ProductResponse,
   ProductCategoryResponse,
-  ProductCategoryCreateRequest, ProductSummaryResponse, ProductEditResponse,
+  ProductCategoryCreateRequest, ProductSummaryResponse, ProductEditResponse, ProductImageUploadResponse,
 } from './product-admin.dto';
 import { environment } from '../../../../environments/environment';
 import { OptionGroupLibraryItem } from '../state/product-editor.model';
@@ -105,6 +105,25 @@ export class ProductAdminApiService {
     return this.http.post<ProductCategoryResponse>(
       `${environment.apiUrl}/api/v1/restaurants/${this.restaurantId}/categories`,
       request
+    );
+  }
+
+  uploadProductImage(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<ProductImageUploadResponse>(
+      `${environment.apiUrl}/api/v1/admin/product-images`,
+      formData
+    );
+  }
+
+  deleteProductImage(path: string) {
+    return this.http.delete<void>(
+      `${environment.apiUrl}/api/v1/admin/product-images`,
+      {
+        params: { path },
+      }
     );
   }
 }
