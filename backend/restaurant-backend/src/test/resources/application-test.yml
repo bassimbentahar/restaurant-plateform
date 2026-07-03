@@ -34,7 +34,3 @@ app:
       - http://localhost:4200
       - http://localhost:4201
 
-  images:
-    storage: local
-    local:
-      root-path: ${java.io.tmpdir}/restaurant-test-images
