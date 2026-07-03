@@ -19,9 +19,22 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9098/realms/test
+          jwk-set-uri: http://localhost:9098/realms/test/protocol/openid-connect/certs
+
   kafka:
     bootstrap-servers: localhost:9092
+    listener:
+      auto-startup: false
+    admin:
+      fail-fast: false
+
 app:
   cors:
     allowed-origins:
       - http://localhost:4200
+      - http://localhost:4201
+
+  images:
+    storage: local
+    local:
+      root-path: ${java.io.tmpdir}/restaurant-test-images
